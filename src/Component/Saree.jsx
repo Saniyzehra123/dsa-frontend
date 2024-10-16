@@ -202,9 +202,9 @@ export default function Saree() {
                       </Link>
                       {/* Heart icon container */}
                       <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                        <a onClick={() => toggleHeart(saree)}>
-                          {isLiked(saree) ? <FaHeart color="red" /> : <FaRegHeart />}
-                        </a>
+                        {/* <a onClick={() => toggleHeart(saree)}>
+                            {isLiked(saree) ? <FaHeart color="red" /> : <FaRegHeart />}
+                          </a> */}
                       </div>
                     </div>
 
