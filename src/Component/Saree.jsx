@@ -5,6 +5,7 @@ import { GetSarees } from '../Redux/Sarees/sareeAction';
 import { Link } from 'react-router-dom';
 import { FaRegHeart, FaHeart } from "react-icons/fa"; // Correct import for icons
 import 'react-toastify/dist/ReactToastify.css'; 
+import  placeholder from '../assets/placeholder.jpg'
 import { toast, ToastContainer } from 'react-toastify';
 
 export default function Saree() {
@@ -194,7 +195,7 @@ export default function Saree() {
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <Link to={`/product-details/${saree.item_id}`} className="image-container">
                         <img
-                          src={saree.main_image_url || "https://via.placeholder.com/150"}
+                          src={saree.main_image_url || placeholder }
                           alt={saree.saree_name}
                           style={{ width: '100%', height: 'auto', display: 'block' }}
                         />
