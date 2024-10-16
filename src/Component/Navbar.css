@@ -1,0 +1,208 @@
+/* Main Navbar Styles */
+.navbar {
+  background-color: #fff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Container for Flex Alignment */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Center the Navigation Menu */
+.nav-menu {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+  gap: 30px;
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.nav-menu a:hover {
+  color: #007bff;
+}
+
+/* Right-Aligned Icons */
+.nav-icons {
+  margin-right: -2%;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nav-icons a {
+  color: #000;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+/* Hide Menu Icon by Default */
+.menu-icon {
+  display: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Menu Bar Style for Mobile */
+.menu-bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  margin: 5px 0;
+}
+
+/* Adjustments for Screen Size 1167px to 1279px */
+@media (max-width: 1279px) and (min-width: 1167px) {
+  /* Reduce gap between menu items for better fit */
+  .nav-menu {
+    gap: 20px;
+  }
+
+  /* Ensure that nav-icons are displayed properly */
+  .nav-icons {
+    margin-right: 2%; /* Adjust this margin as needed */
+    gap: 8px; /* Reduce the gap between icons */
+  }
+
+  /* Adjusting the position of the logo */
+  .p2 {
+    margin-right: 300px; /* Adjust for proper alignment */
+  }
+}
+
+/* Media Query for Screen Sizes 769px to 1166px */
+@media (max-width: 1166px) and (min-width: 769px) {
+  /* Reduce gap between menu items and icons */
+  .nav-menu {
+    gap: 15px;
+  }
+
+  .nav-icons {
+    margin-right: 3%;
+    gap: 10px;
+  }
+
+  /* Adjust logo margin to fit */
+  .p2 {
+    margin-right: 200px;
+  }
+}
+
+/* Media Query for Screen Sizes 599px to 768px */
+@media (max-width: 768px) and (min-width: 599px) {
+  /* Align navbar items for smaller screens */
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 999;
+  }
+
+  .nav-menu.show {
+    display: flex;
+  }
+
+  .nav-icons {
+    margin-right: 4%;
+    gap: 8px;
+  }
+
+  .p2 {
+    margin-right: 100px;
+  }
+
+  /* Adjust icons */
+  .nav-icons a {
+    font-size: 18px;
+  }
+
+  .menu-icon {
+    display: block;
+    margin-left: 5%;
+  }
+}
+
+/* Media Query for Screen Sizes Below 599px */
+@media (max-width: 599px) {
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 999;
+  }
+
+  .nav-menu.show {
+    display: flex;
+  }
+
+  .nav-icons {
+    margin-right: 4%;
+    gap: 6px;
+  }
+
+  .p2 {
+    margin-right: 50px;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+
+  .nav-menu a {
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  /* Reduce icon sizes for small screens */
+  .nav-icons a {
+    font-size: 16px;
+  }
+}
+
+/* Additional smaller screen sizes if needed */
+@media (max-width: 576px) {
+  .nav-icons {
+    gap: 5px;
+  }
+
+  .nav-menu a {
+    margin: 8px 0;
+  }
+}
+ 
+
+/* Resetting for larger screen sizes */
+@media (min-width: 1030px) {
+  .nav-icons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-right: 10px;
+  }
+
+  .nav-icons a {
+    font-size: 20px;
+  }
+}

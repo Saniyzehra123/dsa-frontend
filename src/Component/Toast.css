@@ -1,0 +1,20 @@
+/* Toast.css */
+.custom-toast {
+    background-color: #2a9d8f !important; /* Change background color */
+    color: #fff !important;  /* Text color */
+    font-size: 1rem;  /* Font size */
+    font-family: 'Arial', sans-serif;  /* Font family */
+  }
+  
+  .custom-toast-container {
+    top: 80px !important;  /* Custom position */
+  }
+  
+  .custom-toast .Toastify__close-button {
+    color: #fff;  /* Close button color */
+  }
+  
+  .custom-toast .Toastify__progress-bar {
+    background-color: #e76f51 !important;  /* Progress bar color */
+  }
+  
