@@ -1,9 +1,15 @@
+ 
+
+
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
+import { MdClose } from 'react-icons/md';
 import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Wishlist = () => {
   const [products, setProducts] = useState([]);
+  const [loginUser, setLoginUser] = useState();
 
   // Load the wishlist from localStorage on component mount
   useEffect(() => {
@@ -24,69 +30,256 @@ const Wishlist = () => {
     });
   };
 
-  // Function to increase product quantity
-  const increaseQuantity = (id) => {
-    const updatedProducts = products.map(product =>
-      product.id === id ? { ...product, quantity: (product.quantity || 1) + 1 } : product
-    );
-    setProducts(updatedProducts);
-    localStorage.setItem('wishlist', JSON.stringify(updatedProducts));
-  };
+  // Function to add an item to the cart
+  // const addToCart = (product) => {
+  //   const cartList = {
+  //     id: product.id,
+  //     saree_name: product.saree_name,
+  //     price: product.price,
+  //     quantity: 1,
+  //     image: product.image,
+  //   };
 
-  // Function to decrease product quantity
-  const decreaseQuantity = (id) => {
-    const updatedProducts = products.map(product =>
-      product.id === id
-        ? { ...product, quantity: Math.max((product.quantity || 1) - 1, 1) }
-        : product
-    );
-    setProducts(updatedProducts);
-    localStorage.setItem('wishlist', JSON.stringify(updatedProducts));
+  //   let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+  //   const existingItemIndex = updatedCartList.findIndex(cartItem => cartItem.id === cartList.id);
+
+  //   if (existingItemIndex !== -1) {
+  //     // If the product is already in the cart
+  //     toast.warn('This product is already in your cart!', {
+  //       position: 'top-right',
+  //       autoClose: 2000,
+  //     });
+  //   } else {
+  //     updatedCartList.push(cartList);
+  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+  //     toast.success(
+  //       <div style={{ display: 'flex', alignItems: 'center' }}>
+  //         <img src={product.image} alt={product.saree_name} style={{ width: '50px', height: '50px', marginRight: '10px' }} />
+  //         <span>{product.saree_name} added to your cart!</span>
+  //       </div>,
+  //       {
+  //         position: 'top-right',
+  //         autoClose: 2000,
+  //       }
+  //     );
+  //   }
+  // };
+
+
+  // Updated addToCart function for wishlist
+ 
+
+  const addToCart = (item) => {
+    const cartList = {
+      id: item.id, 
+      saree_name: item.saree_name,
+      price: item.price,
+      quantity: 1, // Default quantity of 1
+      main_image_url: item.image || item.main_image_url, 
+      customer_id: loginUser?.id || ''
+    };
+  
+    let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+    const existingItemIndex = updatedCartList.findIndex((cartItem) => cartItem.id === cartList.id);
+  
+    if (existingItemIndex !== -1) {
+      // If the item already exists, update its quantity
+      updatedCartList[existingItemIndex].quantity += 1; // Increase the quantity by 1
+      localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+      window.dispatchEvent(new Event('storage'));
+  
+      // Show Toastify message for updated quantity
+      toast.info(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={updatedCartList[existingItemIndex].main_image_url}
+            alt={updatedCartList[existingItemIndex].saree_name}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
+          />
+          <span>Quantity updated for {updatedCartList[existingItemIndex].saree_name}!</span>
+        </div>,
+        {
+          position: 'top-right',
+          autoClose: 2000,
+        }
+      );
+    } else {
+      // If the item does not exist, add it to the cart
+      updatedCartList.push({ ...cartList, count: 1 });
+      localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+      window.dispatchEvent(new Event('storage'));
+  
+      // Show Toastify message for adding a new product
+      toast.success(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={cartList.main_image_url}
+            alt={cartList.saree_name}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
+          />
+          <span>{cartList.saree_name} added to your cart successfully!</span>
+        </div>,
+        {
+          position: 'top-right',
+          autoClose: 2000,
+        }
+      );
+    }
   };
+  
+
+  // const addToCart = (item) => {
+  //   const cartList = {
+  //     id: item.id, 
+  //     saree_name: item.saree_name,
+  //     price: item.price,
+  //     quantity: 1,
+  //     main_image_url: item.image || item.main_image_url, 
+  //     customer_id: loginUser?.id || ''
+  //   };
+  
+  //   let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+  //   const existingItemIndex = updatedCartList.findIndex((cartItem) => cartItem.id === cartList.id);
+  
+  //   if (existingItemIndex !== -1) {
+  //     toast.warn('This product is already in your cart!', {
+  //       position: 'top-right',
+  //       autoClose: 2000,
+  //     });
+  //   } else {
+  //     updatedCartList.push({ ...cartList, count: 1 });
+  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+  //     window.dispatchEvent(new Event('storage'));
+  
+  //     // Add success toast with image and saree name
+  //     toast.success(
+  //       <div style={{ display: 'flex', alignItems: 'center' }}>
+  //         <img
+  //           src={cartList.main_image_url}
+  //           alt={cartList.saree_name}
+  //           style={{ width: '90px', height: '90px', marginRight: '10px' }}
+  //         />
+  //         <span>{cartList.saree_name} added to your cart successfully!</span>
+  //       </div>,
+  //       {
+  //         position: 'top-right',
+  //         autoClose: 2000,
+  //       }
+  //     );
+  //   }
+  // };
+  
+
+
+
+  // const addToCart = (product) => {
+  //   const cartList = {
+  //     id: product.id,
+  //     saree_name: product.saree_name,
+  //     price: product.price,
+  //     quantity: 1,
+  //     image: product.image,
+  //   };
+  
+  //   let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+  //   const existingItemIndex = updatedCartList.findIndex(cartItem => cartItem.id === cartList.id);
+  
+  //   if (existingItemIndex !== -1) {
+  //     toast.warn('This product is already in your cart!', {
+  //       position: 'top-right',
+  //       autoClose: 2000,
+  //     });
+  //   } else {
+  //     updatedCartList.push(cartList);
+  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+  
+  //     // Dispatch a storage event to update cart count in the navbar
+  //     window.dispatchEvent(new Event('storage'));
+  
+  //     toast.success(
+  //       <div style={{ display: 'flex', alignItems: 'center' }}>
+  //         <img src={product.image} alt={product.saree_name} style={{ width: '50px', height: '50px', marginRight: '10px' }} />
+  //         <span>{product.saree_name} added to your cart!</span>
+  //       </div>,
+  //       {
+  //         position: 'top-right',
+  //         autoClose: 2000,
+  //       }
+  //     );
+  //   }
+  // };
+  
 
   return (
-    <div className="container mt-36">
-      <h2 className="text-center">Wishlist</h2>
-      <div className="cart-container">
-        <div className="product-list">
-          {products.length === 0 ? (
-            <div className="text-center mt-5">
-              <p className="text-xl">Your Wishlist is empty!</p>
-            </div>
-          ) : (
-            products.map(product => (
-              <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', width: '60%' }}>
-                <img
-                  src={product.image|| "https://via.placeholder.com/150"}
-                  className="card-img-left"
-                  alt="Product Image"
-                  style={{ width: '20%', height: 'auto' }}
-                />
-                <div className="card-body text-justify" style={{ flex: 1 }}>
-                  <h5 className="card-title">{product.saree_name || product.title}</h5>
-                  <p>{product.color || '(Product color not available)'}</p>
-                  <p className="card-text">
-                    <b>₹{product.price}</b> <s>₹{product.price + product.price * 0.2}</s>
-                    <b className="text-amber-400">(20% Off)</b>
-                  </p>
-                  <p className="rating text-justify">4.8 <i className="fa fa-star"></i></p>
-                  <div className="d-flex align-items-center">
-                    <button className="btn btn-secondary me-2" onClick={() => decreaseQuantity(product.id)}>-</button>
-                    <span className="me-2">{product.quantity || 1}</span>
-                    <button className="btn btn-secondary me-2" onClick={() => increaseQuantity(product.id)}>+</button>
-                    <button className="btn btn-danger" onClick={() => deleteItem(product.id)}>Delete</button>
+    <div className="container my-4">
+      <div className="row">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <section className="text-gray-600 body-font mt-8">
+                <div className="container px-5 pt-24 mx-auto">
+                  <div className="flex flex-col text-center w-full">
+                    <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">Wishlist</h1>
+                    <hr />
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              </section>
+            </div>
+          </div>
         </div>
       </div>
+
+      {products.length === 0 ? (
+        <div className="text-center">
+          <p className='text-xl'>Your wishlist is empty!</p>
+        </div>
+      ) : (
+        <div className="row d-flex justify-content-center">
+          {products.map((product) => (
+            <div className="col-md-4 col-sm-6 mb-4" key={product.id}>
+              <div className="card position-relative">
+                <a href="/product-details" className="image-container">
+                  <img
+                    src={product.image || "https://via.placeholder.com/150"}
+                    alt={product.saree_name}
+                    className="card-img-top"
+                    style={{ height: '300px', objectFit: 'contain' }}
+                  />
+                </a>
+                <div className="position-absolute" style={{ top: '10px', right: '10px', zIndex: 2 }}>
+                  <button 
+                    onClick={() => deleteItem(product.id)} 
+                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
+                    <MdClose size={24} color="black" />
+                  </button>
+                </div>
+                <div className="card-body">
+                  <h5 className="card-title">{product.saree_name}</h5>
+                  <p className="card-text">{product.color || '(Product color not available)'}</p>
+                  <p className="card-text">
+                    <strong>Price: ₹{product.price}</strong> <del>₹{product.price + product.price * 0.2}</del>
+                    <span className="text-amber-400">(20% Off)</span>
+                  </p>
+                  <button className="btn btn-primary" onClick={() => addToCart(product)}>
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <ToastContainer />
+
       <style jsx>{`
-        .rating {
-          width: 50px;
-          margin-left: 1%;
+        .card {
+          transition: transform 0.2s;
+        }
+
+        .card:hover {
+          transform: scale(1.05);
         }
       `}</style>
     </div>

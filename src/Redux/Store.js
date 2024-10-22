@@ -5,6 +5,11 @@ import authReducer, { loginReducer } from './Auth/authReducer';
 import sareeReducer  from './Sarees/sareeReducer'
 import cartReducer from './Cart/cartReducer';
 import customerAddressReducer from './Customeraddress/reducer';
+import { forgotPasswordReducer } from './Auth/authReducer';  // Import forgot password reducer
+import { resetPasswordReducer } from './Auth/authReducer';  // Import reset password reducer
+import { contactFormReducer } from './contactus/contactReducer';
+import {getcustomerAddressReducer} from './Customeraddress/reducer'
+import {billingAddressReducer} from './Customeraddress/reducer'
 // import productReducer from './Products/productReducer';
 // import productByIdReducer from './ProductById/productByIdReduer';
 // import { cartReducer } from './Cart/cartReducer';
@@ -27,6 +32,11 @@ const rootReducer = {
   loginData:loginReducer, // Persisting authReducer
   cart: persistReducer(persistConfig, cartReducer),
   customerAddress: customerAddressReducer,
+  forgotPassword: forgotPasswordReducer, // Adding forgot password reducer
+  resetPassword: resetPasswordReducer,   // Adding reset password reducer
+  contactForm: contactFormReducer,
+  getcustomerAddress:getcustomerAddressReducer,
+  billingAddress:billingAddressReducer,
   //   cartData: persistReducer(persistConfig, cartReducer), // Persisting cartReducer
 //   createCustomerAddress: createCreateAddressReducer,
 //   customerAddress: getAddressReducer,
@@ -49,7 +59,7 @@ const store = configureStore({
 
 // Optional: Subscribe to the store updates
 store.subscribe(() => {
-  console.log('Updated Store State:', store.getState());
+  console.log('Updated Store State1:', store.getState());
 });
 
 export const persistor = persistStore(store);

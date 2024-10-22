@@ -26,6 +26,11 @@ import ForgetPassword from './ForgetPassword'
 import Saree from './Saree'
 import Wishlist from './Wishlist'
 import Checkout from './Checkout'
+import TrackProduct from './TrackProduct'
+import Check from './Check'
+import Checkout2 from './Checkout (2)'
+import OrderConfirm from './OrderConfirm'
+ 
 
 
 
@@ -56,13 +61,16 @@ import Checkout from './Checkout'
         <Route path='/comming-soon' element={<CommingSoon/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path='/sign-up' element={<SignUp/>}/>
-        <Route path='/forget-password' element={<ForgetPassword/>}/>
         <Route path='/saree' element={<Saree/>}/>
         <Route path="/wishlist" element={<Wishlist/>}/>
         <Route path='checkout' element={<Checkout/>}/>
-     
-  
-
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        {/* <Route path="/reset-password/:token" element={<ResetPasswor />} /> */}
+        <Route path="/track-product" element={<TrackProduct />} />
+        <Route path="/check" element={<Check />} />
+        <Route path="/checkout2" element={<Checkout2 />} />
+        <Route path="/orderconfirm" element={<OrderConfirm />} />
+      
  
 
 

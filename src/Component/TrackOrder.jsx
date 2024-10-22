@@ -1,81 +1,69 @@
 import React, { useState } from 'react';
-import './TrackOrder.css'; 
+import { useNavigate } from 'react-router-dom';
+import './TrackOrder.css'; // Ensure your styles are updated for the new UI
 
 const TrackOrder = () => {
-    const [activeTab, setActiveTab] = useState('mobile');
+    const [inputValue, setInputValue] = useState('');
+    const [searchType, setSearchType] = useState('orderId'); // Default to Order ID
+    const navigate = useNavigate();
 
-    const openTab = (tabName) => {
-        setActiveTab(tabName);
+    const handleTrackOrder = () => {
+        // If input is empty, show an alert
+        if (!inputValue) {
+            alert("Please enter your order ID or tracking number.");
+            return;
+        }
+
+        // If input is provided, navigate to the track-product page
+        navigate('/track-product', { state: { orderId: inputValue, searchType } });
     };
 
     return (
-
-   
-      <div>   
-       <div className="container h45">
-        <div className="row">
-          <div className="col-md-4"></div>
-          <div className="col-md-4">
-      
-            <h1>Track Your Order</h1>
-            <div className="tabs">
-                <button
-                    className={`tab-button ${activeTab === 'mobile' ? 'active' : ''}`}
-                    onClick={() => openTab('mobile')}
+        <div className="track-order-container">
+            <div className="track-order-box">
+                <div className="search-options">
+                    <label>Search By:</label>
+                    <label>
+                        <input 
+                            type="radio" 
+                            value="orderId" 
+                            checked={searchType === 'orderId'} 
+                            onChange={() => setSearchType('orderId')} 
+                        />
+                        Order ID/No
+                    </label>
+                    <label>
+                        <input 
+                            type="radio" 
+                            value="trackingId" 
+                            checked={searchType === 'trackingId'} 
+                            onChange={() => setSearchType('trackingId')} 
+                        />
+                        Tracking ID/AWB
+                    </label>
+                </div>
+                <div className="input-box">
+                    <input 
+                        type="text" 
+                        placeholder={searchType === 'orderId' ? "DSA-25630" : "Enter Tracking ID"} 
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)} 
+                    />
+                    {inputValue && (
+                        <button className="clear-button" onClick={() => setInputValue('')}>
+                            &#x2716; {/* Cross icon to clear the input */}
+                        </button>
+                    )}
+                </div>
+                <button 
+                    className="track-button" 
+                    onClick={handleTrackOrder}
                 >
-                    Mobile Number
+                    Track Your Order
                 </button>
-                <button
-                    className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
-                    onClick={() => openTab('email')}
-                >
-                    Email
-                </button>
-                <button
-                    className={`tab-button ${activeTab === 'order' ? 'active' : ''}`}
-                    onClick={() => openTab('order')}
-                >
-                    Order Number
-                </button>
+                <p className="note">Check the current status of your shipment.</p>
             </div>
-
-            {activeTab === 'mobile' && (
-                <div className="tab-content active">
-                    <form>
-                        <label htmlFor="mobile-input">Enter Mobile Number:</label>
-                        <input type="text" id="mobile-input" placeholder="+91-1234567890" required />
-                        <button type="button" className="btn btn-outline-success">Track Order</button> <br /><br />
-                    </form>
-                </div>
-            )}
-
-            {activeTab === 'email' && (
-                <div className="tab-content active">
-                    <form>
-                        <label htmlFor="email-input">Enter Email:</label>
-                        <input type="email" id="email-input" placeholder="abc123@gmail.com" required />
-                        <button type="button" className="btn btn-outline-success">Track Order</button> <br /><br />
-                    </form>
-                </div>
-            )}
-
-            {activeTab === 'order' && (
-                <div className="tab-content active">
-                    <form>
-                        <label htmlFor="order-input">Enter Order Number:</label>
-                        <input type="text" id="order-input" placeholder="12345678" required />
-                        <button type="button" className="btn btn-outline-success">Track Order</button> <br /><br />
-                    </form>
-                </div>
-            )}
-       
         </div>
-          <div className="col-md-4"></div>
-        </div>
-       </div>
-      
-        </div>
-
     );
 };
 

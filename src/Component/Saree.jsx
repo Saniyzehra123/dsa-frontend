@@ -64,7 +64,7 @@ export default function Saree() {
           <img
             src={item.main_image_url}
             alt={item.saree_name}
-            style={{ width: '50px', height: '50px', marginRight: '10px' }}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
           />
           <div>
             <strong>{item.saree_name}</strong> added to wishlist!
@@ -81,7 +81,63 @@ export default function Saree() {
     localStorage.setItem('wishlist', JSON.stringify(updatedLiked)); // Update localStorage
   };
 
+  // const addToCart = (saree) => {
+  //   const cartList = {
+  //     id: saree.item_id,
+  //     saree_name: saree.saree_name,
+  //     price: saree.price,
+  //     quantity: 1, // Default quantity of 1
+  //     main_image_url: saree.main_image_url,
+  //     customer_id: loginUser?.id || ''
+  //   };
   
+  //   let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+  //   const existingItemIndex = updatedCartList.findIndex((cartItem) => cartItem.id === cartList.id);
+  
+  //   if (existingItemIndex !== -1) {
+  //     // If the product already exists, update the quantity
+  //     updatedCartList[existingItemIndex].quantity += 1; // Increase the quantity by 1
+  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+  //     window.dispatchEvent(new Event('storage'));
+  
+  //     // Show a toast message for updated quantity
+  //     toast.info(
+  //       <div style={{ display: 'flex', alignItems: 'center' }}>
+  //         <img
+  //           src={updatedCartList[existingItemIndex].main_image_url}
+  //           alt={updatedCartList[existingItemIndex].saree_name}
+  //           style={{ width: '90px', height: '90px', marginRight: '10px' }}
+  //         />
+  //         <span>Quantity updated for {updatedCartList[existingItemIndex].saree_name}!</span>
+  //       </div>,
+  //       {
+  //         position: 'top-right',
+  //         autoClose: 2000,
+  //       }
+  //     );
+  //   } else {
+  //     // If the saree is not in the cart, add it to the cart
+  //     updatedCartList.push({ ...cartList, count: 1 });
+  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+  //     window.dispatchEvent(new Event('storage'));
+  
+  //     // Show a toast message for adding the product
+  //     toast.success(
+  //       <div style={{ display: 'flex', alignItems: 'center' }}>
+  //         <img
+  //           src={cartList.main_image_url}
+  //           alt={cartList.saree_name}
+  //           style={{ width: '90px', height: '90px', marginRight: '10px' }}
+  //         />
+  //         <span>{cartList.saree_name} added to your cart successfully!</span>
+  //       </div>,
+  //       {
+  //         position: 'top-right',
+  //         autoClose: 2000,
+  //       }
+  //     );
+  //   }
+  // };
 
   // Updated addToCart function
   const addToCart = (saree) => {
@@ -202,9 +258,9 @@ export default function Saree() {
                       </Link>
                       {/* Heart icon container */}
                       <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                        {/* <a onClick={() => toggleHeart(saree)}>
-                            {isLiked(saree) ? <FaHeart color="red" /> : <FaRegHeart />}
-                          </a> */}
+                        <a onClick={() => toggleHeart(saree)}>
+                          {isLiked(saree) ? <FaHeart color="red" /> : <FaRegHeart />}
+                        </a>
                       </div>
                     </div>
 

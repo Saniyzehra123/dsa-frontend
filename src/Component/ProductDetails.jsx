@@ -28,6 +28,7 @@ const ProductDetails = () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/products/${id}`);
         setSaree(response.data?.data);
+       
         setMainImage(response.data?.data.main_image_url); // Set the main image
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch saree details');
@@ -87,44 +88,63 @@ const ProductDetails = () => {
   // Add the addToCart function
 
   const handleAddToCart = () => {
-    // Define the cart item based on the saree details
     const cartItem = {
       id: saree.item_id,
       saree_name: saree.saree_name,
       price: saree.price,
+      quantity: 1,  // Default quantity can be set to 1
       main_image_url: saree.main_image_url,
       customer_id: loginUser?.id || ''
     };
   
-    // Fetch the existing cart from localStorage or initialize it as an empty array
     let updatedCart = JSON.parse(localStorage.getItem('itemlist')) || [];
-    
+  
     // Check if the item already exists in the cart
     const existingItemIndex = updatedCart.findIndex(item => item.id === cartItem.id);
-    
+  
     if (existingItemIndex !== -1) {
       // If the product is already in the cart, increment the quantity
-      updatedCart[existingItemIndex].count += 1;  // Increment count if exists
+      updatedCart[existingItemIndex].quantity += 1;
   
-      // Show a warning if the product is already in the cart
-      toast.warn('Product quantity updated in the cart!', {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      // Show a toast message for quantity update
+      toast.info(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={updatedCart[existingItemIndex].main_image_url}
+            alt={updatedCart[existingItemIndex].saree_name}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
+          />
+          <span>Quantity updated for {updatedCart[existingItemIndex].saree_name}!</span>
+        </div>,
+        {
+          position: 'top-right',
+          autoClose: 2000,
+        }
+      );
     } else {
-      // If the product does not exist, add it to the cart with a count of 1
-      updatedCart.push({ ...cartItem, count: 1 });
-      
-      // Show a success toast notification
-      toast.success('Product added to cart!', {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      // If the product does not exist, add it to the cart with a quantity of 1
+      updatedCart.push({ ...cartItem, quantity: 1 });
+  
+      // Show a toast message for adding a new product
+      toast.success(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={cartItem.main_image_url}
+            alt={cartItem.saree_name}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
+          />
+          <span>{cartItem.saree_name} added to your cart successfully!</span>
+        </div>,
+        {
+          position: 'top-right',
+          autoClose: 2000,
+        }
+      );
     }
   
     // Update localStorage with the modified cart
     localStorage.setItem('itemlist', JSON.stringify(updatedCart));
-    
+  
     // Trigger an event to notify other parts of the app
     window.dispatchEvent(new Event('storage'));
   };
