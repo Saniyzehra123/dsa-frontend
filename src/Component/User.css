@@ -1,0 +1,461 @@
+/* Main container layout */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  padding: 20px;
+  color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  display: flex;
+  align-items: center; /* Align icon and text vertically */
+  padding: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  color: #ecf0f1;
+  background-color: #34495e;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.menu li svg {
+  margin-right: 15px; /* Space between icon and text */
+  font-size: 18px;    /* Size of the icon */
+}
+
+.menu li:hover,
+.menu li.active {
+  background-color: #1abc9c;
+}
+
+.menu li.active svg {
+  color: #ffffff; /* Optional: Change icon color when active */
+}
+
+/* Responsive layout for smaller screens */
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .menu li {
+    flex-shrink: 0;
+    margin: 0 10px;
+    display: inline-block;
+  }
+
+  .content-area {
+    width: 100%;
+  }
+
+  .card {
+    width: 100%; /* Make card full width */
+    margin: 0; /* Remove margins */
+  }
+
+  
+.contact-form-popup {
+  margin-top: 80px;
+  margin-left: 50px;
+}
+}
+
+/* Content area styling */
+.content-area {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card styling */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%; /* Ensure card takes full width */
+  max-width: 900px; /* Updated max width */
+  margin: 20px auto; /* Center the card horizontally */
+}
+
+/* Flexbox for centering icons and text in "My Orders" and "Recently Viewed" */
+.center-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.empty-orders-icon, .recently-viewed-icon {
+  margin-bottom: 20px;
+}
+
+p {
+  text-align: justify; /* Make the content justified for better readability */
+}
+
+p.center {
+  text-align: center; /* Center the text for "My Orders" and "Recently Viewed" */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-icon {
+  cursor: pointer;
+}
+
+.profile-section {
+  margin-top: 20px;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.gender-options {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  justify-content: flex-start; /* Align left */
+  margin-top: 10px; /* Optional spacing */
+}
+
+.gender-option {
+  margin-right: 15px; /* Space between radio buttons */
+}
+
+/* Button styling */
+.btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #2980b9;
+}
+
+.save-btn {
+  margin-top: 20px;
+}
+
+/* Logout button styling */
+.logout-btn {
+  background-color: #e74c3c;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Popup message styling */
+.popup-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2ecc71;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 716px) and (max-width: 1200px) {
+  .dashboard-container {
+    margin-top: 240px; /* Adjust this value as needed */
+  }
+  
+.contact-form-popup {
+  margin-top: 80px;
+  margin-left: 50px;
+}
+}
+
+
+
+.order-details {
+  margin-bottom: 20px;
+}
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Spacing between rows */
+}
+
+.view-order-link-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns the link to the right */
+}
+
+.view-order-link {
+  color: black; /* Change this to your preferred color */
+  text-decoration: none;
+  margin-left: 10px; /* Adds spacing between the text and the link */
+  font-weight:400;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.grand-total {
+  display: flex;
+  justify-content: space-between;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.grand-total-label {
+  margin-right: 10px;
+}
+
+.contact-form-popup {
+  position: fixed; /* Make it fixed to the screen */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for center alignment */
+  background-color: white; /* White background for the popup */
+  padding: 20px; /* Padding around the form */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  z-index: 1000; /* Ensure it appears above other elements */
+  margin-top: 80px;
+  margin-left: 50px;
+}
+
+.popup-header {
+  display: flex; /* Flexbox for header layout */
+  justify-content: space-between; /* Space between title and close icon */
+  align-items: center; /* Center items vertically */
+}
+
+.close-icon {
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.input-row {
+  display: flex; /* Flexbox for input row */
+  justify-content: space-between; /* Space between inputs */
+  margin-bottom: 15px; /* Margin for spacing */
+}
+
+.input-group {
+  flex: 1; /* Allow equal width */
+  margin-right: 10px; /* Margin between inputs */
+}
+
+.input-group:last-child {
+  margin-right: 0; /* No margin on the last input */
+}
+
+
+@media (max-width: 600px) {
+  .contact-form-popup {
+    padding: 10px; /* Reduce padding */
+    width: 60%; /* Increase width on small screens */
+    max-height: 80vh; /* Adjust max height */
+    overflow-y: auto; /* Allow scrolling */
+    position: fixed; /* Keep it centered */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the popup */
+    margin-right: 180px;;
+  }
+
+  .popup-header {
+    flex-direction: column; /* Stack header items */
+    align-items: flex-start; /* Align to the start */
+  }
+
+  .input-row {
+    flex-direction: column; /* Stack inputs vertically */
+    margin-bottom: 15px; /* Space between rows */
+  }
+
+  .input-group {
+    margin-right: 0; /* Remove margin for vertical layout */
+    margin-bottom: 10px; /* Add spacing between inputs */
+  }
+
+  .form-control, .form-select {
+    width: 100%; /* Full width for inputs */
+  }
+
+  .btn {
+    width: 100%; /* Full width for button */
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    width: 90%; /* Full width on small screens */
+    margin: auto; /* Center the card */
+    padding: 15px; /* Adjust padding */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+
+  .order-details {
+    display: flex;
+    flex-direction: column; /* Stack order details vertically */
+    margin-bottom: 15px; /* Space below order details */
+  }
+
+  .order-row {
+    display: flex;
+    justify-content: space-between; /* Space out items */
+    margin-bottom: 10px; /* Space between rows */
+    flex-wrap: wrap; /* Allow wrapping if necessary */
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+  }
+
+  .grand-total {
+    display: flex;
+    justify-content: space-between; /* Space between label and amount */
+    font-weight: bold; /* Emphasize grand total */
+  }
+}
+
+/* Adddress Pop-up Form */
+/* Overlay to darken the background */
+.address-form-popup {
+  position: fixed; /* Fixed positioning to stay in view */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for element's size */
+  background-color: #fff; /* White background for the popup */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  padding: 20px; /* Inner padding */
+  z-index: 1000; /* Ensure it appears above other elements */
+  width: 90%; /* Full width on mobile */
+  max-width: 500px; /* Limit maximum width */
+  margin-top: 120px;
+}
+
+/* Styles for the header of the popup */
+.popup-header {
+  display: flex; /* Flexbox for header layout */
+  justify-content: space-between; /* Space between title and close icon */
+  align-items: center; /* Center vertically */
+  margin-bottom: 15px; /* Space below header */
+}
+
+/* Input rows and groups styling */
+.input-row {
+  display: flex; /* Flexbox for input row */
+  justify-content: space-between; /* Space out inputs */
+  margin-bottom: 15px; /* Space below each row */
+}
+
+.input-group {
+  flex: 1; /* Equal space for each input group */
+  margin-right: 10px; /* Right margin for spacing */
+}
+
+.input-group:last-child {
+  margin-right: 0; /* Remove margin for the last element */
+}
+
+/* Input field styles */
+.form-control {
+  width: 100%; /* Full width for inputs */
+  padding: 10px; /* Inner padding */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Button styling */
+.btn {
+  padding: 10px 15px; /* Button padding */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* White text */
+}
+
+/* Adjusting for smaller screens */
+@media (max-width: 600px) {
+  .address-form-popup {
+    width: 95%; /* Full width on mobile */
+    margin-top: 120px;
+  }
+  
+  .input-row {
+    flex-direction: column; /* Stack inputs on small screens */
+  }
+
+  .input-group {
+    margin-right: 0; /* Remove right margin */
+    margin-bottom: 10px; /* Space between stacked inputs */
+  }
+
+  .input-group:last-child {
+    margin-bottom: 0; /* Remove margin for the last input */
+  }
+}
+
+@media (min-width: 716px) and (max-width: 1200px) {
+  .address-form-popup {
+
+    margin-top: 120px;
+  }
+
+}

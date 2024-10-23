@@ -28,8 +28,9 @@ import Wishlist from './Wishlist'
 import Checkout from './Checkout'
 import TrackProduct from './TrackProduct'
 import Check from './Check'
-import Checkout2 from './Checkout (2)'
 import OrderConfirm from './OrderConfirm'
+ 
+import User from './User'
  
 
 
@@ -68,9 +69,10 @@ import OrderConfirm from './OrderConfirm'
         {/* <Route path="/reset-password/:token" element={<ResetPasswor />} /> */}
         <Route path="/track-product" element={<TrackProduct />} />
         <Route path="/check" element={<Check />} />
-        <Route path="/checkout2" element={<Checkout2 />} />
         <Route path="/orderconfirm" element={<OrderConfirm />} />
-      
+   
+ 
+        <Route path="/user" element={<User />} />
  
 
 
