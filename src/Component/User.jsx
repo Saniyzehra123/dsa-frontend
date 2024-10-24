@@ -12,6 +12,7 @@ const User = () => {
   const [isEditable, setIsEditable] = useState(false);
   const [loginUser, setLoginUser] = useState()
   const [addressesData, setAddressesData] = useState([]);
+  const [phone, setPhone] =useState()
   
   const [error, setError] = useState(''); 
   const [addressList, setAddressList] = useState([]);
@@ -110,7 +111,7 @@ const toggleBillingAddress = () => {
         mobile: '',
         country: '',
         customer_id: loginUser?.id,
-        isbilling: 0
+       
 
     });
     setShowAddressForm(true); // Open modal
@@ -137,22 +138,34 @@ const toggleBillingAddress = () => {
         if (addressData.id) {
             // Update existing address
             let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
-            let res = await response.data
-            console.log("Updated Address:", res.data);
+            // let res = await response.data
+            console.log("Updated Address:", response);
         } else {
             // Add new address
             let response = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
             let res = await response.data
+
             console.log("New Address Added:", res.data);
         }
         setShowAddressForm(false);
+        getaddress()
     } catch (error) {
         console.error("Error in saving address:", error);
     }
 };
 
+const getaddress = async()=>{
+  try {
+     let data= await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${loginUser?.id}`);
+     let res = await data.data
+     console.log("address",res)
+     setAddressList(res.data)
+  } catch (error) {
+    console.error("Error in saving address:", error);
+  }
+}
   
-
+ 
   const renderAddressForm = () => {
     // if (!showAddressForm) return null;
 
@@ -168,99 +181,7 @@ const toggleBillingAddress = () => {
                 />
             )}
       </div>
-      // <div className="address-form-popup">
-      //   <div className="popup-header">
-      //     <h3>{currentAddress ? 'Edit Address' : 'Add New Address'}</h3>
-      //     <FaTimes className="close-icon" onClick={closeAddressForm} />
-      //   </div>
-      //   <form>
-      //     <div className="input-row">
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fas fa-user'></i></span>
-      //         <input type="text" className="form-control" placeholder="First Name" aria-label="First Name" />
-      //       </div>
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fas fa-user'></i></span>
-      //         <input type="text" className="form-control" placeholder="Last Name" aria-label="Last Name" />
-      //       </div>
-      //     </div>
-      //     <div className="input-row">
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fa fa-map-marker'></i></span>
-      //         <input type="email" className="form-control" placeholder="Address" aria-label="Address" />
-      //       </div>
-
-      //       <div className="input-group">
-      //         <select className="form-select" required>
-      //           <option value="">Select State</option>
-      //           <option>Andhra Pradesh</option>
-      //           <option>Arunachal Pradesh</option>
-      //           <option>Assam</option>
-      //           <option>Bihar</option>
-      //           <option>Chhattisgarh</option>
-      //           <option>Goa</option>
-      //           <option>Gujarat</option>
-      //           <option>Haryana</option>
-      //           <option>Himachal Pradesh</option>
-      //           <option>Jharkhand</option>
-      //           <option>Karnataka</option>
-      //           <option>Kerala</option>
-      //           <option>Madhya Pradesh</option>
-      //           <option>Maharashtra</option>
-      //           <option>Manipur</option>
-      //           <option>Meghalaya</option>
-      //           <option>Mizoram</option>
-      //           <option>Nagaland</option>
-      //           <option>Odisha</option>
-      //           <option>Punjab</option>
-      //           <option>Rajasthan</option>
-      //           <option>Sikkim</option>
-      //           <option>Tamil Nadu</option>
-      //           <option>Telangana</option>
-      //           <option>Tripura</option>
-      //           <option>Uttar Pradesh</option>
-      //           <option>Uttarakhand</option>
-      //           <option>West Bengal</option>
-      //           <option>Delhi</option>
-      //           <option>Jammu and Kashmir</option>
-      //           <option>Ladakh</option>
-      //           <option>Chandigarh</option>
-      //         </select>
-      //       </div>
-      //     </div>
-      //     <div className="input-row">
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fas fa-city'></i></span>
-      //         <input type="text" className="form-control" placeholder="City" aria-label="City" />
-      //       </div>
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fa fa-map-pin'></i></span>
-      //         <input type="number" className="form-control" placeholder="Postal/Zip-Code" aria-label="Pincode" />
-      //       </div>
-      //     </div>
-      //     <div className="input-row">
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fas fa-envelope'></i></span>
-      //         <input type="email" className="form-control" placeholder="Email" aria-label="Email" />
-      //       </div>
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fa fa-phone'></i></span>
-      //         <input type="number" className="form-control" placeholder="Contact Number" aria-label="Contact Number" />
-      //       </div>
-      //     </div>
-      //     <div className="input-row">
-      //       <div className="input-group">
-      //         <span className="input-group-text" id="basic-addon1"><i className='fas fa-flag-o'></i></span>
-      //         <input type="email" className="form-control" placeholder="Country" aria-label="Email" />
-      //       </div>
-      //       <div className="input-group ">
-      //     <button type="submit" className="btn btn-primary">Submit</button>
-      //       </div>
-      //     </div>
       
-      
-      //   </form>
-      // </div>
     );
   };
 
@@ -271,10 +192,8 @@ const toggleBillingAddress = () => {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
+
     setAddressesData((prevData) => ({ ...prevData, [id]: value })); // Update addressesData instead of profileData
-
-
-       // Validate phone number
        if (id === 'phone') {
         if (!/^\+91[0-9]{10}$/.test(value)) {
           setError('Please enter a valid 10-digit mobile number.');
@@ -283,7 +202,13 @@ const toggleBillingAddress = () => {
         }
       }
   };
-  
+
+  useEffect(()=>{
+    console.log("addressesData", addressesData)
+       if(loginUser?.id){
+        getaddress()
+       }
+  },[loginUser])
    
 
   const renderContent = () => {
@@ -323,11 +248,10 @@ const toggleBillingAddress = () => {
                 <PhoneInput
                   country={'in'}
                   value={addressesData.phone}
-                  onChange={(phone) => handleInputChange({ target: { name: 'phone', value: phone } })}
+                  onChange={(phone) => handleInputChange({ target: { id: 'phone', value: phone } })}
                   disabled={!isEditable}
                   inputStyle={{ width: '100%', height: '40px' }}
                 />
-                {/* <label htmlFor="phone">Mobile Number</label> */}
               </div>
               {error && (
                 <small className="text-danger">{error}</small>
@@ -338,12 +262,11 @@ const toggleBillingAddress = () => {
                   <input
                     type="date"
                     className="form-control"
-                    id="birthdate"
-                    value={addressesData.birthdate}
-                    onChange={handleInputChange}
+                    value={addressesData?.birthdate || ''} // Ensure it's not undefined
+                    onChange={(e) => handleInputChange({ target: { id: 'birthdate', value: e.target.value } })}
                     disabled={!isEditable}
                   />
-                  <label htmlFor="birthdate">Birthdate</label>
+                  <label htmlFor="birthdate" >Birth Date</label>
                 </div>
               </div>
               <div className="form-group">
@@ -374,6 +297,7 @@ const toggleBillingAddress = () => {
           </div>
         );
       case 'address':
+        console.log("list",addressList)
         return (
           <div className="card">
             <div className="card-header">
@@ -382,7 +306,7 @@ const toggleBillingAddress = () => {
             {/* Display the list of addresses */}
              {/* List of Addresses */}
              <div className="address-list">
-                {addressList.map((address, index) => (
+                {addressList?.map((address, index) => (
                     <div key={index} className="address-card">
                         <div>
                         <p><strong>{address.firstname} {address.lastname}</strong></p>
@@ -396,7 +320,6 @@ const toggleBillingAddress = () => {
             </div>
              <br />
              <button className="btn w-40 " onClick={handleAddDifferentAddress}>Add New Address</button> {/* Button to add new address */}
- 
           </div>
         );
 
@@ -591,8 +514,6 @@ const toggleBillingAddress = () => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
   
-
-
   return (
     <div className="dashboard-container mt-48">
       <div className="sidebar">

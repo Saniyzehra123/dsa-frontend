@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
-const AddressForm = ({ currentAddress, setCurrentAddress, showAddressForm, saveAddress }) => {
+const AddressForm = ({ currentAddress, setCurrentAddress, setShowAddressForm, saveAddress }) => {
   
 
   const handleInputChange = (e) => {
@@ -138,7 +138,7 @@ const handleSaveAddress = () => {
                 </div>
             </div>
             <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <button className="btn btn-secondary" onClick={() => showAddressForm(false)}>Cancel</button>
+                <button className="btn btn-secondary" onClick={() => setShowAddressForm(false)}>Cancel</button>
                 <button className="btn btn-primary" onClick={handleSaveAddress}>Save</button>
             </div>
         </div>

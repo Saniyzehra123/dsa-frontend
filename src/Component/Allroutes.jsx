@@ -31,11 +31,7 @@ import Check from './Check'
 import OrderConfirm from './OrderConfirm'
  
 import User from './User'
- 
-
-
-
-
+  
  
  export default function Allroutes() {
    return (
