@@ -46,8 +46,6 @@ const stateOptions = [
 const Checkout = () => {
     const location = useLocation(); // Get the state passed from Cart
     const dispatch = useDispatch();
-    const { isLoding, billing_address, error } = useSelector((store) => store?.billingAddress);
-    const address = useSelector((store) => store?.getcustomerAddress);
     const { products, discount } = location.state || { products: [], discount: 0 }; // Default to empty array and zero discount
     const [loginUser, setLoginUser] = useState()
     const [useDifferentAddress, setUseDifferentAddress] = useState(false);
@@ -68,11 +66,9 @@ const Checkout = () => {
     const handlePaymentChange = (e) => {
         setPaymentOption(e.target.value);
     };
-
     // Modal state
     const [showModal, setShowModal] = useState(false);
     const [modalAddress, setModalAddress] = useState();
-
 
     // Function to handle "Use a Different Address" - Opens a blank form
     const handleUseDifferentAddress = () => {
@@ -93,8 +89,6 @@ const Checkout = () => {
         });
         setShowModal(true); // Open modal
     };
-
-   
 
     const calculateSubtotal = () => {
         if (!Array.isArray(products)) {
@@ -140,7 +134,6 @@ const Checkout = () => {
     const handleAddressChange = (e) => {
         setUseDifferentAddress(e.target.value === 'different');
     };
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -197,7 +190,6 @@ const Checkout = () => {
         try {
             let res = await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${customerId}`)
             let data = await res.data?.data;
-            console.log("list", data);
             setAddressList(data)
         } catch (error) {
             console.log("error", error)
@@ -208,8 +200,10 @@ const Checkout = () => {
         try {
             const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
             const savedData = await res.data?.data;
-            console.log("Shipping Address ID", formData);
             setAddAddressId(savedData.id); // Set saved address ID
+            if(useDifferentAddress){
+                setBillingAddressId(savedData.id);
+            }
         } catch (error) {
             console.error("Error adding shipping address:", error);
         }
@@ -227,14 +221,10 @@ const Checkout = () => {
     };
     
     const saveAddress = async (addressData) => {
-        console.log("data", addressData)
         try {
             if (addressData.id) {
-                // Update the existing address
                let res= await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
-               console.log("response", res)
             } else {
-                // Add a new address
                 let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
             }
             setShowModal(false);
@@ -243,10 +233,8 @@ const Checkout = () => {
         }
     }
     const handleDeleteAddress = async (addressId) => {
-        // Call your API to delete the address
         try {
             await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
-            // Refresh the address list after deletion
             getCusAddressList(loginUser?.id);
         } catch (error) {
             console.error("Error deleting address:", error);
@@ -256,53 +244,60 @@ const Checkout = () => {
     const handleAddressSelection = (addressId) => {
         setAddAddressId(addressId);
         setBillingAddressId(addressId)
-        console.log(`Selected address ID: ${addressId}`);
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
         try {
-            console.log("addid",addAddressId)
-            // Submit the shipping address first
-            if(addAddressId){
-               createOrder();
-            } else
-            {
-                if (!validatePinCode(formData.pincode)) {
-                    alert('Please enter a valid pin code.');
-                    return;
-                }
-                addShippingAddress();
+            if(addressList.length>0 && addAddressId==0){
+               alert('Please Choose Your Address')
+            } else if(addAddressId) {
+                createOrder();
+            }
+            else{
                 if (useDifferentAddress) {
                     addBillingAddress(billingAddress);
                 } else {
-                   addBillingAddress({
-                        ...formData,
-                        isbilling: 1
-                    })
+                    addShippingAddress();
                 }
             }
-            console.log("formData", formData, billingAddress)
         } catch (error) {
             console.error("Error submitting address:", error);
         }
     };
 
+
+
     const createOrder = async () => {
-        console.log("-------------")
         const dataObj = {
             address_id: addAddressId,
             billing_id: billingAddressId,
             customer_id: loginUser?.id
         }
-        console.log("obj",dataObj)
         try {
             let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/order/add`, dataObj)
-            let data = await res.data?.data
-            console.log("orderdata",data)
+            let data = await res.data?.data;
             setOrderId(data?.orderId)
+            createOrderItem(data?.orderId)
         } catch (error) {
             alert("Something went wrong");
+        }
+    }
+
+    const createOrderItem= async(orderId)=>{
+        const obj={
+            data:products,
+            orderId:orderId
+        }
+        try {
+            let res=await axios.post(`${process.env.REACT_APP_BASE_URL}/order/items`, obj, {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+            res = await res?.data
+            alert(`res:${res.message}`)
+        } catch (error) {
+            console.log("error in adding items", error)
         }
     }
 
@@ -329,23 +324,13 @@ const Checkout = () => {
         };
     }, []);
 
-    useEffect(() => {
-        if (billing_address?.data?.addressId > 0 && address?.address?.data?.addressId > 0) {
-            alert("order done sucessfullly")
-        }
-        console.log("billing_address", billing_address, address)
-    }, [dispatch, billing_address])
-
     return (
         <div className="container mt-44 text-justify">
             <h2 className="text-center">Checkout</h2>
             <div className="row">
-                {/* Col-md-8 for the form */}
                 <div className="col-md-8">
                     <form onSubmit={handleSubmit}>
                         <h4>Contact Information</h4>
-
-                        {/* //////get shipp///// */}
                         <h4 onClick={() => setShowAccount(!showAccount)} style={{ cursor: 'pointer', fontSize: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             Account
                             <i className={`fas ${showAccount ? 'fa-chevron-up' : 'fa-chevron-down'}`} style={{ marginLeft: '8px' }}></i>
@@ -355,7 +340,6 @@ const Checkout = () => {
                         )}
                         <p style={{ fontSize: '0.9rem' }}>zsaniya973@gmail.com</p>
                         <hr />
-
                         {
                             addressList?.length > 0 ? <React.Fragment>
                                 <h4 onClick={() => setShowShipping(!showShipping)} style={{ cursor: 'pointer', fontSize: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -714,9 +698,7 @@ const Checkout = () => {
 
                         <button type="submit" className="btn btn-primary w-100 mt-3">Pay now</button>
                     </form>
-
                 </div>
-
                 {/* Col-md-4 for the cart summary */}
                 <div className="col-md-4">
                     <h4>Order Summary</h4>
