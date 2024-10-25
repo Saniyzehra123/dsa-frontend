@@ -53,10 +53,10 @@ const Checkout = () => {
     const [addressList, setAddressList] = useState([]);
     const [showAccount, setShowAccount] = useState(false);
     const [showShipping, setShowShipping] = useState(false);
-    const [paymentOption,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ] = useState(0);
+    const [paymentOption, setPaymentOption]=useState(0);
     const [addAddressId, setAddAddressId] = useState(0);
     const [orderId, setOrderId] = useState(0);
-    const [loading, setLoading]=useState(false)
+    const [loading, setLoading]=useState(false);
     const [billingAddressId, setBillingAddressId] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(null); // To track which address dropdown is open
 
@@ -252,8 +252,9 @@ const Checkout = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            if(addressList.length>0 && addAddressId==0 && paymentOption){
-               alert('Please Choose Your Address')
+            if(addressList.length>0 && addAddressId==0 || paymentOption===0){
+               alert('Please Choose Your Address or Paymet methods')
+               setLoading(false)
             } else if(addAddressId > 0 ) {
                 createOrder();
             }
@@ -318,19 +319,19 @@ const Checkout = () => {
             alert("Please select paymet Option")
         }
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/`, obj)
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/payment`, obj)
             res =await res.data;
-            if(res.paymentId){
+            console.log("res", res)
+            if(res.data.paymentId){
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: 'Your operation was successful!',
+                    text: 'Your order is placed successful!',
                 });
                 setLoading(false)
             }
-            
         } catch (error) {
-            
+            console.log("error in creating order")
         }
     }
 
@@ -711,7 +712,7 @@ const Checkout = () => {
                                 <input
                                     type="radio"
                                     id="cod"
-                                    name="paymentOption"
+                                    name="cod"
                                     value="1"
                                     onChange={handlePaymentChange}
                                     checked={paymentOption === '1'}
