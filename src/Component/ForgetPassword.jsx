@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { forgotPasswordAction } from '../Redux/Auth/authAction';
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const ForgetPassword = () => {
@@ -9,6 +10,7 @@ const ForgetPassword = () => {
   const { loading, message, error } = useSelector((store) => store.forgotPassword); // Adjusted selector
   
   const [email, setEmail] = useState('');
+  const navigate = useNavigate()
 
   const handleOnChange = (e) => {
     setEmail(e.target.value);
@@ -26,6 +28,14 @@ const ForgetPassword = () => {
   if (error) {
     toast.error(error);
   }
+
+  useEffect( ()=>{
+    console.log("linkl",message)
+    if(message?.link){
+      navigate(`${message?.link}`)
+      
+    }
+  },[message?.link])
   return (
     <div>
     <div className="container mt-36">

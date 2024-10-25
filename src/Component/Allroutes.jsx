@@ -32,6 +32,7 @@ import OrderConfirm from './OrderConfirm'
  
 import User from './User'
 import UserDashboard from './UserDashboard'
+import ResetPassword from './ResetPassword'
   
  
  export default function Allroutes() {
@@ -61,12 +62,12 @@ import UserDashboard from './UserDashboard'
         <Route path='/sign-up' element={<SignUp/>}/>
         <Route path='/saree' element={<Saree/>}/>
         <Route path="/wishlist" element={<Wishlist/>}/>
-        <Route path='checkout' element={<Checkout/>}/>
+        <Route path='/checkout' element={<Checkout/>}/>
         <Route path="/forget-password" element={<ForgetPassword />} />
-        {/* <Route path="/reset-password/:token" element={<ResetPasswor />} /> */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/track-product" element={<TrackProduct />} />
         <Route path="/check" element={<Check />} />
-        <Route path="/orderconfirm" element={<OrderConfirm />} />
+        <Route path="/order-confirm/:orderId" element={<OrderConfirm />} />
    
  
         <Route path="/user" element={<User />} />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCustomerAddress } from '../Redux/Customeraddress/action';
 import { billingCustomerAddress } from '../Redux/Customeraddress/action'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select'; // For states dropdown
 import PhoneInput from 'react-phone-input-2'; // For mobile number input
 import 'react-phone-input-2/lib/style.css'; // CSS for phone input
@@ -71,6 +71,7 @@ const Checkout = () => {
     // Modal state
     const [showModal, setShowModal] = useState(false);
     const [modalAddress, setModalAddress] = useState();
+    const navigate= useNavigate()
 
     // Function to handle "Use a Different Address" - Opens a blank form
     const handleUseDifferentAddress = () => {
@@ -329,6 +330,7 @@ const Checkout = () => {
                     text: 'Your order is placed successful!',
                 });
                 setLoading(false)
+                navigate(`/order-confirm/${orderId}`)
             }
         } catch (error) {
             console.log("error in creating order")

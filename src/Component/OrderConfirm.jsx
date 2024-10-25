@@ -1,8 +1,46 @@
 import React from 'react';
 import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import  { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const OrderConfirm = () => {
+ const { orderId } = useParams();
+    const [orderDetails, setOrderDetails] = useState(null);
+    const [loginUser, setLoginUser] = useState();
+
+    function getLoginUser(){
+        const data = JSON.parse(sessionStorage.getItem('userData'));
+        setLoginUser(data);
+    };
+console.log("users", orderId)
+    const fetchOrderDetails = async (customer_id, order_id) => {
+        console.log("Fetching order details for customer_id:", customer_id, "and order_id:", order_id);
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/${customer_id}/${order_id}`);
+            let data = await response.data?.data;
+            console.log("Order details response:", response.data);
+            setOrderDetails(data);
+        } catch (error) {
+            console.error("Failed to fetch order details:", error);
+        }
+    };
+
+    useEffect(() => {
+        let customer_id=loginUser?.id;
+        if (customer_id && orderId) {
+            fetchOrderDetails(customer_id, orderId);
+        }
+    }, [loginUser?.id]);
+   
+    useEffect(() => {
+        getLoginUser();
+        return () => {
+            window.removeEventListener('storage', getLoginUser);
+        };
+    }, []);
+
     return (
         <Container className="my-48">
             <Row>
@@ -11,11 +49,11 @@ const OrderConfirm = () => {
                     <Card className="shadow-lg" style={{ width: '100%' }}>
                         <Card.Body>
                             {/* Order Header */}
-                            <div className="text-center mb-4">
+                            {/* <div className="text-center mb-4">
                                 <h1 className="logo mb-3">D'Sa Fashion Wear & Home Decore</h1>
-                                <h4>Thank you, Saniya!</h4>
-                                <p className="text-muted">Order DSA-25603</p>
-                            </div>
+                                <h4>Thank you, {orderDetails[0]?.customer_name}!</h4>
+                                <p className="text-muted">Order DSA-{orderDetails[0]?.order_id}</p>
+                            </div> */}
 
                             {/* Order Info */}
                             <Row>
