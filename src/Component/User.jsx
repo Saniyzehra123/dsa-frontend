@@ -164,8 +164,17 @@ const getaddress = async()=>{
     console.error("Error in saving address:", error);
   }
 }
-  
- 
+    // Function to delete an address
+    const deleteAddress = async (addressId) => {
+      try {
+        await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
+        setAddressList((prevList) => prevList.filter((address) => address.id !== addressId)); // Update the list by removing the deleted address
+        console.log("Address deleted successfully");
+      } catch (error) {
+        console.error("Error deleting address:", error);
+      }
+    };
+    
   const renderAddressForm = () => {
     // if (!showAddressForm) return null;
 
@@ -316,9 +325,9 @@ const getaddress = async()=>{
                     </div>
                     <div className="icon-container">
                       <FaPen className="edit-icon" onClick={() => openAddressForm(address)} /> &nbsp;
-                      <button className="trash-btn">
-                        <i className="fas fa-trash trash-icon"></i>
-                      </button>
+                      <button className="trash-btn" onClick={() => deleteAddress(address.id)}>
+                      <i className="fas fa-trash trash-icon"></i>
+                    </button>
                     </div>
                   </div>
                     ))}
