@@ -1,4 +1,4 @@
-/* Main container layout */
+Main container layout
 .dashboard-container {
   display: flex;
   min-height: 100vh;

@@ -1,78 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import './User.css';
+import React, { useState } from 'react';
+import './UserDashboard.css';
 import { FaTimes } from 'react-icons/fa';
 import { FaPen, FaHeadset, FaBoxOpen, FaSearch, FaUser, FaAddressCard, FaShoppingBag, FaEye, FaLock, FaSignOutAlt } from 'react-icons/fa';
-import axios from 'axios';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import AddressForm from '../common/AddressForm';
 
-const User = () => {
- const [activeTab, setActiveTab] = useState('profile');
+const UserDashboard = () => {
+  const [activeTab, setActiveTab] = useState('profile');
   const [isEditable, setIsEditable] = useState(false);
-  const [loginUser, setLoginUser] = useState()
-  const [addressesData, setAddressesData] = useState([]);
-  const [phone, setPhone] =useState()
-  
-  const [error, setError] = useState(''); 
-  const [addressList, setAddressList] = useState([]);
   const [profileData, setProfileData] = useState({
-    username: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    birthdate: '',
-    gender: '',
-    customer_id: loginUser?.id
+    firstName: 'Bathroom',
+    lastName: 'Renovators',
+    email: 'contact.bathroomrenovators@gmail.com',
+    mobile: '123 45 678 90',
+    birthdate: '1990-01-01',
+    gender: 'Male'
   });
-
-   // Fetch customer profile data based on customer_id
-   const  fetchUserProfile = async (customerId) => {
-    try {
-      let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/auth/customer/details/${customerId}`);
-      response = await response.data?.data
-      console.log("res",response)
-      setAddressesData(response);
-    } catch (error) {
-      console.error('Error fetching addresses:', error);
-    }
-  };
-
-
-  const getLoginUser = () => {
-    const data = JSON.parse(sessionStorage.getItem('userData'));
-    console.log("data",data)
-    setLoginUser(data);
-    if (data) {
-        setProfileData((prevState) => ({
-            ...prevState,
-            customer_id: data.id,
-        }));
-     
-        fetchUserProfile(data.id); 
-    }
-}
-
-useEffect(() => {
-    getLoginUser();
-    return () => {
-        window.removeEventListener('storage', getLoginUser);
-    };
-}, []);
-const handleSave = async () => {
-  try {
-    let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/auth/customer/profile/${addressesData.id}`, addressesData);
-    let res = await response.data
-
-    console.log('Profile updated successfully:', res.data);
-    setIsEditable(false);
-    setShowPopup(true);
-    // setTimeout(() => setShowPopup(false), 2000);
-  } catch (error) {
-    console.error('Error updating profile:', error);
-  }
-};
-
 
 
   const [showPopup, setShowPopup] = useState(false); // For the success message
@@ -97,91 +38,122 @@ const toggleBillingAddress = () => {
   const [showAddressForm, setShowAddressForm] = useState(false); // To show/hide popup
   const [currentAddress, setCurrentAddress] = useState(null); // To store the address being edited
 
-  // Function to handle "Use a Different Address" - Opens a blank form
-  const handleAddDifferentAddress = () => {
-    setCurrentAddress({
-        email: '',
-        firstname: '',
-        lastname: '',
-        address: '',
-        landmark: '',
-        city: '',
-        state: '',
-        pincode: '',
-        mobile: '',
-        country: '',
-        customer_id: loginUser?.id,
-       
-
-    });
-    setShowAddressForm(true); // Open modal
-};
-
-
   const openAddressForm = (address) => {
-    setCurrentAddress(address || { });
+    setCurrentAddress(address || { name: '', street: '', city: '', state: '', zip: '', country: '' });
     setShowAddressForm(true);
   };
 
   const closeAddressForm = () => {
     setShowAddressForm(false);
-    // setCurrentAddress(null);
+    setCurrentAddress(null);
   };
+
+
 
   const closeContactForm = () => {
     setShowContactForm(false);
 
   };
 
-  const saveAddress = async (addressData) => {
-    try {
-        if (addressData.id) {
-            // Update existing address
-            let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
-            // let res = await response.data
-            console.log("Updated Address:", response);
-        } else {
-            // Add new address
-            let response = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
-            let res = await response.data
-
-            console.log("New Address Added:", res.data);
-        }
-        setShowAddressForm(false);
-        getaddress()
-    } catch (error) {
-        console.error("Error in saving address:", error);
-    }
-};
-
-const getaddress = async()=>{
-  try {
-     let data= await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${loginUser?.id}`);
-     let res = await data.data
-     console.log("address",res)
-     setAddressList(res.data)
-  } catch (error) {
-    console.error("Error in saving address:", error);
-  }
-}
   
- 
+
   const renderAddressForm = () => {
-    // if (!showAddressForm) return null;
+    if (!showAddressForm) return null;
 
     return (
-      <div>
-          {/* Modal for Add/Edit Address */}
-          {showAddressForm && (
-                <AddressForm
-                currentAddress={currentAddress}
-                    setCurrentAddress={setCurrentAddress}
-                    setShowAddressForm={setShowAddressForm}
-                    saveAddress={saveAddress}
-                />
-            )}
-      </div>
+      <div className="address-form-popup">
+        <div className="popup-header">
+          <h3>{currentAddress ? 'Edit Address' : 'Add New Address'}</h3>
+          <FaTimes className="close-icon" onClick={closeAddressForm} />
+        </div>
+        <form>
+          <div className="input-row">
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fas fa-user'></i></span>
+              <input type="text" className="form-control" placeholder="First Name" aria-label="First Name" />
+            </div>
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fas fa-user'></i></span>
+              <input type="text" className="form-control" placeholder="Last Name" aria-label="Last Name" />
+            </div>
+          </div>
+          <div className="input-row">
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fa fa-map-marker'></i></span>
+              <input type="email" className="form-control" placeholder="Address" aria-label="Address" />
+            </div>
+
+            <div className="input-group">
+              <select className="form-select" required>
+                <option value="">Select State</option>
+                <option>Andhra Pradesh</option>
+                <option>Arunachal Pradesh</option>
+                <option>Assam</option>
+                <option>Bihar</option>
+                <option>Chhattisgarh</option>
+                <option>Goa</option>
+                <option>Gujarat</option>
+                <option>Haryana</option>
+                <option>Himachal Pradesh</option>
+                <option>Jharkhand</option>
+                <option>Karnataka</option>
+                <option>Kerala</option>
+                <option>Madhya Pradesh</option>
+                <option>Maharashtra</option>
+                <option>Manipur</option>
+                <option>Meghalaya</option>
+                <option>Mizoram</option>
+                <option>Nagaland</option>
+                <option>Odisha</option>
+                <option>Punjab</option>
+                <option>Rajasthan</option>
+                <option>Sikkim</option>
+                <option>Tamil Nadu</option>
+                <option>Telangana</option>
+                <option>Tripura</option>
+                <option>Uttar Pradesh</option>
+                <option>Uttarakhand</option>
+                <option>West Bengal</option>
+                <option>Delhi</option>
+                <option>Jammu and Kashmir</option>
+                <option>Ladakh</option>
+                <option>Chandigarh</option>
+              </select>
+            </div>
+          </div>
+          <div className="input-row">
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fas fa-city'></i></span>
+              <input type="text" className="form-control" placeholder="City" aria-label="City" />
+            </div>
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fa fa-map-pin'></i></span>
+              <input type="number" className="form-control" placeholder="Postal/Zip-Code" aria-label="Pincode" />
+            </div>
+          </div>
+          <div className="input-row">
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fas fa-envelope'></i></span>
+              <input type="email" className="form-control" placeholder="Email" aria-label="Email" />
+            </div>
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fa fa-phone'></i></span>
+              <input type="number" className="form-control" placeholder="Contact Number" aria-label="Contact Number" />
+            </div>
+          </div>
+          <div className="input-row">
+            <div className="input-group">
+              <span className="input-group-text" id="basic-addon1"><i className='fas fa-flag-o'></i></span>
+              <input type="email" className="form-control" placeholder="Country" aria-label="Email" />
+            </div>
+            <div className="input-group ">
+          <button type="submit" className="btn btn-primary">Submit</button>
+            </div>
+          </div>
       
+      
+        </form>
+      </div>
     );
   };
 
@@ -192,24 +164,14 @@ const getaddress = async()=>{
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-
-    setAddressesData((prevData) => ({ ...prevData, [id]: value })); // Update addressesData instead of profileData
-       if (id === 'phone') {
-        if (!/^\+91[0-9]{10}$/.test(value)) {
-          setError('Please enter a valid 10-digit mobile number.');
-        } else {
-          setError(''); // Clear error if valid
-        }
-      }
+    setProfileData({ ...profileData, [id]: value });
   };
 
-  useEffect(()=>{
-    console.log("addressesData", addressesData)
-       if(loginUser?.id){
-        getaddress()
-       }
-  },[loginUser])
-   
+  const handleSave = () => {
+    setIsEditable(false);
+    setShowPopup(true); // Show popup
+    setTimeout(() => setShowPopup(false), 2000); // Hide popup after 2 seconds
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -225,48 +187,48 @@ const getaddress = async()=>{
               )}
             </div>
             <div className="profile-section">
-            {['firstname', 'lastname', 'email'].map((field) => (
-              <div className="form-group" key={field}>
+              {['firstName', 'lastName', 'email'].map((field) => (
+                <div className="form-group" key={field}>
+                  <div className="form-floating">
+                    <input
+                      type={field === 'email' ? 'email' : 'text'}
+                      className="form-control"
+                      id={field}
+                      value={profileData[field]}
+                      onChange={handleInputChange}
+                      disabled={!isEditable}
+                    />
+                    <label htmlFor={field}>
+                      {field.charAt(0).toUpperCase() + field.slice(1)}
+                    </label>
+                  </div>
+                </div>
+              ))}
+              {/* Mobile Number Field */}
+              <div className="form-group">
                 <div className="form-floating">
                   <input
-                    type={field === 'email' ? 'email' : 'text'}
+                    type="tel"
                     className="form-control"
-                    id={field}
-                    value={addressesData[field]}
+                    id="mobile"
+                    value={profileData.mobile}
                     onChange={handleInputChange}
                     disabled={!isEditable}
                   />
-                  <label htmlFor={field}>
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
+                  <label htmlFor="mobile">Mobile Number</label>
                 </div>
               </div>
-            ))}
-              {/* Mobile Number Field */}
-              <div className="form-group">
-              <div className="form-floating">
-                <PhoneInput
-                  country={'in'}
-                  value={addressesData.phone}
-                  onChange={(phone) => handleInputChange({ target: { id: 'phone', value: phone } })}
-                  disabled={!isEditable}
-                  inputStyle={{ width: '100%', height: '40px' }}
-                />
-              </div>
-              {error && (
-                <small className="text-danger">{error}</small>
-              )}
-            </div>
               <div className="form-group">
                 <div className="form-floating">
                   <input
                     type="date"
                     className="form-control"
-                    value={addressesData?.birthdate || ''} // Ensure it's not undefined
-                    onChange={(e) => handleInputChange({ target: { id: 'birthdate', value: e.target.value } })}
+                    id="birthdate"
+                    value={profileData.birthdate}
+                    onChange={handleInputChange}
                     disabled={!isEditable}
                   />
-                  <label htmlFor="birthdate" >Birth Date</label>
+                  <label htmlFor="birthdate">Birthdate</label>
                 </div>
               </div>
               <div className="form-group">
@@ -275,11 +237,11 @@ const getaddress = async()=>{
                     <label key={gender} className="gender-option">
                       <input
                         type="radio"
-                        id="gender"
+                        name="gender"
                         value={gender}
-                        checked={addressesData.gender === gender}
+                        checked={profileData.gender === gender}
                         onChange={() =>
-                          setAddressesData({ ...addressesData, gender: gender })
+                          setProfileData({ ...profileData, gender: gender })
                         }
                         disabled={!isEditable}
                       />{' '}
@@ -296,37 +258,51 @@ const getaddress = async()=>{
             </div>
           </div>
         );
-      case 'address':
-        console.log("list",addressList)
-        return (
-          <div className="card">
-            <div className="card-header">
-              <h2>Delivery Address</h2>
+  case 'address':
+  return (
+    <div className="card">
+      <div className="card-header">
+        <h2>Delivery Address</h2>
+      </div>
+      {/* Display the list of addresses */}
+      <div className="address-list">
+        {[
+          { 
+            firstname: 'Harsh', 
+            lastname: 'Pandey', 
+            address: 'Near Chaya Churaha', 
+            city: 'Barabanki', 
+            state: 'Uttar Pradesh', 
+            zip: '226021', 
+            country: 'India', 
+            email: 'harshpandeylucifer@gmail.com', 
+            contact: '9555299718' 
+          }
+          // More addresses can be added here
+        ].map((address, index) => (
+          <div key={index} className="address-card">
+            <div className="address-details">
+              <p><strong>{address.firstname} {address.lastname}</strong></p>
+              <p>{address.address}</p>
+              <p>{address.city}, {address.state} - {address.zip}</p>
+              <p>{address.country}</p>
+              <p>{address.email}</p>
+              <p>{address.contact}</p>
             </div>
-            {/* Display the list of addresses */}
-             {/* List of Addresses */}
-             <div className="address-list">
-                {addressList?.map((address, index) => (
-                  <div key={index} className="address-card">
-                    <div className="address-details">
-                      <p><strong>{address.firstname} {address.lastname}</strong></p>
-                      <p>{address.address}, {address.city}, {address.state} - {address.pincode}</p>
-                      <p>{address.country}</p>
-                      <p>Phone: {address.mobile}</p>
-                    </div>
-                    <div className="icon-container">
-                      <FaPen className="edit-icon" onClick={() => openAddressForm(address)} /> &nbsp;
-                      <button className="trash-btn">
-                        <i className="fas fa-trash trash-icon"></i>
-                      </button>
-                    </div>
-                  </div>
-                    ))}
+            <div className="icon-container">
+              <FaPen className="edit-icon text-black" onClick={() => openAddressForm(address)} /> &nbsp;
+               <button><i className='fas fa-trash'></i></button> 
+       
             </div>
-             <br />
-             <button className="btn w-40 " onClick={handleAddDifferentAddress}>Add New Address</button> {/* Button to add new address */}
           </div>
-        );
+        ))}
+      </div>
+      
+      <br />
+      <button className="btn w-40" onClick={() => openAddressForm(null)}>Add New Address</button>
+    </div>
+  );
+
 
         case 'orders':
           return (
@@ -515,14 +491,13 @@ const getaddress = async()=>{
     );
 
   };
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
+
   
   return (
     <div className="dashboard-container mt-48">
+      { (showAddressForm || showContactForm) && <div className="popup-overlay" /> }
       <div className="sidebar">
-      <h3 className="logo">{addressesData?.firstname && capitalizeFirstLetter(addressesData.firstname)}</h3>
+        <h3 className="logo">Harsh</h3>
         <ul className="menu">
           <li className={activeTab === 'profile' ? 'active' : ''} onClick={() => setActiveTab('profile')}>
             <FaUser /> My Profile
@@ -533,7 +508,6 @@ const getaddress = async()=>{
           <li className={activeTab === 'orders' ? 'active' : ''} onClick={() => setActiveTab('orders')}>
             <FaShoppingBag /> My Orders
           </li>
-
           <li className={activeTab === 'changePassword' ? 'active' : ''} onClick={() => setActiveTab('changePassword')}>
             <FaLock /> Change Password
           </li>
@@ -542,13 +516,10 @@ const getaddress = async()=>{
           </li>
         </ul>
       </div>
-
-
-
-
       <div className="content-area">{renderContent()}</div>
       {renderAddressForm()}
-
+      {showContactForm && renderContactForm()} {/* Render contact form */}
+  
       {/* Popup message */}
       {showPopup && (
         <div className="popup-message">
@@ -557,6 +528,10 @@ const getaddress = async()=>{
       )}
     </div>
   );
+  
+
 };
 
-export default User ;
+
+
+export default UserDashboard;

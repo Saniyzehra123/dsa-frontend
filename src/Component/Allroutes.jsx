@@ -31,6 +31,7 @@ import Check from './Check'
 import OrderConfirm from './OrderConfirm'
  
 import User from './User'
+import UserDashboard from './UserDashboard'
   
  
  export default function Allroutes() {
@@ -70,7 +71,7 @@ import User from './User'
  
         <Route path="/user" element={<User />} />
  
-
+        <Route path="/users" element={<UserDashboard />} />
 
 
       
