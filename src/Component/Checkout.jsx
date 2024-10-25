@@ -7,6 +7,7 @@ import Select from 'react-select'; // For states dropdown
 import PhoneInput from 'react-phone-input-2'; // For mobile number input
 import 'react-phone-input-2/lib/style.css'; // CSS for phone input
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import AddEditModal from '../common/AddEditModal';
 import { BsThreeDotsVertical } from 'react-icons/bs'; // Three dots icon
 import { FiEdit } from 'react-icons/fi'; // Edit icon
@@ -52,9 +53,10 @@ const Checkout = () => {
     const [addressList, setAddressList] = useState([]);
     const [showAccount, setShowAccount] = useState(false);
     const [showShipping, setShowShipping] = useState(false);
-    const [paymentOption, setPaymentOption] = useState('cod');
+    const [paymentOption,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ] = useState(0);
     const [addAddressId, setAddAddressId] = useState(0);
     const [orderId, setOrderId] = useState(0);
+    const [loading, setLoading]=useState(false)
     const [billingAddressId, setBillingAddressId] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(null); // To track which address dropdown is open
 
@@ -185,7 +187,6 @@ const Checkout = () => {
         return pinCodeRegex.test(pinCode);
     };
 
-
     const getCusAddressList = async (customerId) => {
         try {
             let res = await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${customerId}`)
@@ -232,6 +233,7 @@ const Checkout = () => {
             console.log(" Error in updating address",error)
         }
     }
+
     const handleDeleteAddress = async (addressId) => {
         try {
             await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
@@ -245,12 +247,14 @@ const Checkout = () => {
         setAddAddressId(addressId);
         setBillingAddressId(addressId)
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            if(addressList.length>0 && addAddressId==0){
+            if(addressList.length>0 && addAddressId==0 && paymentOption){
                alert('Please Choose Your Address')
-            } else if(addAddressId) {
+            } else if(addAddressId > 0 ) {
                 createOrder();
             }
             else{
@@ -265,9 +269,7 @@ const Checkout = () => {
         }
     };
 
-
-
-    const createOrder = async () => {
+    const createOrder = async()=> {
         const dataObj = {
             address_id: addAddressId,
             billing_id: billingAddressId,
@@ -295,9 +297,40 @@ const Checkout = () => {
                 },
               })
             res = await res?.data
-            alert(`res:${res.message}`)
+            if(res.message){
+                createPayment(orderId)
+            }
+            // alert(`res:${res.message}`)
         } catch (error) {
             console.log("error in adding items", error)
+        }
+    }
+
+    const createPayment=async(orderId)=>{
+        const obj={
+            order_id:orderId, 
+            payment_method_id:paymentOption,
+            amount:totalPrice,
+            payment_status_id:2,
+            currency:'Rs'
+        }
+        if(!paymentOption){
+            alert("Please select paymet Option")
+        }
+        try {
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/`, obj)
+            res =await res.data;
+            if(res.paymentId){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Your operation was successful!',
+                });
+                setLoading(false)
+            }
+            
+        } catch (error) {
+            
         }
     }
 
@@ -430,118 +463,115 @@ const Checkout = () => {
                             </a>
                         </div>
                     )}
-                                <hr /></React.Fragment> : <React.Fragment>
-                                <h4>Delivery Information</h4>
-                                <div className="mb-3 row">
-                                    <div className="col-md-6">
-                                        <div className="form-floating">
-                                            <input type="text" className="form-control" id="firstname"
-                                                name="firstname"
-                                                value={formData?.firstname}
-                                                onChange={handleChange}
-                                                placeholder="First Name" required />
-                                            <label htmlFor="firstname">First Name</label>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-floating">
-                                            <input type="text" className="form-control" id="lastname"
-                                                name="lastname"
-                                                value={formData?.lastname}
-                                                onChange={handleChange}
-                                                placeholder="Last Name" required />
-                                            <label htmlFor="lastname">Last Name</label>
-                                        </div>
-                                    </div>
+                    <hr /></React.Fragment> : <React.Fragment>
+                        <h4>Delivery Information</h4>
+                        <div className="mb-3 row">
+                            <div className="col-md-6">
+                                <div className="form-floating">
+                                    <input type="text" className="form-control" id="firstname"
+                                        name="firstname"
+                                        value={formData?.firstname}
+                                        onChange={handleChange}
+                                        placeholder="First Name" required />
+                                    <label htmlFor="firstname">First Name</label>
                                 </div>
-
-                                <div className="mb-3">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" id="address"
-                                            name="address"
-                                            value={formData?.address}
-                                            onChange={handleChange}
-                                            placeholder="Address" required />
-                                        <label htmlFor="address">Address</label>
-                                    </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-floating">
+                                    <input type="text" className="form-control" id="lastname"
+                                        name="lastname"
+                                        value={formData?.lastname}
+                                        onChange={handleChange}
+                                        placeholder="Last Name" required />
+                                    <label htmlFor="lastname">Last Name</label>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="mb-3">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" id="landmark"
-                                            name="landmark"
-                                            value={formData?.landmark}
-                                            onChange={handleChange}
-                                            placeholder="Nearby Landmark" />
-                                        <label htmlFor="landmark">Nearby Landmark</label>
-                                    </div>
+                        <div className="mb-3">
+                            <div className="form-floating">
+                                <input type="text" className="form-control" id="address"
+                                    name="address"
+                                    value={formData?.address}
+                                    onChange={handleChange}
+                                    placeholder="Address" required />
+                                <label htmlFor="address">Address</label>
+                            </div>
+                        </div>
+
+                        <div className="mb-3">
+                            <div className="form-floating">
+                                <input type="text" className="form-control" id="landmark"
+                                    name="landmark"
+                                    value={formData?.landmark}
+                                    onChange={handleChange}
+                                    placeholder="Nearby Landmark" />
+                                <label htmlFor="landmark">Nearby Landmark</label>
+                            </div>
+                        </div>
+
+                        <div className="mb-3 row">
+                            <div className="col-md-3">
+                                <div className="form-floating">
+                                    <input type="text" className="form-control" id="city"
+                                        name="city"
+                                        value={formData?.city}
+                                        onChange={handleChange}
+                                        placeholder="City" required />
+                                    <label htmlFor="city">City</label>
                                 </div>
-
-                                <div className="mb-3 row">
-                                    <div className="col-md-3">
-                                        <div className="form-floating">
-                                            <input type="text" className="form-control" id="city"
-                                                name="city"
-                                                value={formData?.city}
-                                                onChange={handleChange}
-                                                placeholder="City" required />
-                                            <label htmlFor="city">City</label>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-floating">
-                                            <Select
-                                                options={stateOptions}
-                                                onChange={handleStateChange}
-                                                placeholder="Select State"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3">
-                                        <div className="form-floating">
-                                            <input type="text" className="form-control" id="pincode"
-                                                name="pincode"
-                                                value={formData?.pincode}
-                                                onChange={handleChange}
-                                                placeholder="Pin Code" required />
-                                            <label htmlFor="pincode">Pin Code</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="mb-3">
-                                    <PhoneInput
-                                        country={'in'}
-                                        value={formData?.mobile}
-                                        onChange={handleMobileChange}
-                                        placeholder="Mobile Number"
-                                        required
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-floating">
+                                    <Select
+                                        options={stateOptions}
+                                        onChange={handleStateChange}
+                                        placeholder="Select State"
                                     />
                                 </div>
-
-                                <div className="col-md-3">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" id="country"
-                                            name="country"
-                                            value={formData?.country}
-                                            onChange={handleChange}
-                                            placeholder="Country" required />
-                                        <label htmlFor="country">Country</label>
-                                    </div>
+                            </div>
+                            <div className="col-md-3">
+                                <div className="form-floating">
+                                    <input type="text" className="form-control" id="pincode"
+                                        name="pincode"
+                                        value={formData?.pincode}
+                                        onChange={handleChange}
+                                        placeholder="Pin Code" required />
+                                    <label htmlFor="pincode">Pin Code</label>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="form-check mb-3">
-                                    <input type="checkbox" className="form-check-input" id="saveInfo" />
-                                    <label className="form-check-label" htmlFor="saveInfo">Save this information for next time</label>
-                                </div>
-                                <hr />
-                            </React.Fragment>
-                        }
+                        <div className="mb-3">
+                            <PhoneInput
+                                country={'in'}
+                                value={formData?.mobile}
+                                onChange={handleMobileChange}
+                                placeholder="Mobile Number"
+                                required
+                            />
+                        </div>
 
+                        <div className="col-md-3">
+                            <div className="form-floating">
+                                <input type="text" className="form-control" id="country"
+                                    name="country"
+                                    value={formData?.country}
+                                    onChange={handleChange}
+                                    placeholder="Country" required />
+                                <label htmlFor="country">Country</label>
+                            </div>
+                        </div>
 
+                        <div className="form-check mb-3">
+                            <input type="checkbox" className="form-check-input" id="saveInfo" />
+                            <label className="form-check-label" htmlFor="saveInfo">Save this information for next time</label>
+                        </div>
+                        <hr />
+                    </React.Fragment>
+                    }
                         {/* Billing Address Section */}
                         <h4>Billing Address</h4><br />
-
                         <div className="mb-3">
                             <div>
                                 <input
@@ -566,7 +596,6 @@ const Checkout = () => {
                                 <label htmlFor="differentAddress" className="ms-2">Use a different billing address</label>
                             </div>
                         </div>
-
                         {/* Show the form for different billing address if selected */}
                         {useDifferentAddress && (
                             <div>
@@ -675,28 +704,23 @@ const Checkout = () => {
                             </div>
                         )}
                         <hr />
-
                         {/* Billing Address Section */}
                         <h4>Payment Options</h4><br />
-
                         <div className="mb-3">
                             <div>
                                 <input
                                     type="radio"
                                     id="cod"
                                     name="paymentOption"
-                                    value="cod"
+                                    value="1"
                                     onChange={handlePaymentChange}
-                                    checked={paymentOption === 'cod'}
+                                    checked={paymentOption === '1'}
                                 />
                                 <label htmlFor="cod" className="ms-2">Cash On Delivery</label>
                             </div>
-
                         </div>
-                        
                         <hr />
-
-                        <button type="submit" className="btn btn-primary w-100 mt-3">Pay now</button>
+                        <button type="submit" className="btn btn-primary w-100 mt-3">{loading? 'Loading...':'Pay now'}</button>
                     </form>
                 </div>
                 {/* Col-md-4 for the cart summary */}
