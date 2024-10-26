@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 const OrderConfirm = () => {
  const { orderId } = useParams();
-    const [orderDetails, setOrderDetails] = useState(null);
+    const [orderDetails, setOrderDetails] = useState([]);
     const [loginUser, setLoginUser] = useState();
 
     function getLoginUser(){
@@ -15,13 +15,16 @@ const OrderConfirm = () => {
         setLoginUser(data);
     };
 console.log("users", orderId)
+
     const fetchOrderDetails = async (customer_id, order_id) => {
         console.log("Fetching order details for customer_id:", customer_id, "and order_id:", order_id);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/${customer_id}/${order_id}`);
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id=${customer_id}&order_id=${order_id}`);
+            // const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id={{customer_id}}&order_id={{order_id}}`);
+         
             let data = await response.data?.data;
             console.log("Order details response:", response.data);
-            setOrderDetails(data);
+            setOrderDetails(data || []);
         } catch (error) {
             console.error("Failed to fetch order details:", error);
         }
@@ -49,11 +52,11 @@ console.log("users", orderId)
                     <Card className="shadow-lg" style={{ width: '100%' }}>
                         <Card.Body>
                             {/* Order Header */}
-                            {/* <div className="text-center mb-4">
+                            <div className="text-center mb-4">
                                 <h1 className="logo mb-3">D'Sa Fashion Wear & Home Decore</h1>
-                                <h4>Thank you, {orderDetails[0]?.customer_name}!</h4>
-                                <p className="text-muted">Order DSA-{orderDetails[0]?.order_id}</p>
-                            </div> */}
+                                <h4>Thank you, {orderDetails[0]?.customer_name || 'Customer'}!</h4> {/* Conditional rendering */}
+                                <p className="text-muted">Order ID-{orderDetails[0]?.order_id || 'N/A'}</p>
+                            </div>
 
                             {/* Order Info */}
                             <Row>
@@ -69,7 +72,7 @@ console.log("users", orderId)
                                             loading="lazy"></iframe>
                                     </div>
                                 </Col>
-                                <Col lg={6}>
+                                {/* <Col lg={6}>
                                     <div className="mb-3">
                                         <h5>Order details</h5>
                                         <p>Indigo Enchantress - ₹5,200.00</p>
@@ -78,7 +81,7 @@ console.log("users", orderId)
                                         <hr />
                                         <h5>Total: ₹5,200.00 (incl. ₹247.62 taxes)</h5>
                                     </div>
-                                </Col>
+                                </Col> */}
                             </Row>
 
                             {/* Special Voucher Section */}
@@ -130,21 +133,35 @@ console.log("users", orderId)
                 <Col lg={5}>
                     <Card className="shadow-lg p-3 mb-5 bg-white rounded">
                         <Card.Body>
-                            <h5>Product Details</h5>
                             <div className="d-flex align-items-center mb-3">
                                 <Image
                                     src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg"
                                     rounded
-                                    className="-mr-16"
+                                    style={{ width: '80px', height: '110px' }}
                                 />
-                                
+                                <div className="ml-3">
+                                    <p className="font-weight-bold mb-0">Katan Silk Saree</p>
+                                    <p className="text-muted mb-0">₹5,200.00</p>
+                                </div>
                             </div>
-                            <div className="text-center mt-4">
-                                <h6>Indigo Enchantress</h6>
-                                    <p>₹5,200.00</p>
-                                    <p>Size: Medium</p>
-                                <Button variant="outline-primary">View Product</Button>
+                            <hr />
+                            <div className="d-flex justify-content-between">
+                                <p className="mb-0">Subtotal</p>
+                                <p className="mb-0">₹5,200.00</p>
                             </div>
+                            <div className="d-flex justify-content-between">
+                                <p className="mb-0">Shipping</p>
+                                <p className="mb-0">Free</p>
+                            </div>
+                            <hr />
+                            <div className="d-flex justify-content-between align-items-center font-weight-bold mt-3" style={{ fontSize: '1.2rem' }}>
+                                <p className="mb-0">Total</p>
+                                <p className="mb-0">₹5,200.00</p>
+                            </div>
+                            <p className="float-left text-muted" style={{ fontSize: '0.85rem', marginTop: '-5px' }}>
+                                Including ₹247.62 in taxes
+                            </p>
+
                         </Card.Body>
                     </Card>
                 </Col>

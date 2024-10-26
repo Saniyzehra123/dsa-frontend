@@ -64,7 +64,8 @@ import ResetPassword from './ResetPassword'
         <Route path="/wishlist" element={<Wishlist/>}/>
         <Route path='/checkout' element={<Checkout/>}/>
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword/>} />
+
         <Route path="/track-product" element={<TrackProduct />} />
         <Route path="/check" element={<Check />} />
         <Route path="/order-confirm/:orderId" element={<OrderConfirm />} />

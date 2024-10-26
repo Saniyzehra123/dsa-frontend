@@ -37,11 +37,7 @@ const rootReducer = {
   contactForm: contactFormReducer,
   getcustomerAddress:getcustomerAddressReducer,
   billingAddress:billingAddressReducer,
-  //   cartData: persistReducer(persistConfig, cartReducer), // Persisting cartReducer
-//   createCustomerAddress: createCreateAddressReducer,
-//   customerAddress: getAddressReducer,
-//   adminUsers: adminUserListReducer,
-//   getUserData: gateUserByIdReducer,
+  
 userRegister:authReducer
 };
 

@@ -242,22 +242,23 @@ p.center {
 }
 
 .button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+  width: 100%;
 }
 
 .grand-total {
-  display: flex;
-  justify-content: space-between;
-  background-color: black;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
+  display: flex !important;
+  justify-content: space-between !important;
+  background-color: black !important;
+  color: white !important;
+  padding: 10px !important;
+  font-weight: bold !important;
 }
 
 .grand-total-label {
-  margin-right: 10px;
+  margin-right: 10px !important;
 }
 
 .contact-form-popup {
@@ -360,15 +361,16 @@ p.center {
   }
 
   .button-group {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 10px; /* Space between buttons */
+    display: flex !important;
+    flex-direction: column !important; /* Stack buttons vertically */
+    gap: 10px !important; /* Space between buttons */
+    /* width: 100%; */
   }
 
   .grand-total {
-    display: flex;
-    justify-content: space-between; /* Space between label and amount */
-    font-weight: bold; /* Emphasize grand total */
+    display: flex !important;
+    justify-content: space-between !important; /* Space between label and amount */
+    font-weight: bold !important; /* Emphasize grand total */
   }
 }
 

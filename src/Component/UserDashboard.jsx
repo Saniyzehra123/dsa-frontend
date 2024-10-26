@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './UserDashboard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FaTimes } from 'react-icons/fa';
 import { FaPen, FaHeadset, FaBoxOpen, FaSearch, FaUser, FaAddressCard, FaShoppingBag, FaEye, FaLock, FaSignOutAlt } from 'react-icons/fa';
 
@@ -15,17 +17,51 @@ const UserDashboard = () => {
     gender: 'Male'
   });
 
+  const orderProducts = [
+    {
+      name: 'Katan Silk With Silver Zari Work',
+      price: 'Rs. 5,200.00',
+      shipping: 'Rs. 0.00',
+      igst: 'Rs. 247.62',
+      cgst: 'Rs. 0.00',
+      image: 'https://dsafashionwear.com/images/DSA_01/DSA_01.jpg',
+    },
+    {
+      name: 'Pure Cotton Ethnic Wear',
+      price: 'Rs. 3,000.00',
+      shipping: 'Rs. 100.00',
+      igst: 'Rs. 150.00',
+      cgst: 'Rs. 0.00',
+      image: 'https://dsafashionwear.com/images/DSA_02/DSA_02.jpg',
+    },
+  ];
 
+  
   const [showPopup, setShowPopup] = useState(false); // For the success message
-
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const [showContactForm, setShowContactForm] = useState(false); // For the contact form
   const [showOrderDetails, setShowOrderDetails] = useState(false); // State for showing order details
 const [showShippingAddress, setShowShippingAddress] = useState(false); // State for toggling shipping address
 const [showBillingAddress, setShowBillingAddress] = useState(false); // State for toggling billing address
 
-const toggleOrderDetails = () => {
-  setShowOrderDetails(!showOrderDetails); // Toggle order details
+const toggleOrderDetails = (orderId) => {
+  setShowOrderDetails(prev => ({
+    ...prev,
+    [orderId]: !prev[orderId],
+  }));
 };
+
+// Update the function to navigate between products
+const handleProductNavigation = (direction) => {
+  setCurrentProductIndex((prevIndex) => {
+    if (direction === 'prev') {
+      return prevIndex > 0 ? prevIndex - 1 : orderProducts.length - 1;
+    } else {
+      return prevIndex < orderProducts.length - 1 ? prevIndex + 1 : 0;
+    }
+  });
+};
+
 
 const toggleShippingAddress = () => {
   setShowShippingAddress(!showShippingAddress); // Toggle shipping address
@@ -55,7 +91,9 @@ const toggleBillingAddress = () => {
 
   };
 
-  
+  const toggleContactForm = () => {
+    setShowContactForm(!showContactForm);
+  };
 
   const renderAddressForm = () => {
     if (!showAddressForm) return null;
@@ -306,74 +344,71 @@ const toggleBillingAddress = () => {
 
         case 'orders':
           return (
-            <div className="card">
+            <div className="orders-container">
               <h2>My Orders</h2>
-              <div className="order-details">
-                <div className="order-row">
-                  <span>Order Date: <b>October 22, 2024</b></span>
-                  <span>Order ID: <b>DSA-25603</b></span>
-                </div>
-                <div className="order-row">
-                  <span>Total Item: <b>1</b></span>
-                  <span>Payment: <b>Pending (Cash On Delivery (COD))</b></span>
-                </div>
-                <div className="order-row">
-                  <span>Fulfillment Status: <b>Unfulfilled</b></span>
-                  <span className="view-order-link-container">
-                    <a href="#" className="view-order-link" onClick={toggleOrderDetails}>View Order</a>
-                  </span>
-                </div>
-              </div>
-              <div className="button-group">
-                <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
-                <button className="btn reorder-btn">Re-order</button>
-              </div>
-             
-              {showContactForm && renderContactForm()} {/* Render contact form */}
-        
-              {/* Conditional rendering for order details */}
-              {showOrderDetails && (
-                <div className="order-detail-card">
-                  <div className="product-info">
-                    <img src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg" alt="Product" className="product-image w-40" />
-                    <div className="product-name float-left"><b>Katan Silk With Silver Zari Work</b></div>
-                  </div> <br /><br />
-                  <div className="order-summary">
-                    <div className="order-row">
-                      <span>Sub Total:</span>
-                      <span><b>Rs. 5,200.00</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>Shipping Cost:</span>
-                      <span><b>Rs. 0.00</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>IGST 5.0%:</span>
-                      <span><b>Rs. 247.62</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>CGST 13.0%:</span>
-                      <span><b>Rs. 0.00</b></span>
-                    </div>
+          
+              {/* Single Order Card */}
+              <div className="order-card">
+                <div className="order-details">
+                  <div className="order-row">
+                    <span>Order Date: <b>October 22, 2024</b></span>
+                    <span>Order ID: <b>DSA-25603</b></span>
                   </div>
-                  <div className="address-info float-left">
-                    <div className="address-dropdown float-left">
-                      <button className='float-left' onClick={toggleShippingAddress}><b>Address</b></button> <br /><br />
-                      {showShippingAddress && (
-                        <div className="address-details">
-                          <p><b>Shipping Address:</b> Harsh Pandey, Near Chaya Churaha, Barabanki, Uttar Pradesh - 226021</p>
-                          <p><b>Billing Address:</b> Harsh Pandey, Near Chaya Churaha, Barabanki, Uttar Pradesh - 226021</p>
-                        </div>
-                      )}
-                    </div>
+                  <div className="order-row">
+                    <span>Total Item: <b>{orderProducts.length}</b></span>
+                    <span>Payment: <b>Pending (Cash On Delivery (COD))</b></span>
+                  </div>
+                  <div className="order-row">
+                    <span>Fulfillment Status: <b>Unfulfilled</b></span>
+                    <span className="view-order-link-container">
+                      <a href="#" className="view-order-link" onClick={() => toggleOrderDetails('order1')}>View Order</a>
+                    </span>
                   </div>
                 </div>
-                
-              )} <br />
-               <div className="grand-total">
-                <span className="grand-total-label">Grand Total:</span>
-                <span className="grand-total-amount">Rs. 5,200.00</span>
+          
+                {showOrderDetails['order1'] && (
+                  <div className="order-detail-card">
+                    <div className="product-info">
+                      <FontAwesomeIcon icon={faChevronLeft} onClick={() => handleProductNavigation('prev')} />
+                      <img src={orderProducts[currentProductIndex].image} alt="Product" className="product-image" />
+            
+                      <div className="product-name"><b>{orderProducts[currentProductIndex].name}</b></div>        
+                       <FontAwesomeIcon icon={faChevronRight} onClick={() => handleProductNavigation('next')} />
+                    </div>
+                    <div className="order-summary">
+                      <div className="order-row">
+                        <span>Sub Total:</span>
+                        <span><b>{orderProducts[currentProductIndex].price}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>Shipping Cost:</span>
+                        <span><b>{orderProducts[currentProductIndex].shipping}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>IGST 5.0%:</span>
+                        <span><b>{orderProducts[currentProductIndex].igst}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>CGST 13.0%:</span>
+                        <span><b>{orderProducts[currentProductIndex].cgst}</b></span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="grand-total">
+                  <span className="grand-total-label">Grand Total:</span>
+                  <span className="grand-total-amount">Rs. 5,200.00</span>
+                </div>
+          
+                {/* Action Buttons */}
+                <div className="button-group">
+                  <button className="btn contact-us-btn" onClick={toggleContactForm}>Contact Us</button>
+                  <button className="btn reorder-btn">Re-order</button>
+                </div>
               </div>
+          
+              {/* Render Contact Form if active */}
+              {showContactForm && renderContactForm()}
             </div>
           );
       case 'changePassword':

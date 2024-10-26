@@ -13,7 +13,7 @@ const User = () => {
   const [loginUser, setLoginUser] = useState()
   const [addressesData, setAddressesData] = useState([]);
   const [phone, setPhone] =useState()
-  
+  const [orders, setOrders] = useState([]);
   const [error, setError] = useState(''); 
   const [addressList, setAddressList] = useState([]);
   const [profileData, setProfileData] = useState({
@@ -38,6 +38,17 @@ const User = () => {
     }
   };
 
+   // Fetch orders based on customer_id
+   const fetchOrders = async (customerId) => {
+    try {
+      let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id=${customerId}`);
+      response = await response.data?.data
+      console.log("resorder",response)
+      setOrders(response || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  };
 
   const getLoginUser = () => {
     const data = JSON.parse(sessionStorage.getItem('userData'));
@@ -50,6 +61,7 @@ const User = () => {
         }));
      
         fetchUserProfile(data.id); 
+        fetchOrders(data.id); 
     }
 }
 
@@ -212,6 +224,9 @@ const getaddress = async()=>{
       }
   };
 
+
+
+
   useEffect(()=>{
     console.log("addressesData", addressesData)
        if(loginUser?.id){
@@ -341,28 +356,42 @@ const getaddress = async()=>{
           return (
             <div className="card">
               <h2>My Orders</h2>
-              <div className="order-details">
+              {orders.map((order) => (
+              <div key={order.order_id} className="order-details">
+                
                 <div className="order-row">
-                  <span>Order Date: <b>October 22, 2024</b></span>
-                  <span>Order ID: <b>DSA-25603</b></span>
+                  <span>Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b></span>
+                  <span>Order ID: <b>{order.order_id}</b></span>
                 </div>
                 <div className="order-row">
-                  <span>Total Item: <b>1</b></span>
-                  <span>Payment: <b>Pending (Cash On Delivery (COD))</b></span>
+                  {/* <span>Total Items: <b>{totalItems}</b></span> */}
+                  <span>Payment: <b>{order.payment_method}</b></span>
                 </div>
                 <div className="order-row">
-                  <span>Fulfillment Status: <b>Unfulfilled</b></span>
+                  <span>Fulfillment Status: <b>{order.status_type}</b></span>
                   <span className="view-order-link-container">
                     <a href="#" className="view-order-link" onClick={toggleOrderDetails}>View Order</a>
                   </span>
                 </div>
+                <div className="order-row">
+                  <div className="button-group">
+                    <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
+                    <button className="btn reorder-btn">Re-order</button>
+                  </div>
+                </div>
+                <div className="order-row">
+                  <br />
+                  <div className="grand-total">
+                    <span className="grand-total-label">Grand Total:</span>
+                    <span className="grand-total-amount">Rs. 5,200.00</span>
+                  </div>
+                </div>
               </div>
-              <div className="button-group">
-                <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
-                <button className="btn reorder-btn">Re-order</button>
-              </div>
+               ))}
+              
              
-              {showContactForm && renderContactForm()} {/* Render contact form */}
+              {showContactForm && renderContactForm()}
+               {/* Render contact form */}
         
               {/* Conditional rendering for order details */}
               {showOrderDetails && (
@@ -402,11 +431,7 @@ const getaddress = async()=>{
                   </div>
                 </div>
                 
-              )} <br />
-               <div className="grand-total">
-                <span className="grand-total-label">Grand Total:</span>
-                <span className="grand-total-amount">Rs. 5,200.00</span>
-              </div>
+              )} 
             </div>
           );
       case 'changePassword':
@@ -421,7 +446,7 @@ const getaddress = async()=>{
               )}
             </div>
             <div className="form-group">
-              <div className="form-floating">
+              {/* <div className="form-floating">
                 <input
                   type="password"
                   className="form-control"
@@ -429,7 +454,7 @@ const getaddress = async()=>{
                   disabled={!isEditable}
                 />
                 <label htmlFor="currentPassword">Current Password</label>
-              </div>
+              </div> */}
             </div>
             <div className="form-group">
               <div className="form-floating">

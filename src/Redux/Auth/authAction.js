@@ -61,7 +61,7 @@ export const forgotPasswordAction = (email) => async (dispatch) => {
 export const resetPasswordAction = (token, password, resetPassword) => async (dispatch) => {
   dispatch({ type: RESET_PASSWORD_REQUEST });
   try {
-    const { data } = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/reset-password`, { token, password, resetPassword });
+    const { data } = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/reset-password `, { token, password, resetPassword });
     dispatch({ type: RESET_PASSWORD_SUCCESS, payload: data.message });
   } catch (error) {
     dispatch({ type: RESET_PASSWORD_FAILURE, payload: error?.response?.data?.message || error?.message });
