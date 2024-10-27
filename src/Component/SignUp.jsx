@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userRegisterAction } from '../Redux/Auth/authAction';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-phone-input-2/lib/style.css'; // Import phone input CSS
+import PhoneInput from 'react-phone-input-2';
 import './Toast.css';
 
 const SignUp = () => {
@@ -33,6 +35,13 @@ const SignUp = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const handlePhoneChange = (value) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      phone: value,
     }));
   };
 
@@ -96,17 +105,18 @@ const SignUp = () => {
                 <label>Email address</label>
               </div>
               <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Phone"
-                  name="phone"
+                <PhoneInput
+                  country={'in'}
                   value={formData.phone}
-                  onChange={handleOnChange}
-                  autoComplete="off"
-                  required
+                  onChange={handlePhoneChange}
+                  inputProps={{
+                    name: 'phone',
+                    required: true,
+                    autoComplete: 'off',
+                    className: 'form-control' // Bootstrap style for input
+                  }}
                 />
-                <label>Phone</label>
+                {/* <label>Phone</label> */}
               </div>
               <div className="form-floating">
                 <input
@@ -148,7 +158,6 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
 
 
 
