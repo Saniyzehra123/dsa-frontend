@@ -54,7 +54,7 @@ import ResetPassword from './ResetPassword'
         <Route path="/refund-policy" element={<RefundPolicy/>}/>
         <Route path="/term-condition" element={<TermCondition/>}/>
         <Route path="/track-order" element={<TrackOrder/>}/>
-        <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+        <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
         <Route path="/product-details/:id" element={<ProductDetails/>}/>
         <Route path="/cart" element={<Cart/>}/>
         <Route path='/comming-soon' element={<CommingSoon/>}/>
@@ -65,11 +65,9 @@ import ResetPassword from './ResetPassword'
         <Route path='/checkout' element={<Checkout/>}/>
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/reset-password" element={<ResetPassword/>} />
-
         <Route path="/track-product" element={<TrackProduct />} />
         <Route path="/check" element={<Check />} />
         <Route path="/order-confirm/:orderId" element={<OrderConfirm />} />
-   
  
         <Route path="/user" element={<User />} />
  

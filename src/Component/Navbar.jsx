@@ -204,6 +204,9 @@ export default function Navbar() {
               <li>
                 {loginUser ? <a className="dropdown-item text-xs" onClick={handleLogout}>Logout</a> : <a className="dropdown-item text-xs" href="/login">Login</a>}
               </li>
+              <li>
+                {loginUser ? <a className="dropdown-item text-xs" onClick={()=>navigate('/user')}>Profile</a> : ''}
+              </li>
               <li><a className="dropdown-item text-xs" href="/comming-soon">My Orders</a></li>
             </ul>
           </div>
@@ -221,7 +224,6 @@ export default function Navbar() {
         .cart-icon {
           position: relative;
         }
-
         .cart-count {
           position: absolute;
           top: -15px;

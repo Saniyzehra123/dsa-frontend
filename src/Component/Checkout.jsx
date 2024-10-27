@@ -59,6 +59,17 @@ const Checkout = () => {
     const [loading, setLoading]=useState(false);
     const [billingAddressId, setBillingAddressId] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(null); // To track which address dropdown is open
+    const [addressData, setAddressesData] = useState();
+
+    const  fetchUserProfile = async (customerId) => {
+        try {
+            let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/auth/customer/details/${customerId}`);
+            response = await response.data?.data;
+            setAddressesData(response);
+        } catch (error) {
+            console.error('Error fetching addresses:', error);
+        }
+    };
 
     const toggleDropdown = (addressId) => {
         setDropdownOpen(dropdownOpen === addressId ? null : addressId); // Toggle the dropdown
@@ -215,7 +226,6 @@ const Checkout = () => {
         try {
             const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, data);
             const savedData = await res.data?.data;
-            console.log("Billing Address ID", data);
             setBillingAddressId(savedData.id); // Set saved billing address ID
         } catch (error) {
             console.error("Error adding billing address:", error);
@@ -224,10 +234,15 @@ const Checkout = () => {
     
     const saveAddress = async (addressData) => {
         try {
+            let res;
             if (addressData.id) {
-               let res= await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
+                res = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
+                res = await res.data;
+                console.log("res=>1", res);
             } else {
-                let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
+                res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
+                res = await res.data;
+                console.log("res=>2", res);
             }
             setShowModal(false);
         } catch (error) {
@@ -322,7 +337,6 @@ const Checkout = () => {
         try {
             let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/payment`, obj)
             res =await res.data;
-            console.log("res", res)
             if(res.data.paymentId){
                 Swal.fire({
                     icon: 'success',
@@ -353,6 +367,13 @@ const Checkout = () => {
         }
     }
 
+    useEffect(()=>{
+        if(loginUser?.id){
+            fetchUserProfile(loginUser?.id)
+            getCusAddressList(loginUser?.id)
+        }
+    },[loginUser,showModal]);
+
     useEffect(() => {
         getLoginUser();
         return () => {
@@ -374,7 +395,7 @@ const Checkout = () => {
                         {showAccount && (
                             <a href="#" className="text-primary">Log out</a>
                         )}
-                        <p style={{ fontSize: '0.9rem' }}>zsaniya973@gmail.com</p>
+                        <p style={{ fontSize: '0.9rem' }}>{addressData?.email}</p>
                         <hr />
                         {
                             addressList?.length > 0 ? <React.Fragment>

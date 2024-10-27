@@ -3,19 +3,29 @@ import './User.css';
 import { FaTimes } from 'react-icons/fa';
 import { FaPen, FaHeadset, FaBoxOpen, FaSearch, FaUser, FaAddressCard, FaShoppingBag, FaEye, FaLock, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
-import PhoneInput from 'react-phone-input-2';
+import Swal from 'sweetalert2';
 import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
 import AddressForm from '../common/AddressForm';
 
 const User = () => {
- const [activeTab, setActiveTab] = useState('profile');
-  const [isEditable, setIsEditable] = useState(false);
-  const [loginUser, setLoginUser] = useState()
-  const [addressesData, setAddressesData] = useState([]);
-  const [phone, setPhone] =useState()
+  const [phone, setPhone] =useState();
+  const [error, setError] = useState('');
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState(''); 
+  const [loginUser, setLoginUser] = useState();
+  const [showPopup, setShowPopup] = useState(false);
   const [addressList, setAddressList] = useState([]);
+  const [isEditable, setIsEditable] = useState(false);
+  const [activeTab, setActiveTab] = useState('profile');
+  const [password, setPassword] = useState('');
+  const [conformPassword, setConformPassword] = useState('');
+  const [addressesData, setAddressesData] = useState([]);
+  const [passwordError, setPasswordError]= useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
+  const [showShippingAddress, setShowShippingAddress] = useState(false);
+  const [showBillingAddress, setShowBillingAddress] = useState(false);
+
   const [profileData, setProfileData] = useState({
     username: '',
     lastname: '',
@@ -26,8 +36,13 @@ const User = () => {
     customer_id: loginUser?.id
   });
 
+  const [changePassword, setChangePassword] = useState({
+    newPassword:'',
+    conformPassword:''
+  })
+
    // Fetch customer profile data based on customer_id
-   const  fetchUserProfile = async (customerId) => {
+  const  fetchUserProfile = async (customerId) => {
     try {
       let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/auth/customer/details/${customerId}`);
       response = await response.data?.data
@@ -52,59 +67,50 @@ const User = () => {
 
   const getLoginUser = () => {
     const data = JSON.parse(sessionStorage.getItem('userData'));
-    console.log("data",data)
+    console.log("data",data);
     setLoginUser(data);
     if (data) {
         setProfileData((prevState) => ({
             ...prevState,
             customer_id: data.id,
         }));
-     
         fetchUserProfile(data.id); 
         fetchOrders(data.id); 
     }
-}
-
-useEffect(() => {
-    getLoginUser();
-    return () => {
-        window.removeEventListener('storage', getLoginUser);
-    };
-}, []);
-const handleSave = async () => {
-  try {
-    let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/auth/customer/profile/${addressesData.id}`, addressesData);
-    let res = await response.data
-
-    console.log('Profile updated successfully:', res.data);
-    setIsEditable(false);
-    setShowPopup(true);
-    // setTimeout(() => setShowPopup(false), 2000);
-  } catch (error) {
-    console.error('Error updating profile:', error);
   }
-};
 
+  useEffect(() => {
+      getLoginUser();
+      return () => {
+          window.removeEventListener('storage', getLoginUser);
+      };
+  }, []);
 
+  const handleSave = async () => {
+    try {
+      let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/auth/customer/profile/${addressesData.id}`, addressesData);
+      let res = await response.data;
 
-  const [showPopup, setShowPopup] = useState(false); // For the success message
+      console.log('Profile updated successfully:', res.data);
+      setIsEditable(false);
+      setShowPopup(true);
+      // setTimeout(() => setShowPopup(false), 2000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
 
-  const [showContactForm, setShowContactForm] = useState(false); // For the contact form
-  const [showOrderDetails, setShowOrderDetails] = useState(false); // State for showing order details
-const [showShippingAddress, setShowShippingAddress] = useState(false); // State for toggling shipping address
-const [showBillingAddress, setShowBillingAddress] = useState(false); // State for toggling billing address
+  const toggleOrderDetails = () => {
+    setShowOrderDetails(!showOrderDetails); // Toggle order details
+  };
 
-const toggleOrderDetails = () => {
-  setShowOrderDetails(!showOrderDetails); // Toggle order details
-};
+  const toggleShippingAddress = () => {
+    setShowShippingAddress(!showShippingAddress); // Toggle shipping address
+  };
 
-const toggleShippingAddress = () => {
-  setShowShippingAddress(!showShippingAddress); // Toggle shipping address
-};
-
-const toggleBillingAddress = () => {
-  setShowBillingAddress(!showBillingAddress); // Toggle billing address
-};
+  const toggleBillingAddress = () => {
+    setShowBillingAddress(!showBillingAddress); // Toggle billing address
+  };
 
   const [showAddressForm, setShowAddressForm] = useState(false); // To show/hide popup
   const [currentAddress, setCurrentAddress] = useState(null); // To store the address being edited
@@ -123,12 +129,9 @@ const toggleBillingAddress = () => {
         mobile: '',
         country: '',
         customer_id: loginUser?.id,
-       
-
     });
     setShowAddressForm(true); // Open modal
-};
-
+ };
 
   const openAddressForm = (address) => {
     setCurrentAddress(address || { });
@@ -142,70 +145,66 @@ const toggleBillingAddress = () => {
 
   const closeContactForm = () => {
     setShowContactForm(false);
-
   };
 
   const saveAddress = async (addressData) => {
-    try {
-        if (addressData.id) {
-            // Update existing address
-            let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
-            // let res = await response.data
-            console.log("Updated Address:", response);
-        } else {
-            // Add new address
-            let response = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
-            let res = await response.data
-
-            console.log("New Address Added:", res.data);
-        }
-        setShowAddressForm(false);
-        getaddress()
-    } catch (error) {
-        console.error("Error in saving address:", error);
-    }
-};
-
-const getaddress = async()=>{
-  try {
-     let data= await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${loginUser?.id}`);
-     let res = await data.data
-     console.log("address",res)
-     setAddressList(res.data)
-  } catch (error) {
-    console.error("Error in saving address:", error);
-  }
-}
-    // Function to delete an address
-    const deleteAddress = async (addressId) => {
       try {
-        await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
-        setAddressList((prevList) => prevList.filter((address) => address.id !== addressId)); // Update the list by removing the deleted address
-        console.log("Address deleted successfully");
+          if (addressData.id) {
+              // Update existing address
+              let response = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
+              // let res = await response.data
+              console.log("Updated Address:", response);
+          } else {
+              // Add new address
+              let response = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
+              let res = await response.data
+
+              console.log("New Address Added:", res.data);
+          }
+          setShowAddressForm(false);
+          getaddress()
       } catch (error) {
-        console.error("Error deleting address:", error);
+          console.error("Error in saving address:", error);
       }
-    };
+  };
+
+  const getaddress = async()=>{
+    try {
+      let data= await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${loginUser?.id}`);
+      let res = await data.data
+      console.log("address",res)
+      setAddressList(res.data)
+    } catch (error) {
+      console.error("Error in saving address:", error);
+    }
+  }
+    // Function to delete an address
+  const deleteAddress = async (addressId) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
+      setAddressList((prevList) => prevList.filter((address) => address.id !== addressId)); // Update the list by removing the deleted address
+      console.log("Address deleted successfully");
+    } catch (error) {
+      console.error("Error deleting address:", error);
+    }
+  };
     
   const renderAddressForm = () => {
     // if (!showAddressForm) return null;
-
     return (
       <div>
           {/* Modal for Add/Edit Address */}
           {showAddressForm && (
-                <AddressForm
+              <AddressForm
                 currentAddress={currentAddress}
-                    setCurrentAddress={setCurrentAddress}
-                    setShowAddressForm={setShowAddressForm}
-                    saveAddress={saveAddress}
-                />
+                  setCurrentAddress={setCurrentAddress}
+                  setShowAddressForm={setShowAddressForm}
+                  saveAddress={saveAddress}
+              />
             )}
       </div>
-      
     );
   };
-
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
@@ -224,16 +223,33 @@ const getaddress = async()=>{
       }
   };
 
+  const handleChangePassword=async()=>{
+    const token=loginUser?.token;
+    if(changePassword.newPassword!==changePassword.conformPassword){
+      setPasswordError(true);
+      return;
+    }
+    try {
+     let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/reset-password`, {token, password, conformPassword });
+     res = await res.data;
+     if(res?.data?.status){
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Password is updated successful!',
+    });
+     }
+    } catch (error) {
+      console.log("error", error)
+    }
 
-
-
+  }
+  console.log("addressesData", addressesData,loginUser)
   useEffect(()=>{
-    console.log("addressesData", addressesData)
        if(loginUser?.id){
         getaddress()
        }
   },[loginUser])
-   
 
   const renderContent = () => {
     switch (activeTab) {
@@ -344,21 +360,18 @@ const getaddress = async()=>{
                       <i className="fas fa-trash trash-icon"></i>
                     </button>
                     </div>
-                  </div>
-                    ))}
+                  </div>))}
             </div>
              <br />
              <button className="btn w-40 " onClick={handleAddDifferentAddress}>Add New Address</button> {/* Button to add new address */}
           </div>
         );
-
         case 'orders':
           return (
             <div className="card">
               <h2>My Orders</h2>
               {orders.map((order) => (
               <div key={order.order_id} className="order-details">
-                
                 <div className="order-row">
                   <span>Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b></span>
                   <span>Order ID: <b>{order.order_id}</b></span>
@@ -388,11 +401,8 @@ const getaddress = async()=>{
                 </div>
               </div>
                ))}
-              
-             
               {showContactForm && renderContactForm()}
                {/* Render contact form */}
-        
               {/* Conditional rendering for order details */}
               {showOrderDetails && (
                 <div className="order-detail-card">
@@ -430,8 +440,7 @@ const getaddress = async()=>{
                     </div>
                   </div>
                 </div>
-                
-              )} 
+              )}
             </div>
           );
       case 'changePassword':
@@ -439,11 +448,11 @@ const getaddress = async()=>{
           <div className="card">
             <div className="card-header">
               <h2>Change Password</h2>
-              {isEditable ? (
+              {/* {isEditable ? (
                 <FaTimes className="edit-icon" onClick={toggleEdit} />
               ) : (
                 <FaPen className="edit-icon" onClick={toggleEdit} />
-              )}
+              )} */}
             </div>
             <div className="form-group">
               {/* <div className="form-floating">
@@ -461,8 +470,10 @@ const getaddress = async()=>{
                 <input
                   type="password"
                   className="form-control"
-                  id="newPassword"
-                  disabled={!isEditable}
+                  id="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="off"
+                  required
                 />
                 <label htmlFor="newPassword">New Password</label>
               </div>
@@ -470,19 +481,20 @@ const getaddress = async()=>{
             <div className="form-group">
               <div className="form-floating">
                 <input
-                  type="password"
+                  type="ConformPassword"
                   className="form-control"
-                  id="confirmNewPassword"
-                  disabled={!isEditable}
+                  id="conformPassword"
+                  onChange={(e) => setConformPassword(e.target.value)}
                 />
                 <label htmlFor="confirmNewPassword">Confirm New Password</label>
               </div>
             </div>
-            {isEditable && (
-              <button className="btn save-btn" onClick={handleSave}>
+            {
+              error && <p className='' style={{color:'red'}}>Password is miss matching</p>
+            }
+              <button className="btn save-btn" onClick={handleChangePassword}>
                 Save
               </button>
-            )}
           </div>
         );
       case 'logout':
@@ -552,7 +564,7 @@ const getaddress = async()=>{
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
-  
+
   return (
     <div className="dashboard-container mt-48">
       <div className="sidebar">
@@ -576,13 +588,8 @@ const getaddress = async()=>{
           </li>
         </ul>
       </div>
-
-
-
-
       <div className="content-area">{renderContent()}</div>
       {renderAddressForm()}
-
       {/* Popup message */}
       {showPopup && (
         <div className="popup-message">

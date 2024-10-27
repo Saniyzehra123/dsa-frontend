@@ -14,14 +14,11 @@ const OrderConfirm = () => {
         const data = JSON.parse(sessionStorage.getItem('userData'));
         setLoginUser(data);
     };
-console.log("users", orderId)
 
     const fetchOrderDetails = async (customer_id, order_id) => {
         console.log("Fetching order details for customer_id:", customer_id, "and order_id:", order_id);
         try {
             const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id=${customer_id}&order_id=${order_id}`);
-            // const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id={{customer_id}}&order_id={{order_id}}`);
-         
             let data = await response.data?.data;
             console.log("Order details response:", response.data);
             setOrderDetails(data || []);
