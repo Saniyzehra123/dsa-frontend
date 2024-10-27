@@ -12,6 +12,7 @@ export default function Saree() {
   const dispatch = useDispatch();
   const sarees = useSelector((store) => store.saree?.sarees);
   const [loginUser, setLoginUser] = useState();
+  const [sortOrder, setSortOrder] = useState('low');
 
   // Wishlist state will be initialized from localStorage
   const [liked, setLiked] = useState(() => {
@@ -180,15 +181,19 @@ export default function Saree() {
   // Filter and sort products based on selected criteria
   const filteredProducts = sarees?.data || [];
 
+
+  
   return (
     <div className="container mt-36">
       {/* Banner Image */}
-      <div className="row">
-        <div className="col-md-12">
-          <img src="assets/images/carousel/c1.jpeg" alt="Banner" className="banner-image" />
+      <div className="container mt-36">
+        <div className="row">
+          <div className="col-md-12">
+            <img src="assets/images/carousel/c1.jpeg" alt="" />
+          </div>
         </div>
       </div>
-      <br />
+      <br /><br />
 
       <div className="row">
         {/* Left Side Filter */}
@@ -197,52 +202,121 @@ export default function Saree() {
           <hr />
           <div className="filter-group">
             <label>Availability:</label>
-            <select>
-              <option value="All">All</option>
-              <option value="In Stock">In Stock</option>
-              <option value="Out Of Stock">Out Of Stock</option>
-            </select>
+            <div className="dropdown">
+              <button className="dropbtn">Select Availability</button>
+              <div className="dropdown-content">
+                <label>
+                  All <input type="checkbox" onChange={() => ('All')} />
+
+                </label>
+                <label>
+                  In Stock <input type="checkbox" onChange={() => ('In Stock')} />
+
+                </label>
+                <label>
+                  Out Of Stock <input type="checkbox" onChange={() => ('Out Of Stock')} />
+
+                </label>
+              </div>
+            </div>
           </div>
-          <div className="filter-group">
-            <label>Price:</label>
-            <select>
-              <option value="low">Low To High</option>
-              <option value="high">High To Low</option>
-            </select>
-          </div>
+
           <div className="filter-group">
             <label>Category:</label>
-            <select>
-              <option value="All">All</option>
-              <option value="Cotton Silk">Cotton Silk</option>
-              <option value="Katan Silk">Katan Silk</option>
-              <option value="Silk">Silk</option>
-            </select>
+            <div className="dropdown">
+              <button className="dropbtn">Select Category</button>
+              <div className="dropdown-content">
+                <label>
+                  All <input type="checkbox" onChange={() => ('All')} />
+
+                </label>
+                <label>
+                  Cotton Silk  <input type="checkbox" onChange={() => ('Cotton Silk')} />
+
+                </label>
+                <label>
+                  Katan Silk <input type="checkbox" onChange={() => ('Katan Silk')} />
+
+                </label>
+                <label>
+                  Silk  <input type="checkbox" onChange={() => ('Silk')} />
+
+                </label>
+              </div>
+            </div>
           </div>
+
           <div className="filter-group">
             <label>Occasion:</label>
-            <select>
-              <option value="All">All</option>
-              <option value="Festivals">Festivals</option>
-              <option value="Wedding">Wedding</option>
-              <option value="Party Wear">Party Wear</option>
-            </select>
+            <div className="dropdown">
+              <button className="dropbtn">Select Occasion</button>
+              <div className="dropdown-content">
+                <label>
+                  All  <input type="checkbox" onChange={() => ('All')} />
+
+                </label>
+                <label>
+                  Festivals <input type="checkbox" onChange={() => ('Festivals')} />
+
+                </label>
+                <label>
+                  Wedding  <input type="checkbox" onChange={() => ('Wedding')} />
+
+                </label>
+                <label>
+                  Party Wear  <input type="checkbox" onChange={() => ('Party Wear')} />
+
+                </label>
+              </div>
+            </div>
           </div>
+
           <div className="filter-group">
             <label>Weave Type:</label>
-            <select>
-              <option value="All">All</option>
-              <option value="Satin">Satin</option>
-              <option value="Zari - Golden & Copper">Zari - Golden & Copper</option>
-              <option value="Pathani">Pathani</option>
-              <option value="Banarasi">Banarasi</option>
-            </select>
+            <div className="dropdown">
+              <button className="dropbtn">Select Weave Type</button>
+              <div className="dropdown-content">
+                <label>
+                  All <input type="checkbox" onChange={() => ('All')} />
+
+                </label>
+                <label>
+                  Satin  <input type="checkbox" onChange={() => ('Satin')} />
+
+                </label>
+                <label> Zari - Golden & Copper  <input type="checkbox" onChange={() => ('Zari - Golden & Copper')} />
+
+                </label>
+                <label>
+                  Pathani  <input type="checkbox" onChange={() => ('Pathani')} />
+
+                </label>
+                <label>
+                  Banarasi  <input type="checkbox" onChange={() => ('Banarasi')} />
+
+                </label>
+              </div>
+            </div>
           </div>
+
         </div>
+
 
         {/* Right Side Product Cards */}
         <div className="col-md-10">
-          <h1>OUR SAREE COLLECTION</h1>
+        <div className="d-flex justify-content-between align-items-center">
+            <h1>OUR SAREE COLLECTION</h1>
+            <div className="sort-dropdown" style={{ marginLeft: 'auto' }}>
+              <label>Sort By:</label>
+              <select onChange={(e) => setSortOrder(e.target.value)}>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+
+           
           <div className="row">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((saree, index) => (
@@ -361,3 +435,7 @@ export default function Saree() {
     </div>
   );
 }
+
+
+
+
