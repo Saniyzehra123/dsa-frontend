@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './User.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FaTimes } from 'react-icons/fa';
 import { FaPen, FaHeadset, FaBoxOpen, FaSearch, FaUser, FaAddressCard, FaShoppingBag, FaEye, FaLock, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
@@ -25,6 +27,8 @@ const User = () => {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [showBillingAddress, setShowBillingAddress] = useState(false);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -35,6 +39,24 @@ const User = () => {
     gender: '',
     customer_id: loginUser?.id
   });
+  const orderProducts = [
+    {
+      name: 'Katan Silk With Silver Zari Work',
+      price: 'Rs. 5,200.00',
+      shipping: 'Rs. 0.00',
+      igst: 'Rs. 247.62',
+      cgst: 'Rs. 0.00',
+      image: 'https://dsafashionwear.com/images/DSA_01/DSA_01.jpg',
+    },
+    {
+      name: 'Pure Cotton Ethnic Wear',
+      price: 'Rs. 3,000.00',
+      shipping: 'Rs. 100.00',
+      igst: 'Rs. 150.00',
+      cgst: 'Rs. 0.00',
+      image: 'https://dsafashionwear.com/images/DSA_02/DSA_02.jpg',
+    },
+  ];
 
   const [changePassword, setChangePassword] = useState({
     newPassword:'',
@@ -100,10 +122,25 @@ const User = () => {
     }
   };
 
-  const toggleOrderDetails = () => {
-    setShowOrderDetails(!showOrderDetails); // Toggle order details
+  const toggleOrderDetails = (orderId) => {
+    setShowOrderDetails(prev => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
   };
+  
+// Update the function to navigate between products
+const handleProductNavigation = (direction) => {
+  setCurrentProductIndex((prevIndex) => {
+    if (direction === 'prev') {
+      return prevIndex > 0 ? prevIndex - 1 : orderProducts.length - 1;
+    } else {
+      return prevIndex < orderProducts.length - 1 ? prevIndex + 1 : 0;
+    }
+  });
+};
 
+ 
   const toggleShippingAddress = () => {
     setShowShippingAddress(!showShippingAddress); // Toggle shipping address
   };
@@ -251,6 +288,8 @@ const User = () => {
        }
   },[loginUser])
 
+  
+
   const renderContent = () => {
     switch (activeTab) {
       case 'profile':
@@ -383,7 +422,7 @@ const User = () => {
                 <div className="order-row">
                   <span>Fulfillment Status: <b>{order.status_type}</b></span>
                   <span className="view-order-link-container">
-                    <a href="#" className="view-order-link" onClick={toggleOrderDetails}>View Order</a>
+                  <a href="#" className="view-order-link" onClick={() => toggleOrderDetails('order1')}>View Order</a>
                   </span>
                 </div>
                 <div className="order-row">
@@ -401,10 +440,11 @@ const User = () => {
                 </div>
               </div>
                ))}
+
               {showContactForm && renderContactForm()}
                {/* Render contact form */}
               {/* Conditional rendering for order details */}
-              {showOrderDetails && (
+              {/* {showOrderDetails && (
                 <div className="order-detail-card">
                   <div className="product-info">
                     <img src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg" alt="Product" className="product-image w-40" />
@@ -440,7 +480,37 @@ const User = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
+
+{showOrderDetails['order1'] && (
+                  <div className="order-detail-card">
+                    <div className="product-info">
+                      <FontAwesomeIcon icon={faChevronLeft} onClick={() => handleProductNavigation('prev')} />
+                      <img src={orderProducts[currentProductIndex].image} alt="Product" className="product-image" />
+            
+                      <div className="product-name"><b>{orderProducts[currentProductIndex].name}</b></div>        
+                       <FontAwesomeIcon icon={faChevronRight} onClick={() => handleProductNavigation('next')} />
+                    </div>
+                    <div className="order-summary">
+                      <div className="order-row">
+                        <span>Sub Total:</span>
+                        <span><b>{orderProducts[currentProductIndex].price}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>Shipping Cost:</span>
+                        <span><b>{orderProducts[currentProductIndex].shipping}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>IGST 5.0%:</span>
+                        <span><b>{orderProducts[currentProductIndex].igst}</b></span>
+                      </div>
+                      <div className="order-row">
+                        <span>CGST 13.0%:</span>
+                        <span><b>{orderProducts[currentProductIndex].cgst}</b></span>
+                      </div>
+                    </div>
+                  </div>
+                )}
             </div>
           );
       case 'changePassword':

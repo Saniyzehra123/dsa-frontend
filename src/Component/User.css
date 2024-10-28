@@ -54,6 +54,27 @@
   color: #ffffff; /* Optional: Change icon color when active */
 }
 
+
+.product-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.product-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.faChevronLeft, .faChevronRight {
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
 /* Responsive layout for smaller screens */
 @media screen and (max-width: 768px) {
   .dashboard-container {
