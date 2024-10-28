@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { removeFromCart } from '../Redux/Cart/cartAction'; // Import necessary actions
+import Swal from 'sweetalert2';
 
 const Cart = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate(); // Initialize useNavigate
-    const [couponCode, setCouponCode] = useState("");
+    const navigate = useNavigate();
     const [discount, setDiscount] = useState(0);
+    const [loginUser, setLoginUser] = useState();
+    const [couponCode, setCouponCode] = useState("");
 
     // Retrieve cart items from localStorage
     const [cartData, setCartData] = useState([]);
@@ -56,12 +58,32 @@ const Cart = () => {
     };
 
     const handleCheckout = () => {
-        navigate('/checkout', { state: { products: cartData, discount } }); // Navigate to checkout
+        if(loginUser?.id>0){
+            navigate('/checkout', { state: { products: cartData, discount } }); // Navigate to checkout
+        }else{
+            Swal.fire("You are not loged in!").then((result) => {
+                if (result.isConfirmed) {
+                  navigate("/login");
+                }
+              });
+        }
     };
 
+    const getLoginUser = () => {
+        const data = JSON.parse(sessionStorage.getItem('userData'));
+        setLoginUser(data);
+    }
+
+    useEffect(() => {
+        getLoginUser();
+        return () => {
+            window.removeEventListener('storage', getLoginUser);
+        };
+    }, []);
+
     return (
-        <div className="container mt-36">
-            <h2 className="text-center">Cart</h2>
+        <div className="container mt-5">
+            <h2 className="text-center" style={{marginTop:'50px'}}>Cart</h2>
             <div className="cart-container">
                 <div className="product-list">
                     {cartData.length === 0 ? (

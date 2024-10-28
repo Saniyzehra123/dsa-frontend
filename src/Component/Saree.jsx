@@ -207,15 +207,12 @@ export default function Saree() {
               <div className="dropdown-content">
                 <label>
                   All <input type="checkbox" onChange={() => ('All')} />
-
                 </label>
                 <label>
                   In Stock <input type="checkbox" onChange={() => ('In Stock')} />
-
                 </label>
                 <label>
                   Out Of Stock <input type="checkbox" onChange={() => ('Out Of Stock')} />
-
                 </label>
               </div>
             </div>
@@ -228,19 +225,15 @@ export default function Saree() {
               <div className="dropdown-content">
                 <label>
                   All <input type="checkbox" onChange={() => ('All')} />
-
                 </label>
                 <label>
                   Cotton Silk  <input type="checkbox" onChange={() => ('Cotton Silk')} />
-
                 </label>
                 <label>
                   Katan Silk <input type="checkbox" onChange={() => ('Katan Silk')} />
-
                 </label>
                 <label>
                   Silk  <input type="checkbox" onChange={() => ('Silk')} />
-
                 </label>
               </div>
             </div>

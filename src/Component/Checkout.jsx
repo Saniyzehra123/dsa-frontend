@@ -345,6 +345,7 @@ const Checkout = () => {
                 });
                 setLoading(false)
                 navigate(`/order-confirm/${orderId}`)
+                localStorage.removeItem('itemlist')
             }
         } catch (error) {
             console.log("error in creating order")
@@ -407,7 +408,7 @@ const Checkout = () => {
                                     ></i>
                                 </h4>
                                 {showShipping && (
-                        <div>
+                            <div>
                             {addressList.map((address) => (
                                 <div key={address.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                                     
@@ -477,123 +478,123 @@ const Checkout = () => {
                                     </div>
                                 </div>
                             ))}
-
-                            <a
-                                href="#"
-                                onClick={handleUseDifferentAddress}
-                                style={{ color: 'blue', textDecoration: 'none', cursor: 'pointer' }}
-                            >
-                                + Use a Different Address
-                            </a>
-                        </div>
-                    )}
-                    <hr /></React.Fragment> : <React.Fragment>
-                        <h4>Delivery Information</h4>
-                        <div className="mb-3 row">
-                            <div className="col-md-6">
-                                <div className="form-floating">
-                                    <input type="text" className="form-control" id="firstname"
-                                        name="firstname"
-                                        value={formData?.firstname}
-                                        onChange={handleChange}
-                                        placeholder="First Name" required />
-                                    <label htmlFor="firstname">First Name</label>
+                                <a
+                                    href="#"
+                                    onClick={handleUseDifferentAddress}
+                                    style={{ color: 'blue', textDecoration: 'none', cursor: 'pointer' }}
+                                >
+                                    + Use a Different Address
+                                </a>
+                            </div>
+                            )}
+                            <hr />
+                            </React.Fragment> : <React.Fragment>
+                            <h4>Delivery Information</h4>
+                            <div className="mb-3 row">
+                                <div className="col-md-6">
+                                    <div className="form-floating">
+                                        <input type="text" className="form-control" id="firstname"
+                                            name="firstname"
+                                            value={formData?.firstname}
+                                            onChange={handleChange}
+                                            placeholder="First Name" required />
+                                        <label htmlFor="firstname">First Name</label>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-floating">
+                                        <input type="text" className="form-control" id="lastname"
+                                            name="lastname"
+                                            value={formData?.lastname}
+                                            onChange={handleChange}
+                                            placeholder="Last Name" required />
+                                        <label htmlFor="lastname">Last Name</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="col-md-6">
+
+                            <div className="mb-3">
                                 <div className="form-floating">
-                                    <input type="text" className="form-control" id="lastname"
-                                        name="lastname"
-                                        value={formData?.lastname}
+                                    <input type="text" className="form-control" id="address"
+                                        name="address"
+                                        value={formData?.address}
                                         onChange={handleChange}
-                                        placeholder="Last Name" required />
-                                    <label htmlFor="lastname">Last Name</label>
+                                        placeholder="Address" required />
+                                    <label htmlFor="address">Address</label>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="mb-3">
-                            <div className="form-floating">
-                                <input type="text" className="form-control" id="address"
-                                    name="address"
-                                    value={formData?.address}
-                                    onChange={handleChange}
-                                    placeholder="Address" required />
-                                <label htmlFor="address">Address</label>
+                            <div className="mb-3">
+                                <div className="form-floating">
+                                    <input type="text" className="form-control" id="landmark"
+                                        name="landmark"
+                                        value={formData?.landmark}
+                                        onChange={handleChange}
+                                        placeholder="Nearby Landmark" />
+                                    <label htmlFor="landmark">Nearby Landmark</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="mb-3">
-                            <div className="form-floating">
-                                <input type="text" className="form-control" id="landmark"
-                                    name="landmark"
-                                    value={formData?.landmark}
-                                    onChange={handleChange}
-                                    placeholder="Nearby Landmark" />
-                                <label htmlFor="landmark">Nearby Landmark</label>
+                            <div className="mb-3 row">
+                                <div className="col-md-3">
+                                    <div className="form-floating">
+                                        <input type="text" className="form-control" id="city"
+                                            name="city"
+                                            value={formData?.city}
+                                            onChange={handleChange}
+                                            placeholder="City" required />
+                                        <label htmlFor="city">City</label>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-floating">
+                                        <Select
+                                            options={stateOptions}
+                                            onChange={handleStateChange}
+                                            placeholder="Select State"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-3">
+                                    <div className="form-floating">
+                                        <input type="text" className="form-control" id="pincode"
+                                            name="pincode"
+                                            value={formData?.pincode}
+                                            onChange={handleChange}
+                                            placeholder="Pin Code" required />
+                                        <label htmlFor="pincode">Pin Code</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="mb-3 row">
+                            <div className="mb-3">
+                                <PhoneInput
+                                    country={'in'}
+                                    value={formData?.mobile}
+                                    onChange={handleMobileChange}
+                                    placeholder="Mobile Number"
+                                    required
+                                />
+                            </div>
+
                             <div className="col-md-3">
                                 <div className="form-floating">
-                                    <input type="text" className="form-control" id="city"
-                                        name="city"
-                                        value={formData?.city}
+                                    <input type="text" className="form-control" id="country"
+                                        name="country"
+                                        value={formData?.country}
                                         onChange={handleChange}
-                                        placeholder="City" required />
-                                    <label htmlFor="city">City</label>
+                                        placeholder="Country" required />
+                                    <label htmlFor="country">Country</label>
                                 </div>
                             </div>
-                            <div className="col-md-6">
-                                <div className="form-floating">
-                                    <Select
-                                        options={stateOptions}
-                                        onChange={handleStateChange}
-                                        placeholder="Select State"
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-md-3">
-                                <div className="form-floating">
-                                    <input type="text" className="form-control" id="pincode"
-                                        name="pincode"
-                                        value={formData?.pincode}
-                                        onChange={handleChange}
-                                        placeholder="Pin Code" required />
-                                    <label htmlFor="pincode">Pin Code</label>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="mb-3">
-                            <PhoneInput
-                                country={'in'}
-                                value={formData?.mobile}
-                                onChange={handleMobileChange}
-                                placeholder="Mobile Number"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-md-3">
-                            <div className="form-floating">
-                                <input type="text" className="form-control" id="country"
-                                    name="country"
-                                    value={formData?.country}
-                                    onChange={handleChange}
-                                    placeholder="Country" required />
-                                <label htmlFor="country">Country</label>
+                            <div className="form-check mb-3">
+                                <input type="checkbox" className="form-check-input" id="saveInfo" />
+                                <label className="form-check-label" htmlFor="saveInfo">Save this information for next time</label>
                             </div>
-                        </div>
-
-                        <div className="form-check mb-3">
-                            <input type="checkbox" className="form-check-input" id="saveInfo" />
-                            <label className="form-check-label" htmlFor="saveInfo">Save this information for next time</label>
-                        </div>
-                        <hr />
-                    </React.Fragment>
-                    }
+                            <hr />
+                        </React.Fragment>
+                        }
                         {/* Billing Address Section */}
                         <h4>Billing Address</h4><br />
                         <div className="mb-3">
