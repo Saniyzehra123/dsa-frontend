@@ -82,64 +82,6 @@ export default function Saree() {
     localStorage.setItem('wishlist', JSON.stringify(updatedLiked)); // Update localStorage
   };
 
-  // const addToCart = (saree) => {
-  //   const cartList = {
-  //     id: saree.item_id,
-  //     saree_name: saree.saree_name,
-  //     price: saree.price,
-  //     quantity: 1, // Default quantity of 1
-  //     main_image_url: saree.main_image_url,
-  //     customer_id: loginUser?.id || ''
-  //   };
-  
-  //   let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
-  //   const existingItemIndex = updatedCartList.findIndex((cartItem) => cartItem.id === cartList.id);
-  
-  //   if (existingItemIndex !== -1) {
-  //     // If the product already exists, update the quantity
-  //     updatedCartList[existingItemIndex].quantity += 1; // Increase the quantity by 1
-  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
-  //     window.dispatchEvent(new Event('storage'));
-  
-  //     // Show a toast message for updated quantity
-  //     toast.info(
-  //       <div style={{ display: 'flex', alignItems: 'center' }}>
-  //         <img
-  //           src={updatedCartList[existingItemIndex].main_image_url}
-  //           alt={updatedCartList[existingItemIndex].saree_name}
-  //           style={{ width: '90px', height: '90px', marginRight: '10px' }}
-  //         />
-  //         <span>Quantity updated for {updatedCartList[existingItemIndex].saree_name}!</span>
-  //       </div>,
-  //       {
-  //         position: 'top-right',
-  //         autoClose: 2000,
-  //       }
-  //     );
-  //   } else {
-  //     // If the saree is not in the cart, add it to the cart
-  //     updatedCartList.push({ ...cartList, count: 1 });
-  //     localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
-  //     window.dispatchEvent(new Event('storage'));
-  
-  //     // Show a toast message for adding the product
-  //     toast.success(
-  //       <div style={{ display: 'flex', alignItems: 'center' }}>
-  //         <img
-  //           src={cartList.main_image_url}
-  //           alt={cartList.saree_name}
-  //           style={{ width: '90px', height: '90px', marginRight: '10px' }}
-  //         />
-  //         <span>{cartList.saree_name} added to your cart successfully!</span>
-  //       </div>,
-  //       {
-  //         position: 'top-right',
-  //         autoClose: 2000,
-  //       }
-  //     );
-  //   }
-  // };
-
   // Updated addToCart function
   const addToCart = (saree) => {
     const cartList = {
@@ -165,7 +107,6 @@ export default function Saree() {
       updatedCartList.push({ ...cartList, count: 1 });
       localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
       window.dispatchEvent(new Event('storage'));
-
       // Show a success toast notification
       toast.success('Product added to cart!', {
         position: 'top-right', // Use 'top-right' directly

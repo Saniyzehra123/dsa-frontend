@@ -18,7 +18,7 @@ const OrderConfirm = () => {
     const fetchOrderDetails = async (customer_id, order_id) => {
         console.log("Fetching order details for customer_id:", customer_id, "and order_id:", order_id);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id=${customer_id}&order_id=${order_id}`);
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/detail/${order_id}`);
             let data = await response.data?.data;
             console.log("Order details response:", response.data);
             setOrderDetails(data || []);
@@ -130,17 +130,23 @@ const OrderConfirm = () => {
                 <Col lg={5}>
                     <Card className="shadow-lg p-3 mb-5 bg-white rounded">
                         <Card.Body>
-                            <div className="d-flex align-items-center mb-3">
-                                <Image
-                                    src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg"
-                                    rounded
-                                    style={{ width: '80px', height: '110px' }}
-                                />
-                                <div className="ml-3">
-                                    <p className="font-weight-bold mb-0">Katan Silk Saree</p>
-                                    <p className="text-muted mb-0">₹5,200.00</p>
+                            {
+                                orderDetails?.order_items?.map((item)=>{
+                                    console.log("data", item)
+                                    return <div className="d-flex align-items-center mb-3">
+                                    <Image
+                                        src={item?.main_image_url}
+                                        rounded
+                                        style={{ width: '80px', height: '110px' }}
+                                    />
+                                    <div className="ml-3">
+                                        <p className="font-weight-bold mb-0">Katan Silk Saree</p>
+                                        <p className="text-muted mb-0">{`₹ ${item?.total_price}`}</p>
+                                    </div>
                                 </div>
-                            </div>
+                                })
+                            }
+                            
                             <hr />
                             <div className="d-flex justify-content-between">
                                 <p className="mb-0">Subtotal</p>

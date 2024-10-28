@@ -48,7 +48,7 @@ const Checkout = () => {
     const location = useLocation(); // Get the state passed from Cart
     const dispatch = useDispatch();
     const { products, discount } = location.state || { products: [], discount: 0 }; // Default to empty array and zero discount
-    const [loginUser, setLoginUser] = useState()
+    const [loginUser, setLoginUser] = useState();
     const [useDifferentAddress, setUseDifferentAddress] = useState(false);
     const [addressList, setAddressList] = useState([]);
     const [showAccount, setShowAccount] = useState(false);
