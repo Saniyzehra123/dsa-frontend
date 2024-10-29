@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 import 'react-phone-input-2/lib/style.css';
 import PhoneInput from 'react-phone-input-2';
 import AddressForm from '../common/AddressForm';
+import { persistor } from '../Redux/Store';
+import { useNavigate } from 'react-router-dom';
 
 const User = () => {
   const [phone, setPhone] =useState();
@@ -28,7 +30,11 @@ const User = () => {
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [showBillingAddress, setShowBillingAddress] = useState(false);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [selectedOrderId,setselectedOrderId] = useState(0);
+  const [orderDetails, setOrderDetails] = useState([]);
 
+
+  const navigate = useNavigate();
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -39,6 +45,7 @@ const User = () => {
     gender: '',
     customer_id: loginUser?.id
   });
+
   const orderProducts = [
     {
       name: 'Katan Silk With Silver Zari Work',
@@ -75,7 +82,7 @@ const User = () => {
     }
   };
 
-   // Fetch orders based on customer_id
+  //  Fetch orders based on customer_id
    const fetchOrders = async (customerId) => {
     try {
       let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/search?customer_id=${customerId}`);
@@ -87,9 +94,31 @@ const User = () => {
     }
   };
 
+//   const fetchOrderDetails = async (order_id) => {
+//     console.log("Fetching order details for customer_id:","and order_id:", order_id);
+//     try {
+//         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/detail/${order_id}`);
+//         let data = await response.data?.data;
+//         console.log("Order details response:", response.data);
+//         setOrderDetails(data || []);
+//     } catch (error) {
+//         console.error("Failed to fetch order details:", error);
+//     }
+// };
+const fetchOrderDetails = async (order_id) => {
+  console.log("Fetching order details for customer_id:","and order_id:", order_id);
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/order/detail/${order_id}`);
+    const data = response.data?.data;
+    console.log("Order details response:", response.data);
+    setOrderDetails(data.order_items || []); // Set order_items directly
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+  }
+};
+
   const getLoginUser = () => {
     const data = JSON.parse(sessionStorage.getItem('userData'));
-    console.log("data",data);
     setLoginUser(data);
     if (data) {
         setProfileData((prevState) => ({
@@ -100,7 +129,6 @@ const User = () => {
         fetchOrders(data.id); 
     }
   }
-
   useEffect(() => {
       getLoginUser();
       return () => {
@@ -127,18 +155,28 @@ const User = () => {
       ...prev,
       [orderId]: !prev[orderId],
     }));
+ console.log("order-id",orderId)
+    setselectedOrderId(orderId)
   };
   
 // Update the function to navigate between products
+// const handleProductNavigation = (direction) => {
+//   setCurrentProductIndex((prevIndex) => {
+//     if (direction === 'prev') {
+//       return prevIndex > 0 ? prevIndex - 1 : orderProducts.length - 1;
+//     } else {
+//       return prevIndex < orderProducts.length - 1 ? prevIndex + 1 : 0;
+//     }
+//   });
+// };
 const handleProductNavigation = (direction) => {
-  setCurrentProductIndex((prevIndex) => {
-    if (direction === 'prev') {
-      return prevIndex > 0 ? prevIndex - 1 : orderProducts.length - 1;
-    } else {
-      return prevIndex < orderProducts.length - 1 ? prevIndex + 1 : 0;
-    }
-  });
+  if (direction === 'prev' && currentProductIndex > 0) {
+    setCurrentProductIndex((prevIndex) => prevIndex - 1);
+  } else if (direction === 'next' && currentProductIndex < orderDetails.length - 1) {
+    setCurrentProductIndex((prevIndex) => prevIndex + 1);
+  }
 };
+
 
  
   const toggleShippingAddress = () => {
@@ -154,19 +192,19 @@ const handleProductNavigation = (direction) => {
 
   // Function to handle "Use a Different Address" - Opens a blank form
   const handleAddDifferentAddress = () => {
-    setCurrentAddress({
-        email: '',
-        firstname: '',
-        lastname: '',
-        address: '',
-        landmark: '',
-        city: '',
-        state: '',
-        pincode: '',
-        mobile: '',
-        country: '',
-        customer_id: loginUser?.id,
-    });
+      setCurrentAddress({
+          email: '',
+          firstname: '',
+          lastname: '',
+          address: '',
+          landmark: '',
+          city: '',
+          state: '',
+          pincode: '',
+          mobile: '',
+          country: '',
+          customer_id: loginUser?.id,
+      });
     setShowAddressForm(true); // Open modal
  };
 
@@ -279,16 +317,29 @@ const handleProductNavigation = (direction) => {
     } catch (error) {
       console.log("error", error)
     }
-
   }
-  console.log("addressesData", addressesData,loginUser)
+
+
+    const handleLogout = (navigate) => {
+    sessionStorage.removeItem('userData'); // Clear session storage
+    window.dispatchEvent(new Event('storage')); // Trigger storage event for cross-component state sync
+    persistor.purge(); // Clear Redux persisted state
+    navigate('/'); // Redirect to homepage or login page
+  };
+
   useEffect(()=>{
        if(loginUser?.id){
         getaddress()
        }
   },[loginUser])
-
   
+  useEffect(()=>{
+    console.log("check",selectedOrderId)
+    if(selectedOrderId>0){
+      fetchOrderDetails(selectedOrderId)
+    }
+  },[selectedOrderId])
+
 
   const renderContent = () => {
     switch (activeTab) {
@@ -410,40 +461,37 @@ const handleProductNavigation = (direction) => {
             <div className="card">
               <h2>My Orders</h2>
               {orders.map((order) => (
-              <div key={order.order_id} className="order-details">
-                <div className="order-row">
-                  <span>Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b></span>
-                  <span>Order ID: <b>{order.order_id}</b></span>
-                </div>
-                <div className="order-row">
-                  {/* <span>Total Items: <b>{totalItems}</b></span> */}
-                  <span>Payment: <b>{order.payment_method}</b></span>
-                </div>
-                <div className="order-row">
-                  <span>Fulfillment Status: <b>{order.status_type}</b></span>
-                  <span className="view-order-link-container">
-                  <a href="#" className="view-order-link" onClick={() => toggleOrderDetails('order1')}>View Order</a>
-                  </span>
-                </div>
-                <div className="order-row">
-                  <div className="button-group">
-                    <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
-                    <button className="btn reorder-btn">Re-order</button>
+                <div key={order.order_id} className="order-details">
+                  <div className="order-row">
+                    <span>Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b></span>
+                    <span>Order ID: <b>{order.order_id}</b></span>
+                  </div>
+                  <div className="order-row">
+                   <span>Total Items: <b>{order.total_items}</b></span>
+                    <span>Payment: <b>{order.payment_method}</b></span>
+                  </div>
+                  <div className="order-row">
+                    <span>Fulfillment Status: <b>{order.status_type}</b></span>
+                    <span className="view-order-link-container">
+                    <a href="#" className="view-order-link" onClick={() => toggleOrderDetails(order.order_id)}>{showOrderDetails[order.order_id] ? 'Hide Order' : 'View Order'}</a>
+                    </span>
+                  </div>
+                  <div className="order-row">
+                    <div className="button-group">
+                      <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
+                      <button className="btn reorder-btn">Re-order</button>
+                    </div>
+                  </div>
+                  <div className="order-row">
+                    <br />
+                    <div className="grand-total">
+                      <span className="grand-total-label">Grand Total:</span>
+                      <span className="grand-total-amount">Rs. 5,200.00</span>
+                    </div>
                   </div>
                 </div>
-                <div className="order-row">
-                  <br />
-                  <div className="grand-total">
-                    <span className="grand-total-label">Grand Total:</span>
-                    <span className="grand-total-amount">Rs. 5,200.00</span>
-                  </div>
-                </div>
-              </div>
                ))}
-
               {showContactForm && renderContactForm()}
-               {/* Render contact form */}
-              {/* Conditional rendering for order details */}
               {/* {showOrderDetails && (
                 <div className="order-detail-card">
                   <div className="product-info">
@@ -481,34 +529,37 @@ const handleProductNavigation = (direction) => {
                   </div>
                 </div>
               )} */}
-
-{showOrderDetails['order1'] && (
+            {selectedOrderId && showOrderDetails[selectedOrderId] && (
                   <div className="order-detail-card">
-                    <div className="product-info">
-                      <FontAwesomeIcon icon={faChevronLeft} onClick={() => handleProductNavigation('prev')} />
-                      <img src={orderProducts[currentProductIndex].image} alt="Product" className="product-image" />
-            
-                      <div className="product-name"><b>{orderProducts[currentProductIndex].name}</b></div>        
-                       <FontAwesomeIcon icon={faChevronRight} onClick={() => handleProductNavigation('next')} />
-                    </div>
-                    <div className="order-summary">
-                      <div className="order-row">
-                        <span>Sub Total:</span>
-                        <span><b>{orderProducts[currentProductIndex].price}</b></span>
-                      </div>
-                      <div className="order-row">
-                        <span>Shipping Cost:</span>
-                        <span><b>{orderProducts[currentProductIndex].shipping}</b></span>
-                      </div>
-                      <div className="order-row">
-                        <span>IGST 5.0%:</span>
-                        <span><b>{orderProducts[currentProductIndex].igst}</b></span>
-                      </div>
-                      <div className="order-row">
-                        <span>CGST 13.0%:</span>
-                        <span><b>{orderProducts[currentProductIndex].cgst}</b></span>
-                      </div>
-                    </div>
+                 {Array.isArray(orderDetails) && orderDetails.map((item, index) => (
+                        <div key={index}>
+                          <div className="product-info">
+                          <FontAwesomeIcon icon={faChevronLeft} onClick={() => handleProductNavigation('prev')} className={currentProductIndex === 0 ? 'disabled' : ''} />
+                         <img src={item.main_image_url || 'placeholder-image-url.jpg'} alt="Product" className="product-image" />
+                         <div className="product-name"><b>{item.name}</b></div>
+                          <FontAwesomeIcon icon={faChevronRight} onClick={() => handleProductNavigation('next')} className={currentProductIndex === orderDetails.length - 1 ? 'disabled' : ''} />
+                          </div>
+                          
+                          <div className="order-summary">
+                            <div className="order-row">
+                              <span>Sub Total:</span>
+                              <span><b>{item.total_price}</b></span>
+                            </div>
+                            <div className="order-row">
+                              <span>Shipping Cost:</span>
+                              <span><b>{orderProducts[currentProductIndex].shipping}</b></span>
+                            </div>
+                            <div className="order-row">
+                              <span>IGST 5.0%:</span>
+                              <span><b>{orderProducts[currentProductIndex].igst}</b></span>
+                            </div>
+                            <div className="order-row">
+                              <span>CGST 13.0%:</span>
+                              <span><b>{orderProducts[currentProductIndex].cgst}</b></span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 )}
             </div>
@@ -572,7 +623,7 @@ const handleProductNavigation = (direction) => {
           <div className="card">
             <h2>Log Out</h2>
             <p>Are you sure you want to log out?</p>
-            <button className="btn logout-btn">Log Out</button>
+            <button  className="btn logout-btn" onClick={() => handleLogout(navigate)}>Logout</button> {/* Button triggers logout */}
           </div>
         );
       default:
@@ -631,6 +682,7 @@ const handleProductNavigation = (direction) => {
     );
 
   };
+
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };

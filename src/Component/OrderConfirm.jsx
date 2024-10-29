@@ -27,6 +27,9 @@ const OrderConfirm = () => {
         }
     };
 
+    // Calculate total quantity
+  const totalQuantity = orderDetails?.order_items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+
     useEffect(() => {
         let customer_id=loginUser?.id;
         if (customer_id && orderId) {
@@ -81,28 +84,15 @@ const OrderConfirm = () => {
                                 </Col> */}
                             </Row>
 
-                            {/* Special Voucher Section */}
-                            <Row className="mt-4">
-                                <Col>
-                                    <div className="alert alert-primary text-center">
-                                        <h5>Dear Saniya,</h5>
-                                        <p>
-                                            You can select a discount voucher from our extensive list of partner brands as a special gift just for you!
-                                        </p>
-                                        <Button variant="primary">Claim Now!</Button>
-                                    </div>
-                                </Col>
-                            </Row>
-
                             {/* Discount App Section */}
-                            <Row className="mt-4 text-center">
+                            {/* <Row className="mt-4 text-center">
                                 <Col>
                                     <h5>Thank you for shopping with us!</h5>
                                     <p>Install our app for a seamless shopping experience.</p>
                                     <Button variant="outline-primary">Install DSA Fashion App</Button> <br /><br />
                                     <p>Use code <strong>APP5</strong> to get 5% off your first order.</p>
                                 </Col>
-                            </Row>
+                            </Row> */}
                             <hr />
                             {/* Order Footer */}
                             <Row className="mt-4">
@@ -139,6 +129,9 @@ const OrderConfirm = () => {
                                         rounded
                                         style={{ width: '80px', height: '110px' }}
                                     />
+                                    <div className="quantity-badge">
+                                        {item.quantity} {/* Quantity badge */}
+                                    </div>
                                     <div className="ml-3">
                                         <p className="font-weight-bold mb-0">Katan Silk Saree</p>
                                         <p className="text-muted mb-0">{`₹ ${item?.total_price}`}</p>
@@ -148,6 +141,11 @@ const OrderConfirm = () => {
                             }
                             
                             <hr />
+
+                            <div className="d-flex justify-content-between align-items-center font-weight-bold mt-3" style={{ fontSize: '1.2rem' }}>
+                <p className="mb-0">Total Quantity</p>
+                <p className="mb-0">{totalQuantity}</p>
+              </div>
                             <div className="d-flex justify-content-between">
                                 <p className="mb-0">Subtotal</p>
                                 <p className="mb-0">₹5,200.00</p>
@@ -169,6 +167,17 @@ const OrderConfirm = () => {
                     </Card>
                 </Col>
             </Row>
+            <style jsx>{`
+                    .quantity-badge {
+                    margin-top:-80px;
+                    background-color: #8d8988;
+                    color: white;
+                    border-radius: 15px;
+                    padding: 4px 8px;
+                    font-size: 10px;
+                    font-weight: bold;
+                    }
+                `}</style>
         </Container>
     );
 };

@@ -588,10 +588,10 @@ const Checkout = () => {
                                 </div>
                             </div>
 
-                            <div className="form-check mb-3">
+                            {/* <div className="form-check mb-3">
                                 <input type="checkbox" className="form-check-input" id="saveInfo" />
                                 <label className="form-check-label" htmlFor="saveInfo">Save this information for next time</label>
-                            </div>
+                            </div> */}
                             <hr />
                         </React.Fragment>
                         }

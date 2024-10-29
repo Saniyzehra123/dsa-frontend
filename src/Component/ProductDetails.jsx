@@ -58,13 +58,13 @@ const ProductDetails = () => {
     }
   };
 
-  const handlePinCodeChange = (e) => {
-    setPinCode(e.target.value);
-  };
+  // const handlePinCodeChange = (e) => {
+  //   setPinCode(e.target.value);
+  // };
 
-  const checkLocation = () => {
-    alert(`Checking location for pin code: ${pinCode}`);
-  };
+  // const checkLocation = () => {
+  //   alert(`Checking location for pin code: ${pinCode}`);
+  // };
 
   const renderStars = () => {
     const stars = [];
@@ -302,7 +302,7 @@ const addToCart = () => {
           </div> */}
 
           {/* Location Check */}
-          <div className="location-check mt-3">
+          {/* <div className="location-check mt-3">
             <div className="input-group">
               <div className="input-group-prepend">
                 <span className="input-group-text">
@@ -320,7 +320,7 @@ const addToCart = () => {
                 Check
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Action Buttons */}
           <div className="action-buttons mt-12">
