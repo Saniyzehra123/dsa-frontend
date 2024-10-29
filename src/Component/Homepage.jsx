@@ -1,16 +1,125 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Homepage.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetSarees } from '../Redux/Sarees/sareeAction';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Homepage() {
-  // Define the state to track which hearts are red
-  const [liked, setLiked] = useState([false, false, false, false, false, false]); // Adjust number of products if needed
+  const dispatch = useDispatch();
+  const sarees = useSelector((store) => store.saree?.sarees);
+  const [loginUser, setLoginUser] = useState();
+  const [sortOrder, setSortOrder] = useState('low');
 
-  // Function to toggle hearts
-  const toggleHeart = (index) => {
-    const newLiked = [...liked];
-    newLiked[index] = !newLiked[index];
-    setLiked(newLiked);
+
+  // Wishlist state will be initialized from localStorage
+  const [liked, setLiked] = useState(() => {
+    const savedWishlist = localStorage.getItem('wishlist');
+    return savedWishlist ? JSON.parse(savedWishlist) : [];
+  });
+
+  const getLoginUser = () => {
+    const data = JSON.parse(sessionStorage.getItem('userData'));
+    setLoginUser(data);
   };
+
+  useEffect(() => {
+    dispatch(GetSarees()); // Fetch sarees data on component mount
+    // getLoginUser();
+  }, [dispatch]);
+
+  // Sync with the Redux state when the sarees data is updated
+  useEffect(() => {
+    if (sarees?.data?.length) {
+      setLiked((prevLiked) => {
+        const savedWishlist = localStorage.getItem('wishlist');
+        return savedWishlist ? JSON.parse(savedWishlist) : prevLiked;
+      });
+    }
+  }, [sarees]);
+
+  // Add or remove items from wishlist
+  const toggleHeart = (item) => {
+    const itemIndex = liked.findIndex((likedItem) => likedItem.id === item.item_id);
+    let updatedLiked;
+    if (itemIndex !== -1) {
+      // Item is already in the wishlist, remove it
+      updatedLiked = liked.filter((likedItem) => likedItem.id !== item.item_id);
+      toast.warn('Product removed from wishlist!', {
+        position: 'top-right',
+        autoClose: 2000,
+      });
+    }else {
+      // Add item to wishlist
+      updatedLiked = [...liked, { 
+        id: item.item_id,
+      title: item.title,
+      price: item.price,
+      color: item.color_name,
+      image: item.main_image_url,
+       }];
+       toast.success(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={item.main_image_url}
+            alt={item.title}
+            style={{ width: '60px', height: '60px', marginRight: '10px' }}
+          />
+          <div>
+            <strong>{item.title}</strong> added to wishlist!
+          </div>
+        </div>,
+        {
+          position: 'top-right',
+          autoClose: 2000,
+        }
+      );
+    }
+
+    setLiked(updatedLiked);
+    localStorage.setItem('wishlist', JSON.stringify(updatedLiked)); // Update localStorage
+  };
+
+  // Updated addToCart function
+  const addToCart = (saree) => {
+    const cartList = {
+      id: saree.item_id,
+      title: saree.title,
+      price: saree.price,
+      quantity: 1, // Default quantity can be set to 1
+      main_image_url: saree.main_image_url,
+      customer_id: loginUser?.id || ''
+    };
+
+    let updatedCartList = JSON.parse(localStorage.getItem('itemlist')) || [];
+    const existingItemIndex = updatedCartList.findIndex((cartItem) => cartItem.id === cartList.id);
+
+    if (existingItemIndex !== -1) {
+      // If the product is already in the cart, show a toast notification
+      toast.warn('This product is already in your cart!', {
+        position: 'top-right', // Use 'top-right' directly instead of toast.POSITION.TOP_RIGHT
+        autoClose: 2000,
+      });
+    } else {
+      // Add the product to the cart
+      updatedCartList.push({ ...cartList, count: 1 });
+      localStorage.setItem('itemlist', JSON.stringify(updatedCartList));
+      window.dispatchEvent(new Event('storage'));
+      // Show a success toast notification
+      toast.success('Product added to cart!', {
+        position: 'top-right', // Use 'top-right' directly
+        autoClose: 2000,
+      });
+    }
+  };
+
+
+  // Check if the item is in the wishlist
+  const isLiked = (item) => liked.some((likedItem) => likedItem.id === item.item_id);
+
+  // Filter and sort products based on selected criteria
+  const filteredProducts = sarees?.data || [];
+
+
   return (
     <div>
       {/* Carousel Start  */}
@@ -75,563 +184,67 @@ export default function Homepage() {
 
       <center>
 
-        <div className="container mt-8">
+      <div className="container mt-8">
           <div className="row">
             <center>
               <h1>OUR NEW COLLECTION</h1>
             </center>
-            <div className="col-md-3">
-              <div class="card" >
-                <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
+            {sarees?.data?.slice(0, 8).map((saree, index) => (
+          <div className="col-md-3" key={saree.item_id}>
+            <div className="card">
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <a href="/product-details" className="image-container">
+                  <img
+                    src={saree.main_image_url}
+                    alt={saree.title}
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                  />
+                </a>
+                <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
+                  <a onClick={() => toggleHeart(saree)}>
+                    {liked.some(likedItem => likedItem.id === saree.item_id) ? (
+                      <svg className="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.88 107.39">
+                        <defs>
+                          <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
+                        </defs>
+                        <path className="cls-1" d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z" />
+                      </svg>
+                    ) : (
+                      <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd">
+                        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
+                      </svg>
+                    )}
                   </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[0] && (
-                      <a onClick={() => toggleHeart(0)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[0] && (
-                      <a onClick={() => toggleHeart(0)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-
-
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work</h5>
-                  <p>(Pink and Green, Thin Printed Border)</p>
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹3990</s>&nbsp;<b className='text-amber-400'>(14% Off)</b></p>
-                    <a href="#"><p class="rating">4.7 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
                 </div>
               </div>
-            </div>
-            <div className="col-md-3">
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_02/DSA_02.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[1] && (
-                      <a onClick={() => toggleHeart(1)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[1] && (
-                      <a onClick={() => toggleHeart(1)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div class="card-body">
-                  <h5 class="card-title">Banarasi Cottan  Silk Saree</h5>
-                  <p>(Dark Green With Orage Golden Border)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3400</b> &nbsp;&nbsp;<s>₹3808</s>&nbsp;<b className='text-amber-400'>(12% Off)</b></p>
-                    <a href="#"><p class="rating">4.5 &nbsp;<i class="fa fa-star"></i></p></a></li>
+              <div className="card-body text-center">
+                <h5 className="card-title">{saree.title}</h5>
+                <p className='text-center'>({saree.color_name})</p>
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item">
+                  <p className="card-text text-nowrap">
+                          <b className="text-danger">₹{saree.price}</b>&nbsp;
+                          <s className="text-muted">₹{(saree.price * 1.14).toFixed(2)}</s>&nbsp;
+                          <span className="text-success">(14% Off)</span>
+                  </p>
+                    <a href="#"><p className="rating"> 4.4 &nbsp;<i className="fa fa-star"></i></p></a>
+                  </li>
                 </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_03/DSA_03.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[2] && (
-                      <a onClick={() => toggleHeart(2)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[2] && (
-                      <a onClick={() => toggleHeart(2)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work Material Composition</h5>
-                  <p>(Reddish Orange and Green)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹3815</s>&nbsp;<b className='text-amber-400'>(9% Off)</b></p>
-                    <a href="#"><p class="rating">4.7 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div>
-
-            </div>
-            <div className="col-md-3">
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_04/DSA_04.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[3] && (
-                      <a onClick={() => toggleHeart(3)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[3] && (
-                      <a onClick={() => toggleHeart(3)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work Material Composition</h5>
-                  <p>(Mustard Yellow and Green)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹4095</s>&nbsp;<b className='text-amber-400'>(17% Off)</b></p>
-                    <a href="#"><p class="rating">4.8 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
+                <div className="card-body">
+                   <button className="button-28" onClick={()=>addToCart(saree)}>Add To Cart</button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-
-
-
-        {/* Product Card second Start */}
-        <div className="container mt-7">
-          <div className="row">
-            <div className="col-md-3">
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_05/DSA_05.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[4] && (
-                      <a onClick={() => toggleHeart(4)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[4] && (
-                      <a onClick={() => toggleHeart(4)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work</h5>
-                  <p>(Yello, Hand-work)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹3990</s>&nbsp;<b className='text-amber-400'>(14% Off)</b></p>
-                    <a href="#"><p class="rating">4.8 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div class="card " >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_06/DSA_06.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[5] && (
-                      <a onClick={() => toggleHeart(5)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[5] && (
-                      <a onClick={() => toggleHeart(5)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Banarasi Cottan <br /> Silk Saree</h5>
-                  <p>(Rani Pink with Purple Gold Work)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3400</b> &nbsp;&nbsp;<s>₹3808</s>&nbsp;<b className='text-amber-400'>(12% Off)</b></p>
-                    <a href="#"><p class="rating">4.9 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div></div>
-            <div className="col-md-3">
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_07/DSA_07.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[6] && (
-                      <a onClick={() => toggleHeart(6)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[6] && (
-                      <a onClick={() => toggleHeart(6)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work </h5>
-                  <p>(Blue)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹3815</s>&nbsp;<b className='text-amber-400'>(9% Off)</b></p>
-                    <a href="#"><p class="rating">4.5 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-
-              <div class="card" >
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                  <a href="/product-details" className="image-container">
-                    <img
-                      src="https://dsafashionwear.com/images/DSA_08/DSA_08.jpg"
-                      alt="..."
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  </a>
-
-                  {/* Heart icon container */}
-                  <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
-                    {/* Blank Heart - shown if not liked */}
-                    {!liked[0] && (
-                      <a onClick={() => toggleHeart(0)}>
-                        <svg
-                          width="24"
-                          height="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                        >
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181" />
-                        </svg>
-                      </a>
-                    )}
-
-                    {/* Red Heart - shown if liked */}
-                    {liked[0] && (
-                      <a onClick={() => toggleHeart(7)}>
-                        <svg
-                          className="w-7"
-                          id="Layer_1"
-                          data-name="Layer 1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 122.88 107.39"
-                        >
-                          <defs>
-                            <style>{`.cls-1{fill:#ed1b24;fill-rule:evenodd;}`}</style>
-                          </defs>
-                          <path
-                            className="cls-1"
-                            d="M60.83,17.18c8-8.35,13.62-15.57,26-17C110-2.46,131.27,21.26,119.57,44.61c-3.33,6.65-10.11,14.56-17.61,22.32-8.23,8.52-17.34,16.87-23.72,23.2l-17.4,17.26L46.46,93.55C29.16,76.89,1,55.92,0,29.94-.63,11.74,13.73.08,30.25.29c14.76.2,21,7.54,30.58,16.89Z"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Katan Silk With Silver Zari Work Material Composition</h5>
-                  <p>(Firozi and Rani Pink)</p>
-
-                </div>
-                <ul class="list-group list-group-flush">
-
-                  <li class="list-group-item"><p class="card-text"><b>₹3500</b> &nbsp;&nbsp;<s>₹4095</s>&nbsp;<b className='text-amber-400'>(17% Off)</b></p>
-                    <a href="#"><p class="rating">4.7 &nbsp;<i class="fa fa-star"></i></p></a></li>
-                </ul>
-                <div class="card-body">
-
-                  <button class="button-28" role="button">Add To Cart</button>
-                </div>
-              </div>
-            </div>
+        ))}
           </div>
         </div>
-
-
-
 
         <div className="container mt-5">
           <div className="row">
             <div className="col-md-4"></div>
             <div className="col-md-4">
-              <a href="/newarrivals"><button class="button-28" role="button">VIEW MORE</button></a></div>
+              <a href="/saree"><button class="button-28" role="button">VIEW MORE</button></a></div>
             <div className="col-md-4"></div>
 
           </div>
@@ -727,7 +340,18 @@ export default function Homepage() {
 
       </div>
       {/* Features 2.0 End */}
-
+      <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
     </div>
   )
 }

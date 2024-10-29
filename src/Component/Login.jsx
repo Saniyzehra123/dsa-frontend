@@ -45,7 +45,7 @@ const Login = () => {
       sessionStorage.setItem('userData', JSON.stringify(loginData));
       toast.success('Login successful!', { autoClose: 3000 });
       setTimeout(() => {
-        navigate(-1);
+        navigate("/");
       }, 3000);
       setLoginFormData({ email: '', password: '' });
     }
@@ -56,7 +56,7 @@ const Login = () => {
 
   return (
     <div>
-      <div className="container mt-36">
+      <div className="container  mt-48">
         <div className="row">
           <div className="col-md-4"></div>
           <div className="col-md-4"><h1>Login Here</h1></div><hr />

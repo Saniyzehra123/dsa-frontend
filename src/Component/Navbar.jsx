@@ -1,6 +1,3 @@
- 
-
-
 import React, { useState, useEffect } from 'react';
 import './Navbar.css'; // Ensure this file is in the same directory or adjust the path
 import { useSelector } from 'react-redux';
@@ -119,7 +116,7 @@ export default function Navbar() {
               <li>
                 {loginUser ? <a className="dropdown-item text-xs" onClick={()=>navigate('/user')}>Profile</a> : ''}
               </li>
-              <li><a className="dropdown-item text-xs" href="/comming-soon">My Orders</a></li>
+              <li><a className="dropdown-item text-xs" href="/track-order">Track Orders</a></li>
             </ul>
           </div>
           <a href="/wishlist"><FaRegHeart /></a>

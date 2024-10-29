@@ -37,7 +37,7 @@ const ForgetPassword = () => {
 
     return (
         <div>
-            <div className="container mt-36">
+            <div className="container mt-48">
                 <div className="row">
                     <div className="col-md-4"></div>
                     <div className="col-md-4"><h1>Forgot Password</h1></div><hr />

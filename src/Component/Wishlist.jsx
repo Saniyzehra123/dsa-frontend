@@ -211,7 +211,7 @@ const Wishlist = () => {
   
 
   return (
-    <div className="container my-4">
+    <div className="container my-12">
       <div className="row">
         <div className="container">
           <div className="row">

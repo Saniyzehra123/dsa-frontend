@@ -20,6 +20,16 @@ export default function Saree() {
     return savedWishlist ? JSON.parse(savedWishlist) : [];
   });
 
+
+    // State to manage dropdown visibility
+    const [dropdowns, setDropdowns] = useState({
+      availability: false,
+      category: false,
+      occasion: false,
+      weaveType: false,
+    });
+    
+    
   const getLoginUser = () => {
     const data = JSON.parse(sessionStorage.getItem('userData'));
     setLoginUser(data);
@@ -55,7 +65,7 @@ export default function Saree() {
       // Add item to wishlist
       updatedLiked = [...liked, { 
         id: item.item_id,
-      saree_name: item.saree_name,
+      title: item.title,
       price: item.price,
       color: item.color_name,
       image: item.main_image_url,
@@ -64,11 +74,11 @@ export default function Saree() {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
             src={item.main_image_url}
-            alt={item.saree_name}
+            alt={item.title}
             style={{ width: '60px', height: '60px', marginRight: '10px' }}
           />
           <div>
-            <strong>{item.saree_name}</strong> added to wishlist!
+            <strong>{item.title}</strong> added to wishlist!
           </div>
         </div>,
         {
@@ -86,7 +96,7 @@ export default function Saree() {
   const addToCart = (saree) => {
     const cartList = {
       id: saree.item_id,
-      saree_name: saree.saree_name,
+      title: saree.title,
       price: saree.price,
       quantity: 1, // Default quantity can be set to 1
       main_image_url: saree.main_image_url,
@@ -122,7 +132,13 @@ export default function Saree() {
   // Filter and sort products based on selected criteria
   const filteredProducts = sarees?.data || [];
 
-
+  // Toggle dropdown visibility
+  const toggleDropdown = (type) => {
+    setDropdowns((prev) => ({
+      ...prev,
+      [type]: !prev[type]
+    }));
+  };
   
   return (
     <div className="container mt-36">
@@ -141,10 +157,13 @@ export default function Saree() {
         <div className="col-md-2">
           <h4>Filter</h4>
           <hr />
+          {/* Availability Filter */}
           <div className="filter-group">
             <label>Availability:</label>
-            <div className="dropdown">
-              <button className="dropbtn">Select Availability</button>
+            <button className="dropbtn" onClick={() => toggleDropdown('availability')}>
+              {dropdowns.availability ? 'Hide Options' : 'Select Availability'}
+            </button>
+            {dropdowns.availability && (
               <div className="dropdown-content">
                 <label>
                   All <input type="checkbox" onChange={() => ('All')} />
@@ -156,13 +175,16 @@ export default function Saree() {
                   Out Of Stock <input type="checkbox" onChange={() => ('Out Of Stock')} />
                 </label>
               </div>
-            </div>
+            )}
           </div>
 
+          {/* Category Filter */}
           <div className="filter-group">
             <label>Category:</label>
-            <div className="dropdown">
-              <button className="dropbtn">Select Category</button>
+            <button className="dropbtn" onClick={() => toggleDropdown('category')}>
+              {dropdowns.category ? 'Hide Options' : 'Select Category'}
+            </button>
+            {dropdowns.category && (
               <div className="dropdown-content">
                 <label>
                   All <input type="checkbox" onChange={() => ('All')} />
@@ -177,64 +199,59 @@ export default function Saree() {
                   Silk  <input type="checkbox" onChange={() => ('Silk')} />
                 </label>
               </div>
-            </div>
+            )}
           </div>
 
+          {/* Occasion Filter */}
           <div className="filter-group">
             <label>Occasion:</label>
-            <div className="dropdown">
-              <button className="dropbtn">Select Occasion</button>
+            <button className="dropbtn" onClick={() => toggleDropdown('occasion')}>
+              {dropdowns.occasion ? 'Hide Options' : 'Select Occasion'}
+            </button>
+            {dropdowns.occasion && (
               <div className="dropdown-content">
                 <label>
                   All  <input type="checkbox" onChange={() => ('All')} />
-
                 </label>
                 <label>
                   Festivals <input type="checkbox" onChange={() => ('Festivals')} />
-
                 </label>
                 <label>
                   Wedding  <input type="checkbox" onChange={() => ('Wedding')} />
-
                 </label>
                 <label>
                   Party Wear  <input type="checkbox" onChange={() => ('Party Wear')} />
-
                 </label>
               </div>
-            </div>
+            )}
           </div>
 
+          {/* Weave Type Filter */}
           <div className="filter-group">
             <label>Weave Type:</label>
-            <div className="dropdown">
-              <button className="dropbtn">Select Weave Type</button>
+            <button className="dropbtn" onClick={() => toggleDropdown('weaveType')}>
+              {dropdowns.weaveType ? 'Hide Options' : 'Select Weave Type'}
+            </button>
+            {dropdowns.weaveType && (
               <div className="dropdown-content">
                 <label>
                   All <input type="checkbox" onChange={() => ('All')} />
-
                 </label>
                 <label>
                   Satin  <input type="checkbox" onChange={() => ('Satin')} />
-
                 </label>
                 <label> Zari - Golden & Copper  <input type="checkbox" onChange={() => ('Zari - Golden & Copper')} />
-
                 </label>
                 <label>
                   Pathani  <input type="checkbox" onChange={() => ('Pathani')} />
-
                 </label>
                 <label>
                   Banarasi  <input type="checkbox" onChange={() => ('Banarasi')} />
-
                 </label>
               </div>
-            </div>
+            )}
           </div>
-
-        </div>
-
+          </div>
 
         {/* Right Side Product Cards */}
         <div className="col-md-10">
@@ -260,7 +277,7 @@ export default function Saree() {
                       <Link to={`/product-details/${saree.item_id}`} className="image-container">
                         <img
                           src={saree.main_image_url || placeholder }
-                          alt={saree.saree_name}
+                          alt={saree.title}
                           style={{ width: '100%', height: 'auto', display: 'block' }}
                         />
                       </Link>
@@ -272,9 +289,9 @@ export default function Saree() {
                       </div>
                     </div>
 
-                    <div className="card-body">
-                      <h5 className="card-title">{saree.saree_name}</h5>
-                      <p className="card-text">({saree.color_name}, {saree.fabric_type_name})</p>
+                    <div className="card-body text-center">
+                      <h5 className="card-title">{saree.title}</h5>
+                      <p className="card-text">{saree.color_name}</p>
                     </div>
 
                     <ul className="list-group list-group-flush">
@@ -285,7 +302,7 @@ export default function Saree() {
                           <span className="text-success">(14% Off)</span>
                         </p>
                         <a href="#">
-                          <p className="rating">{saree.rating} &nbsp;<i className="fa fa-star"></i></p>
+                          <p className="rating">4.4 &nbsp;<i className="fa fa-star"></i></p>
                         </a>
                       </li>
                     </ul>

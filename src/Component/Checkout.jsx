@@ -752,11 +752,34 @@ const Checkout = () => {
                 <div className="col-md-4">
                     <h4>Order Summary</h4>
                     {products.map(product => (
-                        <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row' }}>
-                            <img src={product.main_image_url} className="card-img-left" alt="Product Image" style={{ width: '100px', height: 'auto' }} />
+        <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ position: 'relative', width: '80px', height: '100px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
+                <img 
+                    src={product.main_image_url} 
+                    alt="Product Image" 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                />
+                <div style={{
+                    position: 'absolute',
+                    top: '1px',  // adjust positioning if necessary
+                    right: '1px',  // adjust positioning if necessary
+                    backgroundColor: '#333',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px'
+                }}>
+                    {product.quantity}
+                </div>
+            </div>
                             <div className="card-body">
-                                <h6 className="card-title">{product.saree_name}</h6>
-                                <p className="card-text">₹{product.price} x {product.quantity}</p>
+                                <h6 className="card-title">{product.title}</h6>
+                                <p className="card-text">₹{product.price}</p>
+                           
                             </div>
                         </div>
                     ))}

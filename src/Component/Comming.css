@@ -1,101 +1,107 @@
-.sec{
-    border:1px solid black;
-    padding:5rem;
-    border-radius:25px;
+/* General Styles */
+.coming-soon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 20px; /* Add padding for smaller screens */
+}
+
+.sec {
+    border: 1px solid #ddd; /* Use a lighter border for a professional look */
+    padding: 3rem; /* Adjusted padding */
+    border-radius: 15px; /* Slightly less rounded for a modern feel */
     background: linear-gradient(to right, #ff512f, #dd2476);
-    margin-top:auto;
-
-
-    }
-   .coming-soon-container {
-       display: flex;
-       flex-direction: column;
-       justify-content: center;
-       align-items: center;
-       height: 100vh;
-       background-color: #f9f9f9;
-       text-align: center;
-     
-   }
-
-   .coming-soon-title {
-       font-size: 3rem;
-       color: #333;
-   }
-
-   .coming-soon-message {
-       font-size: 1.5rem;
-       color: #666;
-       margin: 20px 0;
-   }
-
-   .brand-name {
-       font-weight: bold;
-       color: #2c3e50;
-   }
-
-   .coming-soon-submessage {
-       font-size: 1.2rem;
-       color: #666;
-   }
-
-   .timer {
-       font-size: 1.2rem;
-       color: #e74c3c;
-       margin: 20px 0;
-   }
-
-   .stay-tuned {
-       font-size: 1rem;
-       color: #666;
-   }
-         .button-2 {
-appearance: none;
-background-color: transparent;
-border: 2px solid #fff;
-border-radius: 15px;
-box-sizing: border-box;
-color: #fff;
-cursor: pointer;
-display: inline-block;
-font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-font-size: 16px;
-font-weight: 600;
-line-height: normal;
-margin: 0;
-min-height: 60px;
-min-width: 0;
-outline: none;
-padding: 16px 24px;
-text-align: center;
-text-decoration: none;
-transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-user-select: none;
--webkit-user-select: none;
-touch-action: manipulation;
-width: 60%;
-will-change: transform;
+    margin: 20px auto; /* Space around the card */
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Set a max width for larger screens */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: add shadow for depth */
 }
 
-.button-2:disabled {
-pointer-events: none;
+/* Text Styles */
+.coming-soon-title {
+    font-size: 2.5rem; /* Title size */
+    color: #fff; /* White color for contrast */
+    margin-bottom: 1rem; /* Space below the title */
 }
 
+.coming-soon-message,
+.coming-soon-submessage,
+.timer,
+.stay-tuned {
+    font-size: 1rem; /* Default font size */
+    color: #fff; /* White text for visibility */
+    margin: 10px 0; /* Space between paragraphs */
+}
+
+.brand-name {
+    font-weight: bold;
+    color: #fff; /* White color for brand name */
+}
+
+/* Button Styles */
+.button-2 {
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid #fff; /* White border */
+    border-radius: 15px;
+    color: #fff; /* White text */
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1rem; /* Responsive font size */
+    padding: 12px 20px; /* Adjusted padding */
+    width: 100%; /* Full width button */
+    max-width: 250px; /* Limit max width */
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+}
+
+/* Hover and Active States */
 .button-2:hover {
-color: #fff;
-background-color: #1A1A1A;
-box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    transform: translateY(-2px);
 }
 
 .button-2:active {
-box-shadow: none;
-transform: translateY(0);
+    box-shadow: none;
+    transform: translateY(0);
 }
-   @media (max-width: 768px){
-        .p11
-        {
-          margin-top:250px;
-       
-        }
-   }
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .coming-soon-title {
+        font-size: 2rem; /* Smaller title for mobile */
+    }
+
+    .coming-soon-message,
+    .coming-soon-submessage,
+    .timer,
+    .stay-tuned {
+        font-size: 0.9rem; /* Smaller text for mobile */
+    }
+
+    .sec {
+        padding: 2rem; /* Reduce padding for smaller screens */
+        margin: 10px 0; /* Reduce margin to minimize space */
+    }
+}
+
+@media (max-width: 480px) {
+    .coming-soon-title {
+        font-size: 1.5rem; /* Even smaller title for very small screens */
+    }
+
+    .coming-soon-message,
+    .coming-soon-submessage,
+    .timer,
+    .stay-tuned {
+        font-size: 0.8rem; /* Even smaller text for very small screens */
+    }
+
+    .button-2 {
+        font-size: 0.9rem; /* Smaller button text */
+    }
+}
