@@ -210,10 +210,12 @@ const Checkout = () => {
     }
 
     const addShippingAddress = async () => {
+
         try {
             const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
             const savedData = await res.data?.data;
             setAddAddressId(savedData.id); // Set saved address ID
+            console.log("address===>", savedData)
             if(useDifferentAddress){
                 setBillingAddressId(savedData.id);
             }
@@ -221,6 +223,29 @@ const Checkout = () => {
             console.error("Error adding shipping address:", error);
         }
     };
+
+    // const handleSaveAddress= async(e)=>{
+    //     e.preventDefault()
+    //     try {
+    //         let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
+    //             res = await res.data;
+    //     } catch (error) {
+    //         alert(`Error in adding address:${error}`)
+    //     }
+    // }
+    const handleSaveAddress= async(e)=>{
+        e.preventDefault()
+        try {
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
+                res = await res.data;
+                console.log("data", res)
+                if(res.data){
+                    getCusAddressList(loginUser.id)
+                }
+        } catch (error) {
+            alert(`Error in adding address:${error}`)
+        }
+    }
 
     const addBillingAddress = async (data) => {
         try {
@@ -267,6 +292,7 @@ const Checkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        console.log("chaeck checkout",addressList.length>0 && addAddressId==0 || paymentOption===0, addressList, addAddressId,paymentOption)
         try {
             if(addressList.length>0 && addAddressId==0 || paymentOption===0){
                alert('Please Choose Your Address or Paymet methods')
@@ -274,13 +300,13 @@ const Checkout = () => {
             } else if(addAddressId > 0 ) {
                 createOrder();
             }
-            else{
-                if (useDifferentAddress) {
-                    addBillingAddress(billingAddress);
-                } else {
-                    addShippingAddress();
-                }
-            }
+            // else{
+            //     if (useDifferentAddress) {
+            //         addBillingAddress(billingAddress);
+            //     } else {
+            //         addShippingAddress();
+            //     }
+            // }
         } catch (error) {
             console.error("Error submitting address:", error);
         }
@@ -292,12 +318,15 @@ const Checkout = () => {
             billing_id: billingAddressId,
             customer_id: loginUser?.id
         }
+        console.log("create order", dataObj, process.env.REACT_APP_BASE_URL)
         try {
             let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/order/add`, dataObj)
             let data = await res.data?.data;
+            console.log("order",res, data)
             setOrderId(data?.orderId)
             createOrderItem(data?.orderId)
         } catch (error) {
+            console.log("error in create order", error)
             alert("Something went wrong");
         }
     }
@@ -314,6 +343,7 @@ const Checkout = () => {
                 },
               })
             res = await res?.data
+            console.log("order-created", res);
             if(res.message){
                 createPayment(orderId)
             }
@@ -328,12 +358,13 @@ const Checkout = () => {
             order_id:orderId, 
             payment_method_id:paymentOption,
             amount:totalPrice,
-            payment_status_id:2,
+            payment_status_id:1,
             currency:'Rs'
         }
         if(!paymentOption){
             alert("Please select paymet Option")
         }
+        console.log('payments',obj )
         try {
             let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/payment`, obj)
             res =await res.data;
@@ -347,8 +378,10 @@ const Checkout = () => {
                 navigate(`/order-confirm/${orderId}`)
                 localStorage.removeItem('itemlist')
             }
+            setLoading(false)
         } catch (error) {
-            console.log("error in creating order")
+            alert(`error in creating`, error)
+            console.log("error in creating order",)
         }
     }
 
@@ -387,15 +420,15 @@ const Checkout = () => {
             <h2 className="text-center">Checkout</h2>
             <div className="row">
                 <div className="col-md-8">
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={addressList.length>0 ? handleSubmit: handleSaveAddress}>
                         <h4>Contact Information</h4>
                         <h4 onClick={() => setShowAccount(!showAccount)} style={{ cursor: 'pointer', fontSize: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             Account
                             <i className={`fas ${showAccount ? 'fa-chevron-up' : 'fa-chevron-down'}`} style={{ marginLeft: '8px' }}></i>
                         </h4>
-                        {showAccount && (
+                        {/* {showAccount && (
                             <a href="#" className="text-primary">Log out</a>
-                        )}
+                        )} */}
                         <p style={{ fontSize: '0.9rem' }}>{addressData?.email}</p>
                         <hr />
                         {
@@ -408,185 +441,191 @@ const Checkout = () => {
                                     ></i>
                                 </h4>
                                 {showShipping && (
-                            <div>
-                            {addressList.map((address) => (
-                                <div key={address.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                    
-                                    {/* Radio button to select address */}
-                                    <input
-                                        type="radio"
-                                        id={`address-${address.id}`}
-                                        name="selectedAddress"
-                                        value={address.id}
-                                        // checked={selectedAddressId === address.id}
-                                        onChange={() => handleAddressSelection(address.id)}
-                                        style={{ marginRight: '10px' }}
-                                    />
+                                    <div>
+                                        {addressList.map((address) => (
+                                            <div key={address.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                                
+                                                {/* Radio button to select address */}
+                                                <input
+                                                    type="radio"
+                                                    id={`address-${address.id}`}
+                                                    name="selectedAddress"
+                                                    value={address.id}
+                                                    // checked={selectedAddressId === address.id}
+                                                    onChange={() => handleAddressSelection(address.id)}
+                                                    style={{ marginRight: '10px' }}
+                                                />
 
-                                    <label htmlFor={`address-${address.id}`} style={{ fontSize: '0.9rem', flex: 1 }}>
-                                        {`${address.firstname} ${address.lastname}, ${address.address}, ${address.city}, ${address.state} - ${address.pincode}, Phone: ${address.mobile}`}
-                                    </label>
+                                                <label htmlFor={`address-${address.id}`} style={{ fontSize: '0.9rem', flex: 1 }}>
+                                                    {`${address.firstname} ${address.lastname}, ${address.address}, ${address.city}, ${address.state} - ${address.pincode}, Phone: ${address.mobile}`}
+                                                </label>
 
-                                    {/* Three dots icon with dropdown functionality */}
-                                    <div style={{ position: 'relative' }}>
-                                        <BsThreeDotsVertical
-                                            size={20}
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => toggleDropdown(address.id)}
-                                        />
+                                                {/* Three dots icon with dropdown functionality */}
+                                                <div style={{ position: 'relative' }}>
+                                                    <BsThreeDotsVertical
+                                                        size={20}
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => toggleDropdown(address.id)}
+                                                    />
 
-                                        {/* Show dropdown if this address's dropdown is open */}
-                                        {dropdownOpen === address.id && (
-                                            <div
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '20px',
-                                                    right: '0',
-                                                    background: 'white',
-                                                    border: '1px solid #ddd',
-                                                    borderRadius: '4px',
-                                                    zIndex: 10,
-                                                }}
-                                            >
-                                                <div
-                                                    onClick={() => {
-                                                        setModalAddress(address); // Set the current address for editing
-                                                        setShowModal(true); // Open modal
-                                                    }}
-                                                    style={{
-                                                        padding: '8px',
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
-                                                    <FiEdit style={{ marginRight: '8px' }} /> Edit
-                                                </div>
-                                                <div
-                                                    onClick={() => handleDeleteAddress(address.id)}
-                                                    style={{
-                                                        padding: '8px',
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
-                                                    <RiDeleteBin6Line style={{ marginRight: '8px' }} /> Delete
+                                                    {/* Show dropdown if this address's dropdown is open */}
+                                                    {dropdownOpen === address.id && (
+                                                        <div
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '20px',
+                                                                right: '0',
+                                                                background: 'white',
+                                                                border: '1px solid #ddd',
+                                                                borderRadius: '4px',
+                                                                zIndex: 10,
+                                                            }}
+                                                        >
+                                                            <div
+                                                                onClick={() => {
+                                                                    setModalAddress(address); // Set the current address for editing
+                                                                    setShowModal(true); // Open modal
+                                                                }}
+                                                                style={{
+                                                                    padding: '8px',
+                                                                    cursor: 'pointer',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                }}
+                                                            >
+                                                                <FiEdit style={{ marginRight: '8px' }} /> Edit
+                                                            </div>
+                                                            <div
+                                                                onClick={() => handleDeleteAddress(address.id)}
+                                                                style={{
+                                                                    padding: '8px',
+                                                                    cursor: 'pointer',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                }}
+                                                            >
+                                                                <RiDeleteBin6Line style={{ marginRight: '8px' }} /> Delete
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        )}
+                                        ))}
+                                        <a
+                                            href="#"
+                                            onClick={handleUseDifferentAddress}
+                                            style={{ color: 'blue', textDecoration: 'none', cursor: 'pointer' }}
+                                        >
+                                            + Use a Different Address
+                                        </a>
+                                    </div>
+                                 )}
+                                <hr />
+                                </React.Fragment> : <React.Fragment>
+                                <h4>Delivery Information</h4>
+                                <div className="mb-3 row">
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="firstname"
+                                                name="firstname"
+                                                value={formData?.firstname}
+                                                onChange={handleChange}
+                                                placeholder="First Name" required />
+                                            <label htmlFor="firstname">First Name</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="lastname"
+                                                name="lastname"
+                                                value={formData?.lastname}
+                                                onChange={handleChange}
+                                                placeholder="Last Name" required />
+                                            <label htmlFor="lastname">Last Name</label>
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
-                                <a
-                                    href="#"
-                                    onClick={handleUseDifferentAddress}
-                                    style={{ color: 'blue', textDecoration: 'none', cursor: 'pointer' }}
-                                >
-                                    + Use a Different Address
-                                </a>
-                            </div>
-                            )}
-                            <hr />
-                            </React.Fragment> : <React.Fragment>
-                            <h4>Delivery Information</h4>
-                            <div className="mb-3 row">
-                                <div className="col-md-6">
+
+                                <div className="mb-3 row">
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="city"
+                                                name="city"
+                                                value={formData?.city}
+                                                onChange={handleChange}
+                                                placeholder="City" required />
+                                            <label htmlFor="city">City</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="pincode"
+                                                name="pincode"
+                                                value={formData?.pincode}
+                                                onChange={handleChange}
+                                                placeholder="Pin Code" required />
+                                            <label htmlFor="pincode">Pin Code</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='mb-3'>
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="country"
+                                                name="country"
+                                                value={formData?.country}
+                                                onChange={handleChange}
+                                                placeholder="Country" required />
+                                            <label htmlFor="country">Country</label>
+                                        </div>
+                                </div>
+                                <div className="mb-3">
                                     <div className="form-floating">
-                                        <input type="text" className="form-control" id="firstname"
-                                            name="firstname"
-                                            value={formData?.firstname}
+                                        <input type="text" className="form-control" id="address"
+                                            name="address"
+                                            value={formData?.address}
                                             onChange={handleChange}
-                                            placeholder="First Name" required />
-                                        <label htmlFor="firstname">First Name</label>
+                                            placeholder="Address" required />
+                                        <label htmlFor="address">Address</label>
                                     </div>
                                 </div>
-                                <div className="col-md-6">
+
+                                <div className="mb-3">
                                     <div className="form-floating">
-                                        <input type="text" className="form-control" id="lastname"
-                                            name="lastname"
-                                            value={formData?.lastname}
+                                        <input type="text" className="form-control" id="landmark"
+                                            name="landmark"
+                                            value={formData?.landmark}
                                             onChange={handleChange}
-                                            placeholder="Last Name" required />
-                                        <label htmlFor="lastname">Last Name</label>
+                                            placeholder="Nearby Landmark" />
+                                        <label htmlFor="landmark">Nearby Landmark</label>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="mb-3">
-                                <div className="form-floating">
-                                    <input type="text" className="form-control" id="address"
-                                        name="address"
-                                        value={formData?.address}
-                                        onChange={handleChange}
-                                        placeholder="Address" required />
-                                    <label htmlFor="address">Address</label>
-                                </div>
-                            </div>
-
-                            <div className="mb-3">
-                                <div className="form-floating">
-                                    <input type="text" className="form-control" id="landmark"
-                                        name="landmark"
-                                        value={formData?.landmark}
-                                        onChange={handleChange}
-                                        placeholder="Nearby Landmark" />
-                                    <label htmlFor="landmark">Nearby Landmark</label>
-                                </div>
-                            </div>
-
-                            <div className="mb-3 row">
-                                <div className="col-md-3">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" id="city"
-                                            name="city"
-                                            value={formData?.city}
-                                            onChange={handleChange}
-                                            placeholder="City" required />
-                                        <label htmlFor="city">City</label>
+    
+                                <div className='mb-3 row'>
+                                        <div className="col-md-6">
+                                            <PhoneInput
+                                                country={'in'}
+                                                value={formData?.mobile}
+                                                onChange={handleMobileChange}
+                                                placeholder="Mobile Number"
+                                                required
+                                            />
+                                        </div>
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <Select
+                                                options={stateOptions}
+                                                onChange={handleStateChange}
+                                                placeholder="Select State"
+                                            />
+                                        </div>
                                     </div>
+                                    
                                 </div>
-                                <div className="col-md-6">
-                                    <div className="form-floating">
-                                        <Select
-                                            options={stateOptions}
-                                            onChange={handleStateChange}
-                                            placeholder="Select State"
-                                        />
-                                    </div>
+                                <div className='mg-3'>
+                                    <button className='btn' type='submit'> Save Address</button>
                                 </div>
-                                <div className="col-md-3">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" id="pincode"
-                                            name="pincode"
-                                            value={formData?.pincode}
-                                            onChange={handleChange}
-                                            placeholder="Pin Code" required />
-                                        <label htmlFor="pincode">Pin Code</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-3">
-                                <PhoneInput
-                                    country={'in'}
-                                    value={formData?.mobile}
-                                    onChange={handleMobileChange}
-                                    placeholder="Mobile Number"
-                                    required
-                                />
-                            </div>
-
-                            <div className="col-md-3">
-                                <div className="form-floating">
-                                    <input type="text" className="form-control" id="country"
-                                        name="country"
-                                        value={formData?.country}
-                                        onChange={handleChange}
-                                        placeholder="Country" required />
-                                    <label htmlFor="country">Country</label>
-                                </div>
-                            </div>
+                                
 
                             {/* <div className="form-check mb-3">
                                 <input type="checkbox" className="form-check-input" id="saveInfo" />
@@ -737,50 +776,49 @@ const Checkout = () => {
                                     type="radio"
                                     id="cod"
                                     name="cod"
-                                    value="1"
+                                    value="4"
                                     onChange={handlePaymentChange}
-                                    checked={paymentOption === '1'}
+                                    checked={paymentOption === '4'}
                                 />
                                 <label htmlFor="cod" className="ms-2">Cash On Delivery</label>
                             </div>
                         </div>
                         <hr />
-                        <button type="submit" className="btn btn-primary w-100 mt-3">{loading? 'Loading...':'Pay now'}</button>
+                        <button type="submit" className="btn btn-primary w-100 mt-3">{loading ? 'Loading...':'Pay now'}</button>
                     </form>
                 </div>
                 {/* Col-md-4 for the cart summary */}
                 <div className="col-md-4">
                     <h4>Order Summary</h4>
                     {products.map(product => (
-        <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <div style={{ position: 'relative', width: '80px', height: '100px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
-                <img 
-                    src={product.main_image_url} 
-                    alt="Product Image" 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-                />
-                <div style={{
-                    position: 'absolute',
-                    top: '1px',  // adjust positioning if necessary
-                    right: '1px',  // adjust positioning if necessary
-                    backgroundColor: '#333',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: '20px',
-                    height: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px'
-                }}>
-                    {product.quantity}
-                </div>
-            </div>
-                            <div className="card-body">
-                                <h6 className="card-title">{product.title}</h6>
-                                <p className="card-text">₹{product.price}</p>
-                           
+                        <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <div style={{ position: 'relative', width: '80px', height: '100px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
+                                <img 
+                                    src={product.main_image_url} 
+                                    alt="Product Image" 
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                                />
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '1px',  // adjust positioning if necessary
+                                    right: '1px',  // adjust positioning if necessary
+                                    backgroundColor: '#333',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    width: '20px',
+                                    height: '20px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px'
+                                }}>
+                                    {product.quantity}
+                                </div>
                             </div>
+                                <div className="card-body">
+                                    <h6 className="card-title">{product.title}</h6>
+                                    <p className="card-text">₹{product.price}</p>
+                                </div>
                         </div>
                     ))}
                     <hr />

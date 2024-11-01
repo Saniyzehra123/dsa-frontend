@@ -10,9 +10,15 @@ import { toast, ToastContainer } from 'react-toastify';
 
 export default function Saree() {
   const dispatch = useDispatch();
-  const sarees = useSelector((store) => store.saree?.sarees);
+  const sarees = useSelector((store) => store?.saree?.sarees);
   const [loginUser, setLoginUser] = useState();
-  const [sortOrder, setSortOrder] = useState('low');
+  const [sortBy, setSortOrder] = useState('');
+  const [color, setColor] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [fabricType, setFabricType] = useState('');
+  const [occasion, setOccasion] = useState('');
+  const [weaveType, setWeaveType] = useState('');
 
   // Wishlist state will be initialized from localStorage
   const [liked, setLiked] = useState(() => {
@@ -35,10 +41,23 @@ export default function Saree() {
     setLoginUser(data);
   };
 
+  // useEffect(() => {
+  //   dispatch(GetSarees()); 
+  // }, [dispatch]);
   useEffect(() => {
-    dispatch(GetSarees()); // Fetch sarees data on component mount
-    // getLoginUser();
-  }, [dispatch]);
+    const payload = {
+      color,
+      minPrice,
+      maxPrice,
+      fabricType,
+      occasion,
+      weaveType,
+      sortBy,
+      page: 1, // Assume you're fetching the first page for simplicity
+      limit: 10
+    };
+    dispatch(GetSarees(payload)); 
+  }, [color, minPrice, maxPrice, fabricType, occasion, weaveType, sortBy]);
 
   // Sync with the Redux state when the sarees data is updated
   useEffect(() => {
@@ -64,7 +83,7 @@ export default function Saree() {
     }else {
       // Add item to wishlist
       updatedLiked = [...liked, { 
-        id: item.item_id,
+      id: item.item_id,
       title: item.title,
       price: item.price,
       color: item.color_name,
@@ -125,7 +144,6 @@ export default function Saree() {
     }
   };
 
-
   // Check if the item is in the wishlist
   const isLiked = (item) => liked.some((likedItem) => likedItem.id === item.item_id);
 
@@ -139,7 +157,7 @@ export default function Saree() {
       [type]: !prev[type]
     }));
   };
-  
+
   return (
     <div className="container mt-36">
       {/* Banner Image */}
@@ -259,9 +277,14 @@ export default function Saree() {
             <h1>OUR SAREE COLLECTION</h1>
             <div className="sort-dropdown" style={{ marginLeft: 'auto' }}>
               <label>Sort By:</label>
-              <select onChange={(e) => setSortOrder(e.target.value)}>
+              {/* <select onChange={(e) => setSortOrder(e.target.value)}>
                 <option value="low">Price: Low to High</option>
                 <option value="high">Price: High to Low</option>
+              </select> */}
+              <select onChange={(e) => setSortOrder(e.target.value)}>
+                <option value="">Select Sort</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
               </select>
             </div>
           </div>

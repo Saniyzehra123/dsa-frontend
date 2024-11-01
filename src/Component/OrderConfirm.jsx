@@ -43,7 +43,7 @@ const OrderConfirm = () => {
             window.removeEventListener('storage', getLoginUser);
         };
     }, []);
-
+    console.log("orders", orderDetails)
     return (
         <Container className="my-48">
             <Row>
@@ -98,13 +98,13 @@ const OrderConfirm = () => {
                             <Row className="mt-4">
                                 <Col lg={6}>
                                     <h6>Contact information:</h6>
-                                    <p>zsaniya973@gmail.com</p>
-                                    <p>Phone: +916391377235</p>
+                                    <p>{orderDetails?.customer_email}</p>
+                                    <p>Phone: {`+${orderDetails?.phone}`}</p>
                                 </Col>
                                 <Col lg={6}>
-                                    <h6>Payment method:</h6>
+                                    {/* <h6>Payment method:{orderDetails?.payment.payment_method}</h6> */}
                                     <p>Cash on Delivery (COD) - ₹3,850.00</p>
-                                    <h6>Shipping method:</h6>
+                                    <h6>Shipping method: </h6>
                                     <p>Congratulations! You are eligible for free shipping.</p>
                                 </Col>
                             </Row>

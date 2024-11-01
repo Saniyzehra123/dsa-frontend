@@ -91,6 +91,7 @@ const ProductDetails = () => {
     const cartItem = {
       id: saree.item_id,
       saree_name: saree.saree_name,
+      title: saree.title,
       price: saree.price,
       quantity: 1,  // Default quantity can be set to 1
       main_image_url: saree.main_image_url,
