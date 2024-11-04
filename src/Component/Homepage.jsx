@@ -159,18 +159,18 @@ export default function Homepage() {
         <div className="row">
           <div className="col-md-12 mq">
             <marquee behavior="scroll" scrollamount="12" direction="left">
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span> &nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span> &nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span> &nbsp; &nbsp; &nbsp; &nbsp;
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span> &nbsp; &nbsp; &nbsp; &nbsp;
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>&nbsp; &nbsp; &nbsp; &nbsp;
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>
               &nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>
               &nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>
               &nbsp; &nbsp; &nbsp; &nbsp;
-              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 70% Off At Cottan Silk Sarees</span>
+              <i className='fas fa-bolt'></i>  &nbsp;<span id='sp'>In This Festivals : Save Up to 30% Off At Cottan Silk Sarees</span>
             </marquee>
           </div>
         </div>
