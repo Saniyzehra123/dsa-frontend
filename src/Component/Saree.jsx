@@ -54,7 +54,7 @@ export default function Saree() {
       weaveType,
       sortBy,
       page: 1, // Assume you're fetching the first page for simplicity
-      limit: 10
+      
     };
     dispatch(GetSarees(payload)); 
   }, [color, minPrice, maxPrice, fabricType, occasion, weaveType, sortBy]);
