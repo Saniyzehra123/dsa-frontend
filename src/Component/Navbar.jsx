@@ -123,30 +123,12 @@ export default function Navbar() {
           
           {/* Cart Icon with Count */}
           <a href="/cart" className="cart-icon">
-            <a href="/cart"><LuShoppingCart /></a>
+            <LuShoppingCart />
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </a>
         </div>
       </div>
-        {/* Add some CSS for the cart count badge */}
-        <style jsx>{`
-        .cart-icon {
-          position: relative;
-        }
-        .cart-count {
-          position: absolute;
-          top: -15px;
-          right: -10px;
-          /* background-color: red; */
-          color: rgb(62, 30, 81);
-          padding: 2px 2px; /* Increase padding for larger circle */
-          /* border-radius: 50%; */
-          font-size: 13px; /* Increase font size */
-          font-weight: bold;
-          min-width: 25px; /* Ensure it's always round, even with small numbers */
-          text-align: center;
-        }
-      `}</style>
+        
     </nav>
     </div>
   );

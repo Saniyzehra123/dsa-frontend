@@ -1,0 +1,14 @@
+/* Decrease line height for <p> tags */
+.order-details-text {
+    line-height: 1.2; /* Adjust as needed */
+    margin-bottom: 8px; /* Adjust space between <p> tags */
+}
+
+/* Optional: Add space below order details */
+.mt-4 {
+    margin-top: 2rem; /* You can reduce this as well */
+}
+
+.mb-4 {
+    margin-bottom: 2rem; /* Adjust space below the order details */
+}

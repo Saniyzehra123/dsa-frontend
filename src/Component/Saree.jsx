@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Navbar.css';
+// import './Navbar.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetSarees } from '../Redux/Sarees/sareeAction';
 import { Link } from 'react-router-dom';
@@ -7,18 +7,29 @@ import { FaRegHeart, FaHeart } from "react-icons/fa"; // Correct import for icon
 import 'react-toastify/dist/ReactToastify.css'; 
 import  placeholder from '../assets/placeholder.jpg'
 import { toast, ToastContainer } from 'react-toastify';
+import axios from 'axios';
 
 export default function Saree() {
   const dispatch = useDispatch();
   const sarees = useSelector((store) => store?.saree?.sarees);
   const [loginUser, setLoginUser] = useState();
   const [sortBy, setSortOrder] = useState('');
-  const [color, setColor] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [fabricType, setFabricType] = useState('');
-  const [occasion, setOccasion] = useState('');
-  const [weaveType, setWeaveType] = useState('');
+ 
+  // const [minPrice, setMinPrice] = useState('');
+  // const [maxPrice, setMaxPrice] = useState('');
+  const [sareeTypes, setSareeTypes] = useState([]);
+  const [occasions, setOccasions] = useState([]);
+  const [weaveTypes, setWeaveTypes] = useState([]);
+  const [colors, setColors] = useState([]);
+
+  const [filters, setFilters] = useState({
+    color:[],
+    minPrice: '',
+    maxPrice: '',
+    sareeType: [],
+    occasion: [],
+    weaveType:[]
+  });
 
   // Wishlist state will be initialized from localStorage
   const [liked, setLiked] = useState(() => {
@@ -30,9 +41,10 @@ export default function Saree() {
     // State to manage dropdown visibility
     const [dropdowns, setDropdowns] = useState({
       availability: false,
-      category: false,
+      fabric: false,
       occasion: false,
       weaveType: false,
+      color:false
     });
     
     
@@ -41,25 +53,69 @@ export default function Saree() {
     setLoginUser(data);
   };
 
-  // useEffect(() => {
-  //   dispatch(GetSarees()); 
-  // }, [dispatch]);
+  const fetchSareeTypes = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/adminitem/saree`);
+      let data = await response.data?.data;
+      console.log("get saretype:", data);
+      setSareeTypes(data); // Assuming response contains an array of saree types
+    } catch (error) {
+      console.error('Error fetching saree types:', error);
+    }
+  };
+
+  const fetchOccasions = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/adminitem/ocassion`);
+      let data = await response.data?.data;
+      console.log("get ocasion:", data);
+      setOccasions(data); // Assuming response contains an array of occasions
+    } catch (error) {
+      console.error('Error fetching occasions:', error);
+    }
+  };
+
+  const fetchWeaveTypes = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/adminitem/weave`);
+      let data = await response.data?.data;
+      console.log("get weave:", data);
+      setWeaveTypes(data); // Assuming response contains an array of weave types
+    } catch (error) {
+      console.error('Error fetching weave types:', error);
+    }
+  };
+
+  const fetchColors = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/adminitem/color`);
+      let data = await response.data?.data;
+      console.log("get color:", data);
+      setColors(data); // Assuming response contains an array of colors
+    } catch (error) {
+      console.error('Error fetching colors:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSareeTypes();
+    fetchColors();
+    fetchOccasions();
+    fetchWeaveTypes();
+  }, []);
+  
   useEffect(() => {
     const payload = {
-      color,
-      minPrice,
-      maxPrice,
-      fabricType,
-      occasion,
-      weaveType,
+      ...filters,
       sortBy,
-      page: 1, // Assume you're fetching the first page for simplicity
-      
+      page: 1,
+      limit: 10
     };
-    dispatch(GetSarees(payload)); 
-  }, [color, minPrice, maxPrice, fabricType, occasion, weaveType, sortBy]);
-
+    dispatch(GetSarees(payload));
+  }, [filters, sortBy]);
   // Sync with the Redux state when the sarees data is updated
+
+  
   useEffect(() => {
     if (sarees?.data?.length) {
       setLiked((prevLiked) => {
@@ -148,7 +204,7 @@ export default function Saree() {
   const isLiked = (item) => liked.some((likedItem) => likedItem.id === item.item_id);
 
   // Filter and sort products based on selected criteria
-  const filteredProducts = sarees?.data || [];
+  // const sortedAndFilteredProducts = sarees?.data || [];
 
   // Toggle dropdown visibility
   const toggleDropdown = (type) => {
@@ -157,6 +213,38 @@ export default function Saree() {
       [type]: !prev[type]
     }));
   };
+
+
+   
+  const updateFilter = (type, value) => {
+    setFilters((prev) => {
+      const newValue = prev[type].includes(value)
+        ? prev[type].filter(item => item !== value)  // Remove the value if it's already selected
+        : [...prev[type], value];  // Add the value to the filter array if not already present
+      return { ...prev, [type]: newValue };
+    });
+  };
+ 
+  const sortedAndFilteredProducts = [...(sarees?.data || [])]
+  .filter((saree) => {
+    return (
+      (filters.color.length === 0 || filters.color.includes(saree.color_name)) &&
+      (filters.sareeType.length === 0 || filters.sareeType.includes(saree.saree_name)) &&
+      (filters.occasion.length === 0 || filters.occasion.includes(saree.occasion_name)) &&
+      (filters.weaveType.length === 0 || filters.weaveType.includes(saree.weave_name)) &&
+      (!filters.minPrice || saree.price >= filters.minPrice) &&
+      (!filters.maxPrice || saree.price <= filters.maxPrice)
+    );
+  })
+  .sort((a, b) => {
+    if (sortBy === 'price_asc') {
+      return a.price - b.price;
+    } else if (sortBy === 'price_desc') {
+      return b.price - a.price;
+    }
+    return 0; // No sorting if no sort order is selected
+  });
+  
 
   return (
     <div className="container mt-36">
@@ -173,102 +261,93 @@ export default function Saree() {
       <div className="row">
         {/* Left Side Filter */}
         <div className="col-md-2">
-          <h4>Filter</h4>
-          <hr />
-          {/* Availability Filter */}
+          <h4>Filter By</h4>
+    
+        
+       <hr />
+          {/* fabric Filter */}
           <div className="filter-group">
-            <label>Availability:</label>
-            <button className="dropbtn" onClick={() => toggleDropdown('availability')}>
-              {dropdowns.availability ? 'Hide Options' : 'Select Availability'}
-            </button>
-            {dropdowns.availability && (
-              <div className="dropdown-content">
-                <label>
-                  All <input type="checkbox" onChange={() => ('All')} />
-                </label>
-                <label>
-                  In Stock <input type="checkbox" onChange={() => ('In Stock')} />
-                </label>
-                <label>
-                  Out Of Stock <input type="checkbox" onChange={() => ('Out Of Stock')} />
-                </label>
-              </div>
-            )}
-          </div>
+        <button className="dropbtn" onClick={() => toggleDropdown('fabric')}>
+          {dropdowns.fabric ? 'Fabric' : 'Fabric'}
+        </button>
+        {dropdowns.fabric && (
+         <div className="dropdown-content">
+         {sareeTypes.map((type) => (
+           <label key={type.id}>
+             <input 
+               type="checkbox" 
+               onChange={() => updateFilter('sareeType', type.saree_name)} 
+               checked={filters.sareeType.includes(type.saree_name)} 
+             /> {type.saree_name}
+           </label>
+         ))}
+       </div>
+        )}
+      </div>
 
-          {/* Category Filter */}
-          <div className="filter-group">
-            <label>Category:</label>
-            <button className="dropbtn" onClick={() => toggleDropdown('category')}>
-              {dropdowns.category ? 'Hide Options' : 'Select Category'}
-            </button>
-            {dropdowns.category && (
-              <div className="dropdown-content">
-                <label>
-                  All <input type="checkbox" onChange={() => ('All')} />
-                </label>
-                <label>
-                  Cotton Silk  <input type="checkbox" onChange={() => ('Cotton Silk')} />
-                </label>
-                <label>
-                  Katan Silk <input type="checkbox" onChange={() => ('Katan Silk')} />
-                </label>
-                <label>
-                  Silk  <input type="checkbox" onChange={() => ('Silk')} />
-                </label>
-              </div>
-            )}
-          </div>
+    <hr />
+    {/* Occasion Filter */}
+      <div className="filter-group">
+        <button className="dropbtn" onClick={() => toggleDropdown('occasion')}>
+          {dropdowns.occasion ? 'Occasion' : 'Occasion'}
+        </button>
+        {dropdowns.occasion && (
+        <div className="dropdown-content">
+        {occasions.map((occasion) => (
+          <label key={occasion.id}>
+            <input
+              type="checkbox" 
+              onChange={() => updateFilter('occasion', occasion.occasion_name)} 
+              checked={filters.occasion.includes(occasion.occasion_name)} 
+            /> {occasion.occasion_name}
+          </label>
+        ))}
+      </div>
+        )}
+      </div>
 
-          {/* Occasion Filter */}
-          <div className="filter-group">
-            <label>Occasion:</label>
-            <button className="dropbtn" onClick={() => toggleDropdown('occasion')}>
-              {dropdowns.occasion ? 'Hide Options' : 'Select Occasion'}
-            </button>
-            {dropdowns.occasion && (
-              <div className="dropdown-content">
-                <label>
-                  All  <input type="checkbox" onChange={() => ('All')} />
-                </label>
-                <label>
-                  Festivals <input type="checkbox" onChange={() => ('Festivals')} />
-                </label>
-                <label>
-                  Wedding  <input type="checkbox" onChange={() => ('Wedding')} />
-                </label>
-                <label>
-                  Party Wear  <input type="checkbox" onChange={() => ('Party Wear')} />
-                </label>
-              </div>
-            )}
-          </div>
+<hr />
+        {/* Weave Type Filter */}
+        <div className="filter-group">
+          <button className="dropbtn" onClick={() => toggleDropdown('weaveType')}>
+            {dropdowns.weaveType ? 'Weave Type' : 'Weave Type'}
+          </button>
+          {dropdowns.weaveType && (
+           <div className="dropdown-content">
+           {weaveTypes.map((weave) => (
+             <label key={weave.id}>
+               <input 
+                 type="checkbox" 
+                 onChange={() => updateFilter('weaveType', weave.weave_type_name)} 
+                 checked={filters.weaveType.includes(weave.weave_type_name)} 
+               /> {weave.weave_type_name}
+             </label>
+           ))}
+         </div>
+          )}
+        </div>
 
-          {/* Weave Type Filter */}
-          <div className="filter-group">
-            <label>Weave Type:</label>
-            <button className="dropbtn" onClick={() => toggleDropdown('weaveType')}>
-              {dropdowns.weaveType ? 'Hide Options' : 'Select Weave Type'}
-            </button>
-            {dropdowns.weaveType && (
-              <div className="dropdown-content">
-                <label>
-                  All <input type="checkbox" onChange={() => ('All')} />
-                </label>
-                <label>
-                  Satin  <input type="checkbox" onChange={() => ('Satin')} />
-                </label>
-                <label> Zari - Golden & Copper  <input type="checkbox" onChange={() => ('Zari - Golden & Copper')} />
-                </label>
-                <label>
-                  Pathani  <input type="checkbox" onChange={() => ('Pathani')} />
-                </label>
-                <label>
-                  Banarasi  <input type="checkbox" onChange={() => ('Banarasi')} />
-                </label>
-              </div>
-            )}
-          </div>
+        <hr />
+
+      {/* Weave Type Filter */}
+      <div className="filter-group">
+            <button className="dropbtn" onClick={() => toggleDropdown('color')}>
+            {dropdowns.color ? 'Colors' : 'Colors'}
+          </button>
+          {dropdowns.color && (
+           <div className="dropdown-content">
+           {colors.map((color) => (
+             <label key={color.id}>
+               <input 
+                 type="checkbox" 
+                 onChange={() => updateFilter('color', color.color_name)} 
+                 checked={filters.color.includes(color.color_name)} 
+               /> {color.color_name}
+             </label>
+           ))}
+         </div>
+          )}
+        </div>
           </div>
 
         {/* Right Side Product Cards */}
@@ -276,13 +355,9 @@ export default function Saree() {
         <div className="d-flex justify-content-between align-items-center">
             <h1>OUR SAREE COLLECTION</h1>
             <div className="sort-dropdown" style={{ marginLeft: 'auto' }}>
-              <label>Sort By:</label>
-              {/* <select onChange={(e) => setSortOrder(e.target.value)}>
-                <option value="low">Price: Low to High</option>
-                <option value="high">Price: High to Low</option>
-              </select> */}
+             
               <select onChange={(e) => setSortOrder(e.target.value)}>
-                <option value="">Select Sort</option>
+                <option value="">Sort By</option>
                 <option value="price_asc">Price: Low to High</option>
                 <option value="price_desc">Price: High to Low</option>
               </select>
@@ -292,8 +367,8 @@ export default function Saree() {
 
            
           <div className="row">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((saree, index) => (
+            {sortedAndFilteredProducts.length > 0 ? (
+              sortedAndFilteredProducts.map((saree, index) => (
                 <div className="col-md-4" key={saree.item_id}>
                   <div className="card">
                     <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -358,49 +433,88 @@ export default function Saree() {
 
       <style jsx>
         {`
-          .col-md-3 {
-            margin-bottom: 20px;
-          }
+         /* Column Styles */
+.col-md-2 {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
 
-          .filter-group {
-            margin-bottom: 20px;
-          }
+/* Filter Group Styles */
+.filter-group {
+    margin-bottom: 30px;
+}
 
-          .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-          }
+.filter-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
 
-          .filter-group select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-          }
+/* Dropdown Button Styles */
+.dropbtn {
+    display: inline-block;
+    // background-color: #007bff;
+    color: Black;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    text-align: left;
+}
 
-          .card {
-            margin: 10px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          }
+.dropbtn:hover {
+    background-color: #F5F5F5;
+}
 
-          .card img {
-            margin-bottom: 15px;
-          }
+/* Dropdown Content Styles */
+.dropdown-content {
+    display: block;
+    margin-top: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
 
-          .card-body {
-            padding: 10px 0;
-          }
+/* Checkbox Label Styles */
+.dropdown-content label {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
 
-          .list-group-item {
-            padding: 10px;
-          }
+.dropdown-content input[type="checkbox"] {
+    margin-right: 10px;
+}
 
+/* Card Styles */
+.card {
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.card-body {
+    padding: 10px 0;
+}
           .button-28 {
             margin-top: 10px;
           }

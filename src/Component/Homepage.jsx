@@ -3,6 +3,7 @@ import './Homepage.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetSarees } from '../Redux/Sarees/sareeAction';
 import { toast, ToastContainer } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 export default function Homepage() {
   const dispatch = useDispatch();
@@ -124,32 +125,32 @@ export default function Homepage() {
     <div>
       {/* Carousel Start  */}
       <div className="container-flud cr">
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
 
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <div className="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
           </div>
 
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="/assets/images/carousel/c1.jpeg" class="d-block w-100" />
+          <div className="carousel-inner">
+            <div className="carousel-item active">
+              <img src="/assets/images/carousel/c1.jpeg" className="d-block w-100" />
             </div>
-            <div class="carousel-item" >
-              <img src="/assets/images/carousel/c2.jpeg" class="d-block w-100" />
+            <div className="carousel-item" >
+              <img src="/assets/images/carousel/c2.jpeg" className="d-block w-100" />
             </div>
-            <div class="carousel-item">
-              <img src="/assets/images/carousel/c3.jpeg" class="d-block w-100" />
+            <div className="carousel-item">
+              <img src="/assets/images/carousel/c3.jpeg" className="d-block w-100" />
             </div>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
+          <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span className="visually-hidden">Previous</span>
           </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
+          <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+            <span className="visually-hidden">Next</span>
           </button>
         </div>
       </div>
@@ -193,13 +194,13 @@ export default function Homepage() {
           <div className="col-md-3" key={saree.item_id}>
             <div className="card">
               <div style={{ position: 'relative', display: 'inline-block' }}>
-                <a href="/product-details" className="image-container">
+              <Link to={`/product-details/${saree.item_id}`} className="image-container">
                   <img
                     src={saree.main_image_url}
                     alt={saree.title}
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
-                </a>
+              </Link>
                 <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
                   <a onClick={() => toggleHeart(saree)}>
                     {liked.some(likedItem => likedItem.id === saree.item_id) ? (
@@ -244,7 +245,7 @@ export default function Homepage() {
           <div className="row">
             <div className="col-md-4"></div>
             <div className="col-md-4">
-              <a href="/saree"><button class="button-28" role="button">VIEW MORE</button></a></div>
+              <a href="/saree"><button className="button-28" role="button">VIEW MORE</button></a></div>
             <div className="col-md-4"></div>
 
           </div>
@@ -254,24 +255,24 @@ export default function Homepage() {
 
       {/* Category Overview Section Start */}
       <div className="container-fluid">
-        <section class="text-gray-600 body-font">
-          <div class="container px-5 py-24 mx-auto">
-            <div class="flex flex-wrap -mx-4 -mb-10 text-center">
-              <div class="sm:w-1/2 mb-10 px-4">
-                <div class="rounded-lg h-64 overflow-hidden">
-                  <img alt="content" class="object-cover object-center h-full w-full" src="assets/images/product/bag.jpg" />
+        <section className="text-gray-600 body-font">
+          <div className="container px-5 py-24 mx-auto">
+            <div className="flex flex-wrap -mx-4 -mb-10 text-center">
+              <div className="sm:w-1/2 mb-10 px-4">
+                <div className="rounded-lg h-64 overflow-hidden">
+                  <img alt="content" className="object-cover object-center h-full w-full" src="assets/images/product/bag.jpg" />
                 </div>
-                <h2 class="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collection OF Bags</h2>
-                <p class="leading-relaxed text-base">Elevate your style with our premium range of bags</p>
-                <a href="#">     <button class="button-28" role="button">SHOP BAGS</button></a>
+                <h2 className="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collection OF Bags</h2>
+                <p className="leading-relaxed text-base">Elevate your style with our premium range of bags</p>
+                <a href="#">     <button className="button-28" role="button">SHOP BAGS</button></a>
               </div>
-              <div class="sm:w-1/2 mb-10 px-4">
-                <div class="rounded-lg h-64 overflow-hidden">
-                  <img alt="content" class="object-cover object-center h-full w-full" src="assets/images/product/suit.jpg" />
+              <div className="sm:w-1/2 mb-10 px-4">
+                <div className="rounded-lg h-64 overflow-hidden">
+                  <img alt="content" className="object-cover object-center h-full w-full" src="assets/images/product/suit.jpg" />
                 </div>
-                <h2 class="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collections Of Suits</h2>
-                <p class="leading-relaxed text-base">Find the perfect suit for any occasion</p>
-                <a href="#">     <button class="button-28" role="button">SHOP SUITS</button></a>
+                <h2 className="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collections Of Suits</h2>
+                <p className="leading-relaxed text-base">Find the perfect suit for any occasion</p>
+                <a href="#">     <button className="button-28" role="button">SHOP SUITS</button></a>
 
               </div>
             </div>
@@ -284,8 +285,8 @@ export default function Homepage() {
       {/* Features 2.0 Start */}
       <div className="container">
         <div className="row">
-          <div class="text-center mb-20">
-            <h1 class="sm:text-3xl text-2xl font-medium text-center title-font text-gray-900 mb-4">Why Shop with D'Sa Fashion & Home Décor?</h1>
+          <div className="text-center mb-20">
+            <h1 className="sm:text-3xl text-2xl font-medium text-center title-font text-gray-900 mb-4">Why Shop with D'Sa Fashion & Home Décor?</h1>
 
           </div>
           <div className="col-md-3 fe">

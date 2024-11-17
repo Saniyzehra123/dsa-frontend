@@ -79,7 +79,7 @@
 }
 
 /* Adjustments for Screen Size 1279px and Smaller */
-@media (max-width: 1279px) {
+@media (min-width: 1279px) {
   .nav-menu {
     gap: 20px;
   }
@@ -94,7 +94,7 @@
 }
 
 /* Center Logo on smaller screens */
-@media (max-width: 1280px) {
+@media (min-width: 1280px) {
   .logo {
     display: flex;
     justify-content: center;
@@ -107,7 +107,7 @@
 }
 
 /* Adjustments for 1218px and Smaller */
-@media (max-width: 1218px) {
+@media (min-width: 1218px) {
   .navbar-container {
     justify-content: space-between;
   }
@@ -192,3 +192,24 @@
     margin: 8px 0;
   }
 }
+
+ 
+  .cart-icon {
+    position: relative;
+  }
+  .cart-count {
+    position: absolute;
+    top: -15px;
+    right: -10px;
+    /* background-color: red; */
+    color: rgb(62, 30, 81);
+    padding: 2px 2px; /* Increase padding for larger circle */
+    /* border-radius: 50%; */
+    font-size: 13px; /* Increase font size */
+    font-weight: bold;
+    min-width: 25px; /* Ensure it's always round, even with small numbers */
+    text-align: center;
+  }
+ 
+
+  

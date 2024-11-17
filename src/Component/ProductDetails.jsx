@@ -5,7 +5,7 @@ import './Homepage.css';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../Redux/Cart/cartAction';  // Adjust the path as per your folder structure
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 
 
@@ -18,7 +18,7 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [loginUser, setLoginUser] = useState({});
-  const [rating, setRating] = useState(4.5); // Default rating value for display
+  const [rating, setRating] = useState(4.5);  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.loginData);
@@ -27,8 +27,9 @@ const ProductDetails = () => {
     const fetchSaree = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/products/${id}`);
+        console.log("responsep",response.data?.data)
         setSaree(response.data?.data);
-       
+
         setMainImage(response.data?.data.main_image_url); // Set the main image
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch saree details');
@@ -36,13 +37,13 @@ const ProductDetails = () => {
         setLoading(false);
       }
     };
-  
+
     if (id) {
       fetchSaree();
     }
     // getLoginUser();
   }, [id]);
-  
+
 
   const changeImage = (image) => {
     setMainImage(image);
@@ -97,16 +98,16 @@ const ProductDetails = () => {
       main_image_url: saree.main_image_url,
       customer_id: loginUser?.id || ''
     };
-  
+
     let updatedCart = JSON.parse(localStorage.getItem('itemlist')) || [];
-  
+
     // Check if the item already exists in the cart
     const existingItemIndex = updatedCart.findIndex(item => item.id === cartItem.id);
-  
+
     if (existingItemIndex !== -1) {
       // If the product is already in the cart, increment the quantity
       updatedCart[existingItemIndex].quantity += 1;
-  
+
       // Show a toast message for quantity update
       toast.info(
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -125,7 +126,7 @@ const ProductDetails = () => {
     } else {
       // If the product does not exist, add it to the cart with a quantity of 1
       updatedCart.push({ ...cartItem, quantity: 1 });
-  
+
       // Show a toast message for adding a new product
       toast.success(
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -142,60 +143,39 @@ const ProductDetails = () => {
         }
       );
     }
-  
+
     // Update localStorage with the modified cart
     localStorage.setItem('itemlist', JSON.stringify(updatedCart));
-  
+
     // Trigger an event to notify other parts of the app
     window.dispatchEvent(new Event('storage'));
   };
-  
-  
  
-//   const handleAddToCart = () => {
-//     const cartItem = {
-//       id: saree.item_id,
-//       saree_name: saree.saree_name,
-//       price: saree.price,
-//       quantity: 1,  // Default quantity can be set to 1
-//       main_image_url: saree.main_image_url,
-//       customer_id:loginUser?.id || ''
-//     };
-
-//     console.log("Item to add to cart:", cartItem); // Log the cart item
-//     // if(loginUser?.id){
-//     //   dispatch(addToCart(cartItem));
-//     // }
-
-     
-//     navigate('/cart'); // Navigate to cart page
-// };
-const getLoginUser=()=>{
-  const data= JSON.stringify(sessionStorage.getItem('userData'))
-  setLoginUser(data)
-}
-
-const addToCart = () => {
-  const cartList = {
-    id: saree.item_id,
-    saree_name: saree.saree_name,
-    price: saree.price,
-    quantity: 1,  // Default quantity can be set to 1
-    main_image_url: saree.main_image_url,
-    customer_id:loginUser?.id || ''
-  };
-  let updatedCart = JSON.parse(localStorage.getItem('itemlist')) || [];
-  const existingItemIndex = updatedCart.findIndex((cartItem) => cartItem.id === cartList.id);
-  
-  if (existingItemIndex !== -1) {
-    updatedCart[existingItemIndex].count = updatedCart[existingItemIndex].count || 1;
-    updatedCart[existingItemIndex].count += 1;
-  } else {
-    updatedCart.push({ ...cartList, count: 1 });
+  const getLoginUser = () => {
+    const data = JSON.stringify(sessionStorage.getItem('userData'))
+    setLoginUser(data)
   }
-  localStorage.setItem('itemlist', JSON.stringify(updatedCart)); // Update localStorage
-  window.dispatchEvent(new Event('storage'));
-};
+
+  const handleBuyNow = () => {
+   
+    // Add the item to the cart first
+     handleAddToCart();
+
+    const buyNowItem = {
+      id: saree.item_id,
+      saree_name: saree.saree_name,
+      title: saree.title,
+      price: saree.price,
+      quantity: 1,
+      main_image_url: saree.main_image_url,
+    };
+    // Navigate to checkout with this item as order summary data
+    navigate('/checkout');
+  };
+  
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="container mt-44">
@@ -208,12 +188,14 @@ const addToCart = () => {
               src={mainImage || 'https://via.placeholder.com/150'}
               alt="Product Image"
               className="product-image"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </div>
 
+
           {/* Sub Images / Thumbnails */}
           <div className="d-flex flex-wrap justify-content-start">
-            {saree?.image_url1 && (
+            {(saree?.image_url1 !== null && saree?.image_url1?.trim() !== '') && (
               <img
                 src={saree.image_url1}
                 alt="Thumbnail 1"
@@ -221,7 +203,7 @@ const addToCart = () => {
                 onClick={() => changeImage(saree.image_url1)}
               />
             )}
-            {saree?.image_url2 && (
+            {(saree?.image_url2 !== null && saree?.image_url2?.trim() !== '') && (
               <img
                 src={saree.image_url2}
                 alt="Thumbnail 2"
@@ -229,7 +211,7 @@ const addToCart = () => {
                 onClick={() => changeImage(saree.image_url2)}
               />
             )}
-            {saree?.image_url3 && (
+            {(saree?.image_url3 !== null && saree?.image_url3?.trim() !== '') && (
               <img
                 src={saree.image_url3}
                 alt="Thumbnail 3"
@@ -237,7 +219,7 @@ const addToCart = () => {
                 onClick={() => changeImage(saree.image_url3)}
               />
             )}
-            {saree?.image_url4 && (
+            {(saree?.image_url4 !== null && saree?.image_url4?.trim() !== '')  && (
               <img
                 src={saree.image_url4}
                 alt="Thumbnail 4"
@@ -245,12 +227,12 @@ const addToCart = () => {
                 onClick={() => changeImage(saree.image_url4)}
               />
             )}
-            {saree?.image_url5 && (
+            {(saree?.image_url5 !== null && saree?.image_url5?.trim() !== '') && (
               <img
                 src={saree.image_url5}
                 alt="Thumbnail 5"
                 className="thumbnail mr-2"
-                onClick={() => changeImage(saree.image_url5)}
+                onClick={() => changeImage(saree.image_url5 )}
               />
             )}
           </div>
@@ -259,7 +241,7 @@ const addToCart = () => {
         {/* Product Details */}
         <div className="col-md-6 text-left">
           {/* Product Name */}
-          <h1>{saree?.saree_name}</h1>
+          <h1>{saree?.title}</h1>
 
           {/* Product Rating */}
           <div className="product-rating mb-3">
@@ -269,8 +251,8 @@ const addToCart = () => {
             <p className="rating-text">({rating} out of 5 stars)</p>
           </div>
 
-         {/* Discount Price */}
-                  {/* Discount Price */}
+          {/* Discount Price */}
+          {/* Discount Price */}
           <h2 className="text-danger">
             ₹{saree?.price}&nbsp;
             <s className="text-muted">₹{(saree?.price * 1.14).toFixed(2)}</s>
@@ -279,18 +261,18 @@ const addToCart = () => {
 
           {/* Saree Details */}
           <ul className="saree-details">
-            {
-              saree?.blouse_name !=null ?<li><i className="fas fa-tshirt"></i> Blouse Type: {saree?.blouse_name}</li>:''
-            }
-            <li><i className="fas fa-th-large"></i> Components: {saree?.components_description || 'N/A'}</li>
-            <li><i className="fas fa-calendar-day"></i> Occasion: {saree?.occasion_name || 'N/A'}</li>
-            <li><i className="fas fa-ruler"></i> Length: {saree?.saree_length}</li>
-            <li><i className="fas fa-weight-hanging"></i> Weight: {saree?.saree_weight || 'N/A'}</li>
-            {
-              saree?.weave_name !=null ?<li><i className="fas fa-fabric"></i> Weave Type: {saree?.weave_name}</li>:""
-            }
-            
-            <li><i className="fas fa-globe"></i> Country of Origin: {saree?.country_of_origin}</li>
+             
+           <li><i className="fas fa-calendar-day"></i> Occasion: {saree?.occasion_name || 'N/A'}</li>
+          <li><i className="fas fa-ruler"></i> Length: {saree?.size}</li>
+          <li><i className="fas fa-weight-hanging"></i> Weight: {saree?.weight || 'N/A'}</li>
+          <li><i className="fas fa-barcode"></i> Code: {saree?.code_name || 'N/A'}</li>
+          <li><i className="fas fa-tshirt"></i> Blouse Description: {saree?.boluse_des || 'N/A'}</li>
+          <li><i className="fas fa-box"></i> Included Components: {saree?.included_components || 'N/A'}</li>
+          <li><i className="fas fa-warehouse"></i> Stock Quantity: {saree?.stock_quantity || 'N/A'}</li>
+          <li><i className="fas fa-feather"></i> Fabric Type: {saree?.fabric_type_name || 'N/A'}</li>
+          <li><i className="fas fa-layer-group"></i> Weave Type: {saree?.weave_name || 'N/A'}</li>
+          <li><i className="fas fa-palette"></i> Color: {saree?.color_name || 'N/A'}</li>
+          {/* <li><i className="fas fa-globe"></i> Country of Origin: {saree?.country_of_origin}</li> */}
           </ul>
 
           {/* Quantity Selector */}
@@ -327,22 +309,22 @@ const addToCart = () => {
           <div className="action-buttons mt-12">
             <button className="btn btn-primary" onClick={handleAddToCart}>Add to Cart</button>
             &nbsp;&nbsp;
-            <button className="btn btn-success">Buy Now</button>
+            <button className="btn btn-success" onClick={handleBuyNow}>Buy Now</button>
           </div>
         </div>
       </div>
       <ToastContainer
-  position="top-right"
-  autoClose={2000}
-  hideProgressBar={false}
-  newestOnTop={false}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-  theme="light"
-/>
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
 
 
       <style jsx>{`
@@ -394,4 +376,3 @@ const addToCart = () => {
 export default ProductDetails;
 
 
- 

@@ -26,8 +26,8 @@ export const submitContactForm = (formData) => {
         dispatch(contactFormRequest());
 
         // Replace with your correct backend URL
-        axios
-            .post(`${process.env.REACT_APP_BASE_URL}/contact`, formData)
+       
+        axios.post(`${process.env.REACT_APP_BASE_URL}/contact`, formData)
             .then((response) => {
                 dispatch(contactFormSuccess(response.data));
             })

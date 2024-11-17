@@ -44,8 +44,6 @@ export const userRegisterAction = (data) => async (dispatch) => {
     }
   };
 
- 
-
   // Forgot Password Action
 export const forgotPasswordAction = (email) => async (dispatch) => {
   dispatch({ type: FORGOT_PASSWORD_REQUEST });

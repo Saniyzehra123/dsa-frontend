@@ -9,9 +9,10 @@ import 'react-phone-input-2/lib/style.css'; // CSS for phone input
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import AddEditModal from '../common/AddEditModal';
-import { BsThreeDotsVertical } from 'react-icons/bs'; // Three dots icon
+import { BsFillMenuButtonFill, BsThreeDotsVertical } from 'react-icons/bs'; // Three dots icon
 import { FiEdit } from 'react-icons/fi'; // Edit icon
 import { RiDeleteBin6Line } from 'react-icons/ri'; // Delete icon
+import { decodeToken } from '../common/utils';
 
 const stateOptions = [
     { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
@@ -47,7 +48,8 @@ const stateOptions = [
 const Checkout = () => {
     const location = useLocation(); // Get the state passed from Cart
     const dispatch = useDispatch();
-    const { products, discount } = location.state || { products: [], discount: 0 }; // Default to empty array and zero discount
+    const [products,setProducts] = useState([]);  
+    const [discount,setDiscount] = useState(0)
     const [loginUser, setLoginUser] = useState();
     const [useDifferentAddress, setUseDifferentAddress] = useState(false);
     const [addressList, setAddressList] = useState([]);
@@ -60,6 +62,8 @@ const Checkout = () => {
     const [billingAddressId, setBillingAddressId] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(null); // To track which address dropdown is open
     const [addressData, setAddressesData] = useState();
+    const [pincodeError, setPincodeError] = useState('');
+    const [otp, setOtp] =useState();
 
     const  fetchUserProfile = async (customerId) => {
         try {
@@ -113,7 +117,7 @@ const Checkout = () => {
 
     const subtotal = calculateSubtotal(); // Original subtotal
     const discountedSubtotal = subtotal - (subtotal * discount); // Subtotal after discount
-    const totalPrice = discountedSubtotal + 40; // Add shipping charges
+    const totalPrice = discountedSubtotal; // Add shipping charges
 
     const [formData, setFormData] = useState({
         email: '',
@@ -151,10 +155,19 @@ const Checkout = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log("handle change", name, value);
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
         }));
+        // Apply validation only if the field is "pincode"
+        if (name === 'pincode') {
+            if (!validatePinCode(value)) {
+                setPincodeError('Pincode must be exactly 6 digits and cannot start with zero');
+            } else {
+                setPincodeError('');
+            }
+        }
     };
 
     const handleBillingChange = (e) => {
@@ -203,82 +216,131 @@ const Checkout = () => {
         try {
             let res = await axios.get(`${process.env.REACT_APP_BASE_URL}/address/${customerId}`)
             let data = await res.data?.data;
+            console.log("getCusAddressList",data);
             setAddressList(data)
         } catch (error) {
             console.log("error", error)
         }
     }
 
-    const addShippingAddress = async () => {
-
-        try {
-            const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
-            const savedData = await res.data?.data;
-            setAddAddressId(savedData.id); // Set saved address ID
-            console.log("address===>", savedData)
-            if(useDifferentAddress){
-                setBillingAddressId(savedData.id);
-            }
-        } catch (error) {
-            console.error("Error adding shipping address:", error);
+    function generate6CharPassword() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let password = '';
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            password += chars[randomIndex];
         }
-    };
+        return password;
+    }
 
-    // const handleSaveAddress= async(e)=>{
-    //     e.preventDefault()
-    //     try {
-    //         let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
-    //             res = await res.data;
-    //     } catch (error) {
-    //         alert(`Error in adding address:${error}`)
-    //     }
-    // }
     const handleSaveAddress= async(e)=>{
         e.preventDefault()
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
-                res = await res.data;
-                console.log("data", res)
-                if(res.data){
-                    getCusAddressList(loginUser.id)
+            let password = generate6CharPassword();
+            let regData={
+                email:formData.email,
+                phone:formData.mobile,
+                password:password,
+                username:formData.firstname
+            }
+            console.log("userdata", regData)
+             if(!loginUser?.id){
+                let data = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/register`,regData);
+                console.log('auth1', data,  { email:regData.email, password:regData.password })
+                data=await data.data.userId; 
+                let logData =  { email:regData.email, password:regData.password }
+                let authResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/login`, logData);
+                console.log("authResponse", authResponse)
+                let auth = authResponse.data;
+                setOtp(password);
+                console.log('auth2',auth,authResponse)
+                let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/customer/otp`, {email:regData.email, otpCode:regData.password});
+                if(auth.token){
+                    let loginData = decodeToken(auth.token);
+                    loginData['token'] = auth.token;
+                    loginData['login'] = false;
+                    sessionStorage.setItem('userData', JSON.stringify(loginData));
                 }
+                if(data>0){
+                    formData.customer_id=data
+                    setFormData((prev) => ({
+                        ...prev,
+                        customer_id: data
+                    }));
+                    setLoginUser({id:data})
+                    let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
+                        res = await res.data;
+                        console.log("data", res,data)
+                        if(res.data){
+                            getCusAddressList(data)
+                            setFormData((prev)=>({
+                                ...prev, 
+                                email: '',
+                                firstname: '',
+                                lastname: '',
+                                address: '',
+                                landmark: '',
+                                city: '',
+                                state: '',
+                                pincode: '',
+                                mobile: '',
+                                country: '',
+                            }))
+                        }     
+                    }
+             }else{
+                 let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, formData);
+                     res = await res.data;
+                     console.log("data", res)
+                     if(res.data){
+                         getCusAddressList(loginUser.id)
+                         setFormData((prev)=>({
+                            ...prev, 
+                            email: '',
+                            firstname: '',
+                            lastname: '',
+                            address: '',
+                            landmark: '',
+                            city: '',
+                            state: '',
+                            pincode: '',
+                            mobile: '',
+                            country: '',
+                        }))
+                     }
+             }
         } catch (error) {
             alert(`Error in adding address:${error}`)
         }
     }
 
-    const addBillingAddress = async (data) => {
-        try {
-            const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, data);
-            const savedData = await res.data?.data;
-            setBillingAddressId(savedData.id); // Set saved billing address ID
-        } catch (error) {
-            console.error("Error adding billing address:", error);
-        }
-    };
-    
     const saveAddress = async (addressData) => {
         try {
             let res;
             if (addressData.id) {
                 res = await axios.patch(`${process.env.REACT_APP_BASE_URL}/address/update`, addressData);
                 res = await res.data;
-                console.log("res=>1", res);
             } else {
                 res = await axios.post(`${process.env.REACT_APP_BASE_URL}/address/add`, addressData);
                 res = await res.data;
                 console.log("res=>2", res);
             }
             setShowModal(false);
+
         } catch (error) {
             console.log(" Error in updating address",error)
         }
     }
-
-    const handleDeleteAddress = async (addressId) => {
+    const handleDeleteAddress = async (addressId, customer_id) => {
+        console.log("check address", addressId,);
         try {
-            await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
-            getCusAddressList(loginUser?.id);
+            // Pass both customer_id and addressId in the URL
+            let res= await axios.delete(`${process.env.REACT_APP_BASE_URL}/address/delete/${addressId}`);
+            console.log("status", res)
+            // Refresh the address list after deletion
+            if(res.status===200){
+                getCusAddressList(customer_id);
+            }
         } catch (error) {
             console.error("Error deleting address:", error);
         }
@@ -300,13 +362,8 @@ const Checkout = () => {
             } else if(addAddressId > 0 ) {
                 createOrder();
             }
-            // else{
-            //     if (useDifferentAddress) {
-            //         addBillingAddress(billingAddress);
-            //     } else {
-            //         addShippingAddress();
-            //     }
-            // }
+
+          
         } catch (error) {
             console.error("Error submitting address:", error);
         }
@@ -359,7 +416,8 @@ const Checkout = () => {
             payment_method_id:paymentOption,
             amount:totalPrice,
             payment_status_id:1,
-            currency:'Rs'
+            currency:'Rs',
+            email:addressData?.email
         }
         if(!paymentOption){
             alert("Please select paymet Option")
@@ -376,7 +434,7 @@ const Checkout = () => {
                 });
                 setLoading(false)
                 navigate(`/order-confirm/${orderId}`)
-                localStorage.removeItem('itemlist')
+                // localStorage.removeItem('itemlist')
             }
             setLoading(false)
         } catch (error) {
@@ -409,6 +467,8 @@ const Checkout = () => {
     },[loginUser,showModal]);
 
     useEffect(() => {
+        const storedItems = JSON.parse(localStorage.getItem('itemlist')) || [];
+         setProducts(storedItems); // Set the cart items into state
         getLoginUser();
         return () => {
             window.removeEventListener('storage', getLoginUser);
@@ -420,7 +480,7 @@ const Checkout = () => {
             <h2 className="text-center">Checkout</h2>
             <div className="row">
                 <div className="col-md-8">
-                    <form onSubmit={addressList.length>0 ? handleSubmit: handleSaveAddress}>
+                    <form onSubmit={addressList?.length>0 ? handleSubmit: handleSaveAddress}>
                         <h4>Contact Information</h4>
                         <h4 onClick={() => setShowAccount(!showAccount)} style={{ cursor: 'pointer', fontSize: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             Account
@@ -429,7 +489,18 @@ const Checkout = () => {
                         {/* {showAccount && (
                             <a href="#" className="text-primary">Log out</a>
                         )} */}
-                        <p style={{ fontSize: '0.9rem' }}>{addressData?.email}</p>
+                        {
+                            addressData?.email ? <p style={{ fontSize: '0.9rem' }}>{addressData?.email}</p>: <div 
+                            className="col-md-6">
+                            <div className="form-floating">
+                                <input type="email" className="form-control" id="email"
+                                    name="email"
+                                    onChange={handleChange}
+                                    placeholder="Email" required />
+                                <label htmlFor="email">Email</label>
+                            </div>
+                        </div>
+                        }
                         <hr />
                         {
                             addressList?.length > 0 ? <React.Fragment>
@@ -496,7 +567,7 @@ const Checkout = () => {
                                                                 <FiEdit style={{ marginRight: '8px' }} /> Edit
                                                             </div>
                                                             <div
-                                                                onClick={() => handleDeleteAddress(address.id)}
+                                                                onClick={() => handleDeleteAddress(address.id, address.customer_id)}
                                                                 style={{
                                                                     padding: '8px',
                                                                     cursor: 'pointer',
@@ -559,13 +630,26 @@ const Checkout = () => {
                                     </div>
                                     <div className="col-md-6">
                                         <div className="form-floating">
-                                            <input type="text" className="form-control" id="pincode"
-                                                name="pincode"
-                                                value={formData?.pincode}
-                                                onChange={handleChange}
-                                                placeholder="Pin Code" required />
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="pincode"
+                                            name="pincode"
+                                            value={formData.pincode}
+                                            onChange={handleChange}
+                                            placeholder="Pin Code"
+                                            required
+                                        />
+                                            {/* <label htmlFor="pincode">Pin Code</label> */}
                                             <label htmlFor="pincode">Pin Code</label>
+                                          
                                         </div>
+                                         {/* Show error message if pincode is invalid */}
+                                            {pincodeError && (
+                                                <div style={{ color: 'red', fontSize: '0.9em', marginTop: '5px' }}>
+                                                    {pincodeError}
+                                                </div>
+                                            )}
                                     </div>
                                 </div>
 
@@ -790,7 +874,9 @@ const Checkout = () => {
                 {/* Col-md-4 for the cart summary */}
                 <div className="col-md-4">
                     <h4>Order Summary</h4>
+                     
                     {products.map(product => (
+                        
                         <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <div style={{ position: 'relative', width: '80px', height: '100px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
                                 <img 
@@ -828,7 +914,7 @@ const Checkout = () => {
                     </div>
                     <div className="d-flex justify-content-between">
                         <span>Shipping Charges</span>
-                        <span>₹40</span>
+                        {/* <span>₹40</span> */}
                     </div>
                     <hr />
                     <div className="d-flex justify-content-between">

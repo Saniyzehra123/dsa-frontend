@@ -58,15 +58,16 @@ const Cart = () => {
     };
 
     const handleCheckout = () => {
-        if(loginUser?.id>0){
-            navigate('/checkout', { state: { products: cartData, discount } }); // Navigate to checkout
-        }else{
-            Swal.fire("You are not loged in!").then((result) => {
-                if (result.isConfirmed) {
-                  navigate("/login");
-                }
-              });
-        }
+        navigate('/checkout', { state: { products: cartData, discount } }); // Navigate to checkout
+        // if(loginUser?.id>0){
+        //     navigate('/checkout', { state: { products: cartData, discount } }); // Navigate to checkout
+        // }else{
+        //     Swal.fire("You are not loged in!").then((result) => {
+        //         if (result.isConfirmed) {
+        //           navigate("/login");
+        //         }
+        //       });
+        // }
     };
 
     const getLoginUser = () => {
