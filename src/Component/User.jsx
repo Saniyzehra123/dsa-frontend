@@ -387,7 +387,8 @@ const handleProductNavigation = (direction) => {
                 <small className="text-danger">{error}</small>
               )}
             </div>
-              <div className="form-group">
+            {/* birthdate */}
+              {/* <div className="form-group">
                 <div className="form-floating">
                   <input
                     type="date"
@@ -398,8 +399,9 @@ const handleProductNavigation = (direction) => {
                   />
                   <label htmlFor="birthdate" >Birth Date</label>
                 </div>
-              </div>
-              <div className="form-group">
+              </div> */}
+              {/* gender */}
+              {/* <div className="form-group">
                 <div className="gender-options">Gender &nbsp;&nbsp;
                   {['Male', 'Female', 'Other'].map((gender) => (
                     <label key={gender} className="gender-option">
@@ -417,7 +419,7 @@ const handleProductNavigation = (direction) => {
                     </label>
                   ))}
                 </div>
-              </div>
+              </div> */}
               {isEditable && (
                 <button className="btn save-btn" onClick={handleSave}>
                   Save
@@ -459,110 +461,125 @@ const handleProductNavigation = (direction) => {
         case 'orders':
           return (
             <div className="card">
-              <h2>My Orders</h2>
-              {orders.map((order) => (
-                <div key={order.order_id} className="order-details">
-                  <div className="order-row">
-                    <span>Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b></span>
-                    <span>Order ID: <b>{order.order_id}</b></span>
-                  </div>
-                  <div className="order-row">
-                   <span>Total Items: <b>{order.total_items}</b></span>
-                    <span>Payment: <b>{order.payment_method}</b></span>
-                  </div>
-                  <div className="order-row">
-                    <span>Fulfillment Status: <b>{order.status_type}</b></span>
-                    <span className="view-order-link-container">
-                    <a href="#" className="view-order-link" onClick={() => toggleOrderDetails(order.order_id)}>{showOrderDetails[order.order_id] ? 'Hide Order' : 'View Order'}</a>
-                    </span>
-                  </div>
-                  <div className="order-row">
-                    <div className="button-group">
-                      <button className="btn contact-us-btn" onClick={() => setShowContactForm(true)}>Contact Us</button>
-                      <button className="btn reorder-btn">Re-order</button>
-                    </div>
-                  </div>
-                  <div className="order-row">
-                    <br />
-                    <div className="grand-total">
-                      <span className="grand-total-label">Grand Total:</span>
-                      <span className="grand-total-amount">Rs. 5,200.00</span>
-                    </div>
+            <h2>My Orders</h2>
+            {orders.map((order) => (
+              <div key={order.order_id} className="order-details">
+                <div className="order-row">
+                  <span>
+                    Order Date: <b>{new Date(order.created_at).toLocaleDateString()}</b>
+                  </span>
+                  <span>
+                    Order ID: <b>{order.order_id}</b>
+                  </span>
+                </div>
+                <div className="order-row">
+                  <span>
+                    Total Items: <b>{order.total_items}</b>
+                  </span>
+                  <span>
+                    Payment: <b>{order.payment_method}</b>
+                  </span>
+                </div>
+                <div className="order-row">
+                  <span>
+                    Fulfillment Status: <b>{order.status_type}</b>
+                  </span>
+                  <span className="view-order-link-container">
+                    <a
+                      href="#"
+                      className="view-order-link"
+                      onClick={() => toggleOrderDetails(order.order_id)}
+                    >
+                      {showOrderDetails[order.order_id] ? "Hide Order" : "View Order"}
+                    </a>
+                  </span>
+                </div>
+                <div className="order-row">
+                  <div className="button-group">
+                    <button
+                      className="btn contact-us-btn"
+                      onClick={() => setShowContactForm(true)}
+                    >
+                      Contact Us
+                    </button>
+                    <button className="btn reorder-btn">Re-order</button>
                   </div>
                 </div>
-               ))}
-              {showContactForm && renderContactForm()}
-              {/* {showOrderDetails && (
-                <div className="order-detail-card">
-                  <div className="product-info">
-                    <img src="https://dsafashionwear.com/images/DSA_01/DSA_01.jpg" alt="Product" className="product-image w-40" />
-                    <div className="product-name float-left"><b>Katan Silk With Silver Zari Work</b></div>
-                  </div> <br /><br />
-                  <div className="order-summary">
-                    <div className="order-row">
-                      <span>Sub Total:</span>
-                      <span><b>Rs. 5,200.00</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>Shipping Cost:</span>
-                      <span><b>Rs. 0.00</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>IGST 5.0%:</span>
-                      <span><b>Rs. 247.62</b></span>
-                    </div>
-                    <div className="order-row">
-                      <span>CGST 13.0%:</span>
-                      <span><b>Rs. 0.00</b></span>
-                    </div>
-                  </div>
-                  <div className="address-info float-left">
-                    <div className="address-dropdown float-left">
-                      <button className='float-left' onClick={toggleShippingAddress}><b>Address</b></button> <br /><br />
-                      {showShippingAddress && (
-                        <div className="address-details">
-                          <p><b>Shipping Address:</b> Harsh Pandey, Near Chaya Churaha, Barabanki, Uttar Pradesh - 226021</p>
-                          <p><b>Billing Address:</b> Harsh Pandey, Near Chaya Churaha, Barabanki, Uttar Pradesh - 226021</p>
-                        </div>
-                      )}
-                    </div>
+                <div className="order-row">
+                  <br />
+                  <div className="grand-total">
+                    <span className="grand-total-label">Grand Total:</span>
+                    <span className="grand-total-amount">Rs. 5,200.00</span>
                   </div>
                 </div>
-              )} */}
-            {selectedOrderId && showOrderDetails[selectedOrderId] && (
+        
+                {/* Conditional rendering for order details */}
+                {showOrderDetails[order.order_id] && (
                   <div className="order-detail-card">
-                 {Array.isArray(orderDetails) && orderDetails.map((item, index) => (
+                    {Array.isArray(orderDetails) &&
+                      orderDetails.map((item, index) => (
                         <div key={index}>
                           <div className="product-info">
-                          <FontAwesomeIcon icon={faChevronLeft} onClick={() => handleProductNavigation('prev')} className={currentProductIndex === 0 ? 'disabled' : ''} />
-                         <img src={item.main_image_url || 'placeholder-image-url.jpg'} alt="Product" className="product-image" />
-                         <div className="product-name"><b>{item.name}</b></div>
-                          <FontAwesomeIcon icon={faChevronRight} onClick={() => handleProductNavigation('next')} className={currentProductIndex === orderDetails.length - 1 ? 'disabled' : ''} />
+                            <FontAwesomeIcon
+                              icon={faChevronLeft}
+                              onClick={() => handleProductNavigation("prev")}
+                              className={
+                                currentProductIndex === 0 ? "disabled" : ""
+                              }
+                            />
+                            <img
+                              src={item.main_image_url || "placeholder-image-url.jpg"}
+                              alt="Product"
+                              className="product-image"
+                            />
+                            <div className="product-name">
+                              <b>{item.name}</b>
+                            </div>
+                            <FontAwesomeIcon
+                              icon={faChevronRight}
+                              onClick={() => handleProductNavigation("next")}
+                              className={
+                                currentProductIndex === orderDetails.length - 1
+                                  ? "disabled"
+                                  : ""
+                              }
+                            />
                           </div>
-                          
+        
                           <div className="order-summary">
                             <div className="order-row">
                               <span>Sub Total:</span>
-                              <span><b>{item.total_price}</b></span>
+                              <span>
+                                <b>{item.total_price}</b>
+                              </span>
                             </div>
                             <div className="order-row">
                               <span>Shipping Cost:</span>
-                              <span><b>{orderProducts[currentProductIndex].shipping}</b></span>
+                              <span>
+                                <b>{orderProducts[currentProductIndex].shipping}</b>
+                              </span>
                             </div>
                             <div className="order-row">
                               <span>IGST 5.0%:</span>
-                              <span><b>{orderProducts[currentProductIndex].igst}</b></span>
+                              <span>
+                                <b>{orderProducts[currentProductIndex].igst}</b>
+                              </span>
                             </div>
                             <div className="order-row">
                               <span>CGST 13.0%:</span>
-                              <span><b>{orderProducts[currentProductIndex].cgst}</b></span>
+                              <span>
+                                <b>{orderProducts[currentProductIndex].cgst}</b>
+                              </span>
                             </div>
                           </div>
                         </div>
                       ))}
                   </div>
                 )}
-            </div>
+              </div>
+            ))}
+            {showContactForm && renderContactForm()}
+          </div>
           );
       case 'changePassword':
         return (
