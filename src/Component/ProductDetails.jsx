@@ -22,6 +22,25 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.loginData);
+  // Zoom-related states
+const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+const [isZooming, setIsZooming] = useState(false);
+
+const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+    const x = ((e.pageX - left) / width) * 100;
+    const y = ((e.pageY - top) / height) * 100;
+    setZoomPosition({ x, y });
+  };
+  
+  const handleMouseEnter = () => {
+    setIsZooming(true);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsZooming(false);
+  };
+
 
   useEffect(() => {
     const fetchSaree = async () => {
@@ -59,13 +78,7 @@ const ProductDetails = () => {
     }
   };
 
-  // const handlePinCodeChange = (e) => {
-  //   setPinCode(e.target.value);
-  // };
-
-  // const checkLocation = () => {
-  //   alert(`Checking location for pin code: ${pinCode}`);
-  // };
+ 
 
   const renderStars = () => {
     const stars = [];
@@ -178,28 +191,43 @@ const ProductDetails = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="container mt-44">
+    <div className="container mt-60">
       <div className="row">
         {/* Product Images */}
-        <div className="col-md-6">
+        <div className="col-md-6 product-image-container">
           {/* Main Image */}
-          <div id="mainImage" className="mb-3">
+        <div
+            id="mainImage"
+            className="image-container"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
             <img
               src={mainImage || 'https://via.placeholder.com/150'}
               alt="Product Image"
               className="product-image"
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            //   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
-          </div>
+             {isZooming && (
+                    <div
+                        className="magnifier"
+                        style={{
+                        backgroundImage: `url(${mainImage})`,
+                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                        }}
+                    ></div>
+                    )}
+        </div>
 
 
           {/* Sub Images / Thumbnails */}
-          <div className="d-flex flex-wrap justify-content-start">
+          <div className="thumbnail-container mt-3">
             {(saree?.image_url1 !== null && saree?.image_url1?.trim() !== '') && (
               <img
                 src={saree.image_url1}
                 alt="Thumbnail 1"
-                className="thumbnail mr-2"
+                className="thumbnail"
                 onClick={() => changeImage(saree.image_url1)}
               />
             )}
@@ -207,7 +235,7 @@ const ProductDetails = () => {
               <img
                 src={saree.image_url2}
                 alt="Thumbnail 2"
-                className="thumbnail mr-2"
+                className="thumbnail"
                 onClick={() => changeImage(saree.image_url2)}
               />
             )}
@@ -215,7 +243,7 @@ const ProductDetails = () => {
               <img
                 src={saree.image_url3}
                 alt="Thumbnail 3"
-                className="thumbnail mr-2"
+                className="thumbnail"
                 onClick={() => changeImage(saree.image_url3)}
               />
             )}
@@ -223,7 +251,7 @@ const ProductDetails = () => {
               <img
                 src={saree.image_url4}
                 alt="Thumbnail 4"
-                className="thumbnail mr-2"
+                className="thumbnail"
                 onClick={() => changeImage(saree.image_url4)}
               />
             )}
@@ -231,7 +259,7 @@ const ProductDetails = () => {
               <img
                 src={saree.image_url5}
                 alt="Thumbnail 5"
-                className="thumbnail mr-2"
+                className="thumbnail"
                 onClick={() => changeImage(saree.image_url5 )}
               />
             )}
@@ -327,52 +355,130 @@ const ProductDetails = () => {
       />
 
 
-      <style jsx>{`
-        .product-image {
-          width: 100%;
-          max-height: 650px;
-          object-fit: cover;
-        }
-        .thumbnail {
-        width: 80px;
-        height: 120px; /* Increased height */
-        margin: 5px;
+<style jsx>{`
+      .product-image-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+       
+      }
+      
+      .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit:contain; /* Ensures the entire image is visible without cropping */
+        object-position: center; /* Centers the image */
+        transition: transform 0.3s ease; /* Smooth zoom effect */
+      }
+      
+      .image-container {
+        position: relative;
+        width: 100%; /* Makes it responsive */
+        max-width: 500px; /* Limits the maximum size */
+        height: auto; /* Adjust height automatically */
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        overflow: hidden;
+        cursor: zoom-in;
+      }
+      
+      .image-container:hover .product-image {
+        transform: scale(1.2); /* Zoom-in effect on hover */
+        transition: transform 0.3s ease-in-out; /* Smooth transition */
+      }
+      
+      .zoomed-image {
+        margin-top: 20px;
+        width: 500px;
+        height: 500px;
+        border: 1px solid #ddd;
+        background-repeat: no-repeat;
+        background-size: 200%;
+      }
+      
+      
+      
+      /* Magnifier Effect */
+      .magnifier {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: 200%; /* Magnification level */
+        pointer-events: none;
+        z-index: 2;
+      }
+      
+      
+      /* Thumbnail Container */
+      .thumbnail-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      
+      .thumbnail {
+        width: 70px;
+        height: 70px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
         cursor: pointer;
-        opacity: 0.6;
+        object-fit: cover;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
+      
       .thumbnail:hover {
-        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
-        .d-flex {
-          display: flex;
-          flex-wrap: wrap;
-        }
-        .product-rating {
-          display: flex;
-          align-items: center;
-        }
-        .stars {
-          margin-right: 10px;
-        }
-        .rating-text {
-          color: #999;
-        }
-        .saree-details {
-          list-style: none;
-          padding: 0;
-        }
-        .saree-details li {
-          margin-bottom: 10px;
-        }
-        .quantity-selector {
-          display: flex;
-          align-items: center;
-        }
-      `}</style>
+      
+              .product-image {
+                width: 100%;
+                max-height: 650px;
+                object-fit: cover;
+              }
+              .thumbnail {
+              width: 80px;
+              height: 120px; /* Increased height */
+              margin: 5px;
+              cursor: pointer;
+              opacity: 0.6;
+            }
+            .thumbnail:hover {
+              opacity: 1;
+            }
+              .d-flex {
+                display: flex;
+                flex-wrap: wrap;
+              }
+              .product-rating {
+                display: flex;
+                align-items: center;
+              }
+              .stars {
+                margin-right: 10px;
+              }
+              .rating-text {
+                color: #999;
+              }
+              .saree-details {
+                list-style: none;
+                padding: 0;
+              }
+              .saree-details li {
+                margin-bottom: 10px;
+              }
+              .quantity-selector {
+                display: flex;
+                align-items: center;
+              }
+                
+            `}</style>
     </div>
   );
 };
 
 export default ProductDetails;
-
-
