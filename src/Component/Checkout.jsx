@@ -719,7 +719,8 @@ const Checkout = () => {
                         </React.Fragment>
                         }
                         {/* Billing Address Section */}
-                        <h4>Billing Address</h4><br />
+
+                        {/* <h4>Billing Address</h4><br />
                         <div className="mb-3">
                             <div>
                                 <input
@@ -743,9 +744,10 @@ const Checkout = () => {
                                 />
                                 <label htmlFor="differentAddress" className="ms-2">Use a different billing address</label>
                             </div>
-                        </div>
+                        </div> */}
+
                         {/* Show the form for different billing address if selected */}
-                        {useDifferentAddress && (
+                        {/* {useDifferentAddress && (
                             <div>
                                 <div className="mb-3 row">
                                     <div className="col-md-6">
@@ -850,8 +852,8 @@ const Checkout = () => {
                                     </div>
                                 </div>
                             </div>
-                        )}
-                        <hr />
+                        )} */}
+                        {/* <hr /> */}
                         {/* Billing Address Section */}
                         <h4>Payment Options</h4><br />
                         <div className="mb-3">
