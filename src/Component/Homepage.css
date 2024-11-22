@@ -162,6 +162,7 @@ font-size:4rem;
   }
   .cr{
     margin-top:190px;
+
   }
 }
 
@@ -185,21 +186,26 @@ font-size:4rem;
   .row {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* Adds spacing between columns */
+    gap: 20px; /* Add spacing between cards */
+    margin-left: -10px; /* Adjust left margin to compensate for gap */
+    margin-right: -10px; /* Adjust right margin to compensate for gap */
   }
 
+  /* Full width cards, with 3 cards per row */
   .col-md-3 {
-    width: calc(33.33% - 16px); /* Ensures 3 cards per row with space in between */
-    margin-bottom: 16px; /* Adds space below each card */
+    width: 45%!important; /* Make each card take full width */
     box-sizing: border-box;
+    padding-left: 10px; /* Padding for spacing */
+    padding-right: 10px; /* Padding for spacing */
+    margin-bottom: 20px; /* Adds space below each card */
   }
 
-  /* Increase the width of the card and reduce its height */
+  /* Card styling */
   .card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: auto; /* Remove fixed height to allow content to fit better */
+    justify-content: flex-start;
+    height: auto; /* Ensure card height adjusts with content */
     overflow: hidden; /* Prevent overflow of content */
     background-color: #fff;
     border: 1px solid #ddd;
@@ -207,16 +213,16 @@ font-size:4rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  /* Card Body to make content fit properly */
+  /* Card Body */
   .card-body {
     padding: 16px;
-    overflow: hidden; /* Hide overflowing content */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
-  /* Adjust image container for better fit */
+  /* Image container styling */
   .image-container {
     position: relative;
     width: 100%;
@@ -229,17 +235,17 @@ font-size:4rem;
     display: block;
   }
 
-  /* Ensure text wraps and doesn't overflow */
+  /* Text and button styling */
   .card-title, .card-text, .list-group-item, .rating {
-    white-space: normal; /* Allow text to wrap within the card */
-    overflow: hidden; /* Prevent text from overflowing */
-    text-overflow: ellipsis; /* Add ellipsis if the text overflows */
+    white-space: normal; /* Allow text to wrap */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate text if it overflows */
   }
 
-  /* Button styling to fit within the card */
+  /* Button styling */
   .card-body .button-28 {
-    width: 100%; /* Ensure button fills width of card */
-    margin-top: 12px; /* Adds space above the button */
+    width: 100%; /* Ensure the button fills the width of the card */
+    margin-top: 12px; /* Space above the button */
     padding: 10px;
   }
 }
