@@ -20,8 +20,8 @@ const Footer = () => {
             <div className="col-md-3 ty2 text-justify">
               <h3>Popular Searches</h3>
               <ul>
-                <li><a href="/silk"><p>Silk Saree</p></a></li>
-                <li><a href="/cotton"><p>Cottan Saree</p></a></li>
+                <li><a href="/saree"><p> Saree</p></a></li>
+                <li><a href="/comming-soon"><p>Imitation Jewellery</p></a></li>
                 <li><a href="/comming-soon"><p>Lather Bag</p></a></li>
                 <li><a href="/comming-soon"><p>Cotton Bag</p></a></li>
                

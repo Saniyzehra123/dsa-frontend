@@ -21,7 +21,7 @@ export default function Homepage() {
   const getLoginUser = () => {
     const data = JSON.parse(sessionStorage.getItem('userData'));
     setLoginUser(data);
-  };
+  }; 
 
   useEffect(() => {
     dispatch(GetSarees()); // Fetch sarees data on component mount
@@ -219,7 +219,7 @@ export default function Homepage() {
                 </div>
               </div>
               <div className="card-body text-center">
-                <h5 className="card-title">{saree.title}</h5>
+                <h6 className="card-title">{saree.title}</h6>
                 <p className='text-center'>({saree.color_name})</p>
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item">
@@ -264,7 +264,7 @@ export default function Homepage() {
                 </div>
                 <h2 className="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collection OF Bags</h2>
                 <p className="leading-relaxed text-base">Elevate your style with our premium range of bags</p>
-                <a href="#">     <button className="button-28" role="button">SHOP BAGS</button></a>
+                <a href="/comming-soon">     <button className="button-28" role="button">SHOP BAGS</button></a>
               </div>
               <div className="sm:w-1/2 mb-10 px-4">
                 <div className="rounded-lg h-64 overflow-hidden">
@@ -272,7 +272,7 @@ export default function Homepage() {
                 </div>
                 <h2 className="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">Discover Our Latest Collections Of Suits</h2>
                 <p className="leading-relaxed text-base">Find the perfect suit for any occasion</p>
-                <a href="#">     <button className="button-28" role="button">SHOP SUITS</button></a>
+                <a href="/comming-soon">     <button className="button-28" role="button">SHOP SUITS</button></a>
 
               </div>
             </div>
@@ -324,14 +324,14 @@ export default function Homepage() {
             <br />
             <span className="text-2xl">Enjoy a wide range of collections for every occasion.</span>
           </div>
-
+ 
 
         </div>
 
         <div className="row mt-4">
           <div className="col-md-4"></div>
           <div className="col-md-4">
-            <a href="#">
+            <a href="/privacy-policy">
               <button className="view" role="button">VIEW OUR POLICIES</button>
             </a>
           </div>

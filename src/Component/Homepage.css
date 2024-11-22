@@ -5,7 +5,7 @@
 .mq{
   height: auto;
   background: yellow;
-  font-size: 2rem;
+  font-size: 1rem;
   margin-bottom:2%;
 }
 
@@ -179,3 +179,68 @@ font-size:4rem;
   opacity: 0.9;
   font-size: 16px;
 }
+
+/* Media Query for tablets, iPads, and medium screens (768px to 1200px) */
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Adds spacing between columns */
+  }
+
+  .col-md-3 {
+    width: calc(33.33% - 16px); /* Ensures 3 cards per row with space in between */
+    margin-bottom: 16px; /* Adds space below each card */
+    box-sizing: border-box;
+  }
+
+  /* Increase the width of the card and reduce its height */
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto; /* Remove fixed height to allow content to fit better */
+    overflow: hidden; /* Prevent overflow of content */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Card Body to make content fit properly */
+  .card-body {
+    padding: 16px;
+    overflow: hidden; /* Hide overflowing content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Adjust image container for better fit */
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Ensure text wraps and doesn't overflow */
+  .card-title, .card-text, .list-group-item, .rating {
+    white-space: normal; /* Allow text to wrap within the card */
+    overflow: hidden; /* Prevent text from overflowing */
+    text-overflow: ellipsis; /* Add ellipsis if the text overflows */
+  }
+
+  /* Button styling to fit within the card */
+  .card-body .button-28 {
+    width: 100%; /* Ensure button fills width of card */
+    margin-top: 12px; /* Adds space above the button */
+    padding: 10px;
+  }
+}
+

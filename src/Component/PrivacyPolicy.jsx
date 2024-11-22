@@ -106,9 +106,10 @@ const PrivacyPolicy = () => {
           border-radius: 10px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
           padding: 2rem;
-          margin: 240px auto;
+          margin: 200px auto;
           max-width: 800px;
           text-align: left;
+              margin-bottom:0px;
         }
 
         .title {

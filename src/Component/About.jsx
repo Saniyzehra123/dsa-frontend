@@ -33,9 +33,10 @@ export default function About() {
                 border-radius: 10px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
                 padding: 2rem;
-                margin: 280px auto; /* Added top margin */
+                margin: 250px auto; /* Added top margin */
                 max-width: 800px; /* Set a max width for larger screens */
                 text-align: left; /* Align text to the left for readability */
+                margin-bottom:0px;
               }
 
               .title {
@@ -47,7 +48,7 @@ export default function About() {
               p {
                 font-size: 1rem;
                 color: #666;
-                margin: 10px 0; /* Space between paragraphs */
+              
               }
 
               @media (max-width: 768px) {
