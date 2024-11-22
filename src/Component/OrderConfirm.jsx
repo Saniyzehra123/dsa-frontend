@@ -29,7 +29,6 @@ const OrderConfirm = () => {
         }
     };
  
-
     // Calculate total quantity
   const totalQuantity = orderDetails?.order_items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0;
 
@@ -77,7 +76,7 @@ const OrderConfirm = () => {
                                         <p>{`${orderDetails?.address?.city || ''}, ${orderDetails?.address?.state || ''}`}</p>
                                         <p>{orderDetails?.address?.country || 'N/A'}</p>
                                         <p>Pin Code: {orderDetails?.address?.pincode || 'N/A'}</p>
-                                        <iframe
+                                        {/* <iframe
                                             src={mapUrl}
                                             title="Shipping Address Map"
                                             width="100%"
@@ -85,12 +84,11 @@ const OrderConfirm = () => {
                                             style={{ border: 0 }}
                                             allowFullScreen=""
                                             loading="lazy"
-                                        ></iframe>
+                                        ></iframe> */}
                                     </div>
                                 </Col>
 
                             </Row>
-
                             
                             <hr />
                             {/* Order Footer */}
@@ -117,14 +115,14 @@ const OrderConfirm = () => {
                     <Col md={6}>
                         <h6 className="text-left">Payment Method</h6>
                         <p className="order-details-text">Cash on Delivery (COD) - ₹{orderDetails?.total_amount || 'N/A'}</p>
-                        <h6 className="text-left">Billing Address</h6>
+                        {/* <h6 className="text-left">Billing Address</h6>
                         <p className="order-details-text">{`${orderDetails?.billing_address?.firstname || ''} ${orderDetails?.billing_address?.lastname || ''}`}</p>
                         <p className="order-details-text">{orderDetails?.billing_address?.address || 'N/A'}</p>
                         <p className="order-details-text">{orderDetails?.billing_address?.landmark || 'N/A'}</p>
                         <p className="order-details-text">{`${orderDetails?.billing_address?.city || ''}, ${orderDetails?.billing_address?.state || ''}`}</p>
                         <p className="order-details-text">{orderDetails?.billing_address?.country || 'N/A'}</p>
                         <p className="order-details-text">Pin Code: {orderDetails?.billing_address?.pincode || 'N/A'}</p>
-                        <p className="order-details-text">Phone: {orderDetails?.billing_address?.mobile || 'N/A'}</p>
+                        <p className="order-details-text">Phone: {orderDetails?.billing_address?.mobile || 'N/A'}</p> */}
                     </Col>
             </Row>
                             <hr />

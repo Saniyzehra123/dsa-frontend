@@ -1,14 +1,225 @@
-/* Decrease line height for <p> tags */
-.order-details-text {
-    line-height: 1.2; /* Adjust as needed */
-    margin-bottom: 8px; /* Adjust space between <p> tags */
-}
-
-/* Optional: Add space below order details */
-.mt-4 {
-    margin-top: 2rem; /* You can reduce this as well */
-}
-
-.mb-4 {
-    margin-bottom: 2rem; /* Adjust space below the order details */
-}
+/* General styles for larger screens */
+.navbar {
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-height: auto;
+  }
+  
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .nav-menu {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 30px;
+  }
+  
+  .nav-menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-menu a:hover {
+    color: #007bff;
+  }
+  
+  .nav-icons {
+    margin-right: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  
+  .nav-icons a {
+    color: #000;
+    font-size: 20px;
+    text-decoration: none;
+  }
+  
+  /* Hide hamburger menu icon on larger screens */
+  .menu-icon {
+    display: none;
+  }
+  
+  /* Cart icon and badge styles */
+  .cart-icon {
+    position: relative;
+  }
+  
+  .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: rgb(62, 30, 81);
+    color: #fff !important;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Media Query For Small Devices (Under 992px) */
+  @media only screen and (max-width: 991px) {
+    /* Show hamburger icon and hide navbar items */
+    .menu-icon {
+      display: block; /* Show hamburger icon */
+      cursor: pointer;
+      z-index: 1000;
+      margin-left: 10px;
+    }
+  
+    .menu-bar {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background-color: #333;
+      margin: 5px 0;
+    }
+  
+    /* Style changes when hamburger menu is clicked */
+    .menu-icon.active .menu-bar:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+  
+    .menu-icon.active .menu-bar:nth-child(2) {
+      opacity: 0;
+    }
+  
+    .menu-icon.active .menu-bar:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+  
+    }
+  
+    .navbar-container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+  
+    /* Hide navbar items initially */
+    .nav-menu {
+      display: none; /* Initially hidden */
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 100%; /* Position menu below the navbar */
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      overflow-x: auto;
+    }
+  
+    /* Show navbar items when hamburger is clicked */
+    .nav-menu.show {
+      display: flex;
+      animation: slideDown 0.3s ease;
+    }
+  
+    /* Animation for sliding down the menu */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  
+    .nav-menu a {
+      width: 100%; /* Full-width for touch-friendly navigation */
+      text-align: center;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .nav-icons{
+      margin-right: 10px;
+    }
+  }
+  
+  /* Medium devices (landscape tablets, 768px and up) */
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .menu-icon {
+      display: block; /* Show hamburger icon */
+      cursor: pointer;
+      margin-left: 10px;
+    }
+  
+    .menu-bar {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background-color: #333;
+      margin: 4px 0;
+      transition: transform 0.3s ease;
+    }
+  
+    .nav-menu {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  
+    .nav-menu.show {
+      display: flex;
+    }
+  
+    .nav-menu a {
+      width: 100%;
+      text-align: center;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .nav-icons{
+      margin-right: 10px;
+    }
+  }
+  
+  /* Large devices (laptops/desktops, 992px and up) */
+  @media only screen and (min-width: 992px) {
+    /* Navbar items should always be visible */
+    .nav-menu {
+      display: flex !important;
+    }
+  
+    /* Hide the hamburger icon */
+    .menu-icon {
+      display: none;
+      margin-left: 10px;
+    }
+  }
+  
+  
+  /* Media Query for screens 1300px or smaller */
+  @media only screen and (max-width: 1300px) {
+  
+  
+    .logo {
+      margin: 0 auto; /* Automatically center the logo */
+      flex-shrink: 0; /* Prevent shrinking of the logo */
+    }
+  }
