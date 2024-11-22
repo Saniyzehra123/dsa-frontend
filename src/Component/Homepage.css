@@ -191,6 +191,9 @@ font-size:4rem;
     margin-right: -10px; /* Adjust right margin to compensate for gap */
   }
 
+  .view{
+    width: 100%!important;
+  }
   /* Full width cards, with 3 cards per row */
   .col-md-3 {
     width: 45%!important; /* Make each card take full width */

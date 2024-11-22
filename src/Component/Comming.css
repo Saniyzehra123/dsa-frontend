@@ -7,8 +7,9 @@
     height: 100vh; /* Full height of the viewport */
     background-color: #f9f9f9;
     text-align: center;
-    padding: 20px; /* Add padding for smaller screens */
-    margin-top: 150px;
+    padding: 15px; /* Add padding for smaller screens */
+    margin-top: 110px;
+    margin-bottom:0px;
 }
 
 .sec {

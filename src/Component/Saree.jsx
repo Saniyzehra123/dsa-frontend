@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// import './Navbar.css';
+import './Saree.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetSarees } from '../Redux/Sarees/sareeAction';
 import { Link } from 'react-router-dom';
@@ -370,7 +370,7 @@ export default function Saree() {
             {sortedAndFilteredProducts.length > 0 ? (
               sortedAndFilteredProducts.map((saree, index) => (
                 <div className="col-md-4" key={saree.item_id}>
-                  <div className="card">
+                  <div className="card c22">
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <Link to={`/product-details/${saree.item_id}`} className="image-container">
                         <img
@@ -441,96 +441,6 @@ export default function Saree() {
         />
 
       </div>
-
-      <style jsx>
-        {`
-         /* Column Styles */
-.col-md-2 {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-/* Filter Group Styles */
-.filter-group {
-    margin-bottom: 30px;
-}
-
-.filter-group label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 14px;
-    color: #333;
-}
-
-/* Dropdown Button Styles */
-.dropbtn {
-    display: inline-block;
-    // background-color: #007bff;
-    color: Black;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-    text-align: left;
-}
-
-.dropbtn:hover {
-    background-color: #F5F5F5;
-}
-
-/* Dropdown Content Styles */
-.dropdown-content {
-    display: block;
-    margin-top: 10px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-}
-
-/* Checkbox Label Styles */
-.dropdown-content label {
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
-}
-
-.dropdown-content input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-/* Card Styles */
-.card {
-    margin: 10px 0;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 15px;
-}
-
-.card-body {
-    padding: 10px 0;
-}
-          .button-28 {
-            margin-top: 10px;
-          }
-        `}
-      </style>
     </div>
   );
 }
