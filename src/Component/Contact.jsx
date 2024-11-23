@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import Swal from 'sweetalert2';
-import { submitContactForm } from '../Redux/contactus/contactAction';
-import './Navbar.css';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { submitContactForm } from "../Redux/contactus/contactAction";
+import "./Navbar.css";
 
 const Contact = () => {
   const dispatch = useDispatch();
   const { loading, success, error } = useSelector((state) => state.contactForm);
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    mobile: '',
-    message: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    mobile: "",
+    message: "",
   });
 
   const { first_name, last_name, email, mobile, message } = formData;
@@ -29,27 +29,27 @@ const Contact = () => {
     // Show success message and reset form when submission is successful
     if (!loading && success) {
       Swal.fire({
-        icon: 'success',
-        title: 'Message Sent',
-        text: 'Thank you for reaching out to us! We will get back to you soon.',
+        icon: "success",
+        title: "Message Sent",
+        text: "Thank you for reaching out to us! We will get back to you soon.",
       });
 
       // Clear form
       setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        mobile: '',
-        message: '',
+        first_name: "",
+        last_name: "",
+        email: "",
+        mobile: "",
+        message: "",
       });
     }
 
     // Handle error
     if (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong! Please try again later.',
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong! Please try again later.",
       });
     }
   };
@@ -60,32 +60,35 @@ const Contact = () => {
         <div className="container px-5 py-24 mx-auto">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col text-center w-full mb-12">
-              <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-36">Contact Us</h1>
-              <p className="lg:w-2/3 mx-auto leading-relaxed text-base">We love to hear from you.</p>
+              <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-36">
+                Contact Us
+              </h1>
+              <p className="text-center">We love to hear from you.</p>
             </div>
 
             <div className="lg:w-1/2 md:w-2/3 mx-auto">
               <div className="flex flex-wrap -m-2">
                 <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <label className="leading-7 text-sm text-gray-600">First Name</label>
+                  <div class="form-floating mb-3">
                     <input
+                      class="form-control"
+                      placeholder="Enter First Name "
                       type="text"
-                      placeholder="Enter First Name"
                       id="first_name"
                       name="first_name"
                       value={first_name}
                       onChange={handleChange}
                       required
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     />
+                    <label for="floatingInput">First Name</label>
                   </div>
                 </div>
 
                 <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <label className="leading-7 text-sm text-gray-600">Last Name</label>
+                  <div class="form-floating mb-3">
                     <input
+                      class="form-control"
+
                       type="text"
                       placeholder="Enter Last Name"
                       id="last_name"
@@ -93,31 +96,32 @@ const Contact = () => {
                       value={last_name}
                       onChange={handleChange}
                       required
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     />
+                    <label for="floatingInput">Last Name </label>
                   </div>
                 </div>
 
                 <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <label className="leading-7 text-sm text-gray-600">Email</label>
+                  <div class="form-floating mb-3">
                     <input
                       type="email"
+                      class="form-control"
+  
                       placeholder="Enter Email"
                       id="email"
                       name="email"
                       value={email}
                       onChange={handleChange}
                       required
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     />
+                    <label for="floatingInput">Email address</label>
                   </div>
                 </div>
 
                 <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <label className="leading-7 text-sm text-gray-600">Mobile</label>
+                  <div class="form-floating mb-3">
                     <input
+                      class="form-control"
                       type="number"
                       placeholder="Enter Mobile Number"
                       id="mobile"
@@ -125,24 +129,27 @@ const Contact = () => {
                       value={mobile}
                       onChange={handleChange}
                       required
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     />
+                    <label for="floatingInput">Mobile</label>
                   </div>
                 </div>
 
                 <div className="p-2 w-full">
-                  <div className="relative">
-                    <label className="leading-7 text-sm text-gray-600">Message</label>
+                  <div class="form-floating mb-3">
                     <textarea
+                    
+                      class="form-control"
+    
                       placeholder="Enter Your Query Here"
                       id="message"
                       name="message"
                       value={message}
                       onChange={handleChange}
                       required
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-                    ></textarea>
+                    />
+                    <label for="floatingInput">Message</label>
                   </div>
+                 
                 </div>
 
                 <div className="p-2 w-full">
@@ -155,8 +162,18 @@ const Contact = () => {
                   </button>
                 </div>
                 <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                  <p>Email: <a href="mailto:dsafashionwear@gmail.com" className="text-indigo-500">dsafashionwear@gmail.com</a></p>
-                  <p className="leading-normal">Address: Near Omaxe City Lucknow - 226025, India</p>
+                  <p className="text-center text-decoration-none text-">
+                    Email:{" "}
+                    <a
+                      href="mailto:dsafashionwear@gmail.com"
+                      className="text-indigo-500"
+                    >
+                      dsafashionwear@gmail.com
+                    </a>
+                  </p>
+                  <p className="text-center">
+                    Address: Near Omaxe City Lucknow - 226025, India
+                  </p>
                 </div>
               </div>
             </div>
@@ -168,6 +185,6 @@ const Contact = () => {
       </section>
     </div>
   );
-}
+};
 
 export default Contact;
