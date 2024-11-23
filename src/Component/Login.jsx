@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { userLoginAction } from '../Redux/Auth/authAction';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { decodeToken } from '../common/utils';
+import './Login-Signup.css';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -17,6 +17,7 @@ const Login = () => {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +57,7 @@ const Login = () => {
 
   return (
     <div>
-      <div className="container  mt-48">
+      <div className="container login">
         <div className="row">
           <div className="col-md-4"></div>
           <div className="col-md-4"><h1>Login Here</h1></div><hr />
@@ -81,9 +82,9 @@ const Login = () => {
                 />
                 <label>Email address</label>
               </div>
-              <div className="form-floating">
+              <div className="form-floating position-relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} // Toggle password visibility
                   className="form-control"
                   placeholder="Password"
                   name="password"
@@ -93,9 +94,26 @@ const Login = () => {
                   autoComplete="off"
                 />
                 <label>Password</label>
-                <br />
-                <a href="/forget-password" className="float-left">Forgot Password?</a>
+                {/* Eye Icon */}
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    zIndex: 2,
+                  }}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <i className="fa fa-eye-slash"></i> // Hidden password icon
+                  ) : (
+                    <i className="fa fa-eye"></i> // Visible password icon
+                  )}
+                </span>
               </div>
+              <a href="/forget-password" className="float-left">Forgot Password?</a>
               <br />
               <button type="submit" className="btn btn-outline-success">
                 {loading ? 'Logging in...' : 'Login'}

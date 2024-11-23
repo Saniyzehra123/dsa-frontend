@@ -19,6 +19,7 @@ const SignUp = () => {
     email: '',
     password: '',
   });
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
 
   // Clears form data after successful submission
   const resetForm = () => {
@@ -66,7 +67,7 @@ const SignUp = () => {
 
   return (
     <div>
-      <div className="container mt-48">
+      <div className="container sign">
         <div className="row">
           <div className="col-md-4"></div>
           <div className="col-md-4"><h1>Sign Up Here</h1></div><hr />
@@ -113,14 +114,13 @@ const SignUp = () => {
                     name: 'phone',
                     required: true,
                     autoComplete: 'off',
-                    className: 'form-control' // Bootstrap style for input
+                    className: 'form-control', // Bootstrap style for input
                   }}
                 />
-                {/* <label>Phone</label> */}
               </div>
-              <div className="form-floating">
+              <div className="form-floating position-relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} // Toggle password visibility
                   className="form-control"
                   placeholder="Password"
                   name="password"
@@ -130,6 +130,24 @@ const SignUp = () => {
                   required
                 />
                 <label>Password</label>
+                {/* Eye Icon */}
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    zIndex: 2,
+                  }}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <i className="fa fa-eye-slash"></i> // Hidden password icon
+                  ) : (
+                    <i className="fa fa-eye"></i> // Visible password icon
+                  )}
+                </span>
               </div>
               <br />
               <button type="submit" className="btn btn-outline-success">Sign Up</button>

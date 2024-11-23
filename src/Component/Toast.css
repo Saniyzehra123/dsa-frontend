@@ -17,4 +17,11 @@
   .custom-toast .Toastify__progress-bar {
     background-color: #e76f51 !important;  /* Progress bar color */
   }
+
+  .sign{
+    margin-top:250px;
+  }
   
+  .forget{
+    margin-top: 250px;
+  }

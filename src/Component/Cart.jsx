@@ -331,7 +331,7 @@ const Cart = () => {
 
     .card-img-left {
         width: 100%; /* Full width for image on small screens */
-        max-height: 150px; /* Limit height for images */
+        max-height: 250px!important; /* Limit height for images */
         object-fit: cover; /* Maintain aspect ratio */
     }
 
