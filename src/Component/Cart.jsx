@@ -96,7 +96,7 @@ const Cart = () => {
                         </div>
                     ) : (
                         cartData.map(product => (
-                            <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', width: '60%' }}>
+                            <div className="card mb-3" key={product.id} style={{ display: 'flex', flexDirection: 'row', width: '80%', marginTop:'60px' }}>
                                 <img
                                     src={product.main_image_url}
                                     className="card-img-left"
