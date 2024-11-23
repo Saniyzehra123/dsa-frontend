@@ -159,70 +159,9 @@
 
   /* Media Query for Smaller Screens (max-width: 768px) */
 @media only screen and (max-width: 768px) {
-    .filter-group-container {
-      width: 100%; /* Filters take full width */
-      padding: 15px;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px; /* Space below the filter section */
-    }
-  
-    .filter-group {
-      margin-bottom: 15px; /* Space between filter groups */
-    }
-  
-    .filter-group .dropbtn {
-      width: 100%; /* Full width for buttons */
-      font-size: 14px; /* Slightly smaller for compact layout */
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background-color: #fff;
-      text-align: left;
-    }
-  
-    .filter-group .dropdown-content {
-      width: 100%; /* Match the width of the button */
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  
-    .dropdown-content label {
-      padding: 5px 0;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-    }
-  
-    .dropdown-content input[type="checkbox"] {
-      margin-right: 8px; /* Space between checkbox and label */
-    }
-  
-    .card {
-      width: 100%; /* Cards take full width */
-      margin: 15px 0; /* Space between cards */
-    }
-  
-    .card img {
-      width: 100%; /* Image stretches to fit card */
-      height: auto; /* Maintain aspect ratio */
-    }
-  
-    .card-body {
-      padding: 10px;
-      text-align: center;
-    } 
-    .row{
-        /* gap: 100px!important; */
-        justify-content: space-between!important;
-      }
-      .c22{
-        width:180% !important;
-      }
+ 
+  .banner-img{
+    margin-top: 60px!important;
+  }
 
   }

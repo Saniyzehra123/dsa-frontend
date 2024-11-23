@@ -11,11 +11,11 @@ const Footer = () => {
 
 
         <center>
-          <div className="container-fluid px-5 py-24 mx-auto">
+          <div className="container-fluid px-5 py-12">
           <div className="row">
             <div className="col-md-3 ty1">
               <center><img className='w-25' src="assets/images/logo/logo.jpg" alt="" /></center><br />
-              <center>  <h3>D'Sa Fashion Wear <br /> & <br /> Home Decor</h3></center>
+              <center>  <h4>D'Sa Fashion Wear <br /> & <br /> Home Decor</h4></center>
             </div>
             <div className="col-md-3 ty2 text-justify">
               <h3>Popular Searches</h3>
@@ -55,7 +55,7 @@ const Footer = () => {
         </center>
   
         <div className="border-t border-gray-200">
-          <div className="container px-5 py-8 flex flex-wrap mx-auto items-center">
+          <div className="container px-5 py-2 flex flex-wrap  items-center ad">
             <div className="flex md:flex-nowrap flex-wrap justify-center items-end md:justify-start">
               {/* <div className="relative sm:w-64 w-40 sm:mr-4 mr-2">
                 <label for="footer-field" className="leading-7 text-sm text-gray-600">Subscribe Newsletter</label>
@@ -84,8 +84,8 @@ const Footer = () => {
           </div>
         </div>
         <div className="bg-gray-100">
-          <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-            <p className="text-gray-500 text-sm text-center sm:text-left">© 2024 D'Sa FahionWear & Home Decor
+          <div className="container mx-auto py-2 px-5 flex flex-wrap flex-col sm:flex-row">
+            <p className="text-gray-500 text-sm text-center sm:text-left"><b>© 2024 D'Sa FahionWear & Home Decor</b>
 
             </p>
             <span className="sm:ml-auto sm:mt-0 mt-2 sm:w-auto w-full sm:text-left text-center text-gray-500 text-sm">  Design & Developed By <a href="https://pixelperfectstrategies.com" className="text-gray-600 ml-1" target="_blank" rel="noopener noreferrer">pixelperfectstrategies</a></span>

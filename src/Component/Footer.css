@@ -8,16 +8,23 @@ span>a{
 }
 
     @media (max-width: 768px) {
-      .ty1, .ty3{
-        flex: 0 0 100%; /* Last column takes full width */
-        max-width: 100%;
-        padding: 50px;
-        text-align: center;
-
+      .ty1, .ty3 {
+        flex: 0 0 100%; /* Full width */
+        max-width: 100%; /* Ensure it doesn't exceed the container width */
+        padding: 50px; /* Add padding for spacing */
+        text-align: center; /* Center-align text inside */
+        display: flex; /* Use flexbox for layout */
+        flex-direction: column; /* Stack child elements vertically */
+        align-items: center; /* Center elements horizontally */
+        gap: 20px; /* Add spacing between elements */
       }
       .ty2{
         flex: 0 0 50%; /* Next two columns take half width each */
         max-width: 50%;
+    
+      }
+      .ad{
+        height: 110px;
       }
 
 }

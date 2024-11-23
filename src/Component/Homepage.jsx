@@ -284,11 +284,12 @@ export default function Homepage() {
 
       {/* Features 2.0 Start */}
       <div className="container">
-        <div className="row">
+      
           <div className="text-center mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium text-center title-font text-gray-900 mb-4">Why Shop with D'Sa Fashion & Home Décor?</h1>
 
-          </div>
+          </div> 
+           <div className="row ca">
           <div className="col-md-3 fe">
             <i className='fa fa-truck text-6xl' id='ic'></i>
             <br />
@@ -307,7 +308,7 @@ export default function Homepage() {
           </div>
 
         </div>
-        <div className="row mt-5">
+        <div className="row mt-5 ca">
           <div className="col-md-3 fe">
             <i className='fa fa-undo text-6xl' id='ic'></i>
             <br />
@@ -330,7 +331,7 @@ export default function Homepage() {
 
         <div className="row mt-4">
           <div className="col-md-4"></div>
-          <div className="col-md-4">
+          <div className="col-md-4 bt">
             <a href="/privacy-policy">
               <button className="view" role="button">VIEW OUR POLICIES</button>
             </a>

@@ -19,7 +19,6 @@
 .fe{
   border: .5px solid gray;
   height: 15rem;
-  width: auto;
   border-radius:25px;
   margin: auto;
 
@@ -163,7 +162,17 @@ font-size:4rem;
   .cr{
     margin-top:190px;
 
+    .fe{
+   width: 40%;
+  
+    }
   }
+  .ca{
+    width: 75%;
+   gap: 35px;
+   margin-left: 10%!important;
+  }
+
 }
 
 
@@ -251,5 +260,11 @@ font-size:4rem;
     margin-top: 12px; /* Space above the button */
     padding: 10px;
   }
+  .bt {
+margin-left:-11.6%!important ;
+
+  }
+
+
 }
 

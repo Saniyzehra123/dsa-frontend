@@ -251,7 +251,7 @@ export default function Saree() {
       {/* Banner Image */}
       <div className="container mt-36">
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-12 banner-img">
             <img src="assets/images/carousel/c1.jpeg" alt="" />
           </div>
         </div>
@@ -363,10 +363,10 @@ export default function Saree() {
               </select>
             </div>
           </div>
-
+ 
 
            
-          <div className="row">
+          <div className="row saree-card-container">
             {sortedAndFilteredProducts.length > 0 ? (
               sortedAndFilteredProducts.map((saree, index) => (
                 <div className="col-md-4" key={saree.item_id}>
