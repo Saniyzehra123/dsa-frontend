@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import  placeholder from '../assets/placeholder.jpg'
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
+import SareeCardContainer from './SareeCardContainer';
 
 export default function Saree() {
   const dispatch = useDispatch();
@@ -363,10 +364,9 @@ export default function Saree() {
               </select>
             </div>
           </div>
- 
 
-           
-          <div className="row saree-card-container">
+          <SareeCardContainer sortedAndFilteredProducts={sortedAndFilteredProducts} placeholder={placeholder} toggleHeart={toggleHeart} liked={liked} addToCart />
+          {/* <div className="row saree-card-container">
             {sortedAndFilteredProducts.length > 0 ? (
               sortedAndFilteredProducts.map((saree, index) => (
                 <div className="col-md-4" key={saree.item_id}>
@@ -379,7 +379,6 @@ export default function Saree() {
                           style={{ width: '100%', height: 'auto', display: 'block' }}
                         />
                       </Link>
-                      {/* Heart icon container */}
                       <div style={{ position: 'absolute', top: '20px', right: '30px', zIndex: 2 }}>
                   <a onClick={() => toggleHeart(saree)}>
                     {liked.some(likedItem => likedItem.id === saree.item_id) ? (
@@ -424,7 +423,7 @@ export default function Saree() {
             ) : (
               <p>No sarees available</p>
             )}
-          </div>
+          </div> */}
         </div>
 
         <ToastContainer
