@@ -113,18 +113,21 @@ const Cart = () => {
                                     <p className="rating w-14">4.8 <i className="fa fa-star"></i></p>
                                     <div className="d-flex align-items-center">
                                         <button className="btn btn-secondary me-2" onClick={() => handleQuantityChange(product.id, product.quantity - 1)} disabled={product.quantity <= 1}>-</button>
-                                        <span className="me-2">{product.quantity}</span>
+                                        <span className="me-3">{product.quantity}</span>
                                         <button className="btn btn-secondary me-2" onClick={() => handleQuantityChange(product.id, product.quantity + 1)}>+</button>
                                         <button className="btn btn-danger" onClick={() => handleRemove(product.id)}>Delete</button>
-                                    </div>
-                                </div>
-                            </div>
+                                    </div>         <button className="btn btn-primary mt-4" onClick={handleCheckout}>Proceed to Checkout</button>
+                                </div>    
+                            </div>      
                         ))
+                        
                     )}
+            
                 </div>
+                
 
                 {/* Subtotal, Coupon Input, and Checkout */}
-                {cartData.length > 0 && (
+                {/* {cartData.length > 0 && (
                     <div className="subtotal-banner">
                         <center><h4>Best Coupon for You</h4></center>
                         <div className="coupon-slider">
@@ -159,9 +162,10 @@ const Cart = () => {
                         <hr />
                         <h4>Subtotal: ₹{(calculateSubtotal() - (calculateSubtotal() * discount)).toFixed(2)}</h4>
                         <hr />
-                        <button className="btn btn-primary mt-4" onClick={handleCheckout}>Proceed to Checkout</button>
+                       
                     </div>
-                )}
+                )} */}
+                
             </div>
 
             <style jsx>{`
@@ -356,6 +360,10 @@ const Cart = () => {
     .coupon-slider {
         flex-direction: column; /* Stack coupon cards */
     }
+        .me-3{
+        margin-left:52px;
+        }
+
 }
 
 
