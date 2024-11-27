@@ -14,7 +14,7 @@ const Login = () => {
   const { loading, error, isAuthenticated, user } = useSelector((store) => store?.loginData);
 
   const [loginFormData, setLoginFormData] = useState({
-    email: '',
+    email:'',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
@@ -44,6 +44,7 @@ const Login = () => {
       let loginData = decodeToken(user.token);
       loginData['token'] = user.token;
       sessionStorage.setItem('userData', JSON.stringify(loginData));
+      window.dispatchEvent(new Event('storage'));
       toast.success('Login successful!', { autoClose: 3000 });
       setTimeout(() => {
         navigate("/");

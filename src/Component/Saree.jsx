@@ -363,9 +363,6 @@ export default function Saree() {
               </select>
             </div>
           </div>
- 
-
-           
           <div className="row saree-card-container">
             {sortedAndFilteredProducts.length > 0 ? (
               sortedAndFilteredProducts.map((saree, index) => (

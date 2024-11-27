@@ -52,6 +52,7 @@ export default function Navbar() {
     getCartItemCount(); // Get the initial cart count when the component mounts
     // Listen for changes in localStorage
     window.addEventListener('storage', getCartItemCount);
+    window.addEventListener('storage', getLoginUser);
     return () => {
       window.removeEventListener('storage',  getCartItemCount);
     };
