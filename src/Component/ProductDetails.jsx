@@ -22,25 +22,76 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.loginData);
-  // Zoom-related states
+// Zoom-related states
 const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
 const [isZooming, setIsZooming] = useState(false);
+const [isModalOpen, setIsModalOpen] = useState(false); // For mobile modal
+const [zoomLevel, setZoomLevel] = useState(1); // Zoom level for modal
+const [startDist, setStartDist] = useState(0); // For pinch-to-zoom
+const [translate, setTranslate] = useState({ x: 0, y: 0 }); // Pan position
+const [startTranslate, setStartTranslate] = useState(null);
 
+// Desktop/Laptop Zoom Handlers
 const handleMouseMove = (e) => {
-    const { left, top, width, height } = e.target.getBoundingClientRect();
-    const x = ((e.pageX - left) / width) * 100;
-    const y = ((e.pageY - top) / height) * 100;
-    setZoomPosition({ x, y });
-  };
-  
-  const handleMouseEnter = () => {
-    setIsZooming(true);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsZooming(false);
-  };
+  const { left, top, width, height } = e.target.getBoundingClientRect();
+  const x = ((e.pageX - left) / width) * 100;
+  const y = ((e.pageY - top) / height) * 100;
+  setZoomPosition({ x, y });
+};
 
+const handleMouseEnter = () => {
+  setIsZooming(true);
+};
+
+const handleMouseLeave = () => {
+  setIsZooming(false);
+};
+
+// Mobile/Tablet Modal Handlers
+const handleImageClick = () => {
+  if (window.innerWidth <= 768) {
+    setIsModalOpen(true); // Open modal
+  }
+};
+
+const closeModal = () => {
+  setIsModalOpen(false); // Close modal
+  setZoomLevel(1); // Reset zoom level
+  setTranslate({ x: 0, y: 0 }); // Reset translation
+};
+
+// Pinch-to-Zoom Handlers
+const handleTouchStart = (e) => {
+  if (e.touches.length === 2) {
+    const dist = Math.sqrt(
+      (e.touches[0].clientX - e.touches[1].clientX) ** 2 +
+        (e.touches[0].clientY - e.touches[1].clientY) ** 2
+    );
+    setStartDist(dist);
+  } else if (e.touches.length === 1) {
+    setStartTranslate({
+      x: e.touches[0].clientX - translate.x,
+      y: e.touches[0].clientY - translate.y,
+    });
+  }
+};
+
+const handleTouchMove = (e) => {
+  if (e.touches.length === 2) {
+    const dist = Math.sqrt(
+      (e.touches[0].clientX - e.touches[1].clientX) ** 2 +
+        (e.touches[0].clientY - e.touches[1].clientY) ** 2
+    );
+    const scale = dist / startDist;
+    setZoomLevel((prevZoom) => Math.max(1, Math.min(prevZoom * scale, 3))); // Clamp zoom level
+  } else if (e.touches.length === 1 && startTranslate) {
+    const newTranslate = {
+      x: e.touches[0].clientX - startTranslate.x,
+      y: e.touches[0].clientY - startTranslate.y,
+    };
+    setTranslate(newTranslate);
+  }
+};
 
   useEffect(() => {
     const fetchSaree = async () => {
@@ -193,37 +244,37 @@ const handleMouseMove = (e) => {
   return (
     <div className="container mt-60">
       <div className="row">
+     
         {/* Product Images */}
         <div className="col-md-6 product-image-container">
           {/* Main Image */}
-        <div
+          <div
             id="mainImage"
             className="image-container"
             onMouseMove={handleMouseMove}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-        >
+            onClick={handleImageClick} // Add click event for tablets/mobiles
+          >
             <img
-              src={mainImage || 'https://via.placeholder.com/150'}
+              src={mainImage || "https://via.placeholder.com/150"}
               alt="Product Image"
               className="product-image"
-            //   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
-             {isZooming && (
-                    <div
-                        className="magnifier"
-                        style={{
-                        backgroundImage: `url(${mainImage})`,
-                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        }}
-                    ></div>
-                    )}
-        </div>
-
+            {isZooming && (
+              <div
+                className="magnifier"
+                style={{
+                  backgroundImage: `url(${mainImage})`,
+                  backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                }}
+              ></div>
+            )}
+          </div>
 
           {/* Sub Images / Thumbnails */}
           <div className="thumbnail-container mt-3">
-            {(saree?.image_url1 !== null && saree?.image_url1?.trim() !== '') && (
+            {saree?.image_url1 && (
               <img
                 src={saree.image_url1}
                 alt="Thumbnail 1"
@@ -231,7 +282,7 @@ const handleMouseMove = (e) => {
                 onClick={() => changeImage(saree.image_url1)}
               />
             )}
-            {(saree?.image_url2 !== null && saree?.image_url2?.trim() !== '') && (
+            {saree?.image_url2 && (
               <img
                 src={saree.image_url2}
                 alt="Thumbnail 2"
@@ -239,7 +290,7 @@ const handleMouseMove = (e) => {
                 onClick={() => changeImage(saree.image_url2)}
               />
             )}
-            {(saree?.image_url3 !== null && saree?.image_url3?.trim() !== '') && (
+            {saree?.image_url3 && (
               <img
                 src={saree.image_url3}
                 alt="Thumbnail 3"
@@ -247,7 +298,7 @@ const handleMouseMove = (e) => {
                 onClick={() => changeImage(saree.image_url3)}
               />
             )}
-            {(saree?.image_url4 !== null && saree?.image_url4?.trim() !== '')  && (
+            {saree?.image_url4 && (
               <img
                 src={saree.image_url4}
                 alt="Thumbnail 4"
@@ -255,15 +306,33 @@ const handleMouseMove = (e) => {
                 onClick={() => changeImage(saree.image_url4)}
               />
             )}
-            {(saree?.image_url5 !== null && saree?.image_url5?.trim() !== '') && (
+            {saree?.image_url5 && (
               <img
                 src={saree.image_url5}
                 alt="Thumbnail 5"
                 className="thumbnail"
-                onClick={() => changeImage(saree.image_url5 )}
+                onClick={() => changeImage(saree.image_url5)}
               />
             )}
           </div>
+
+          {/* Modal for smaller devices */}
+          {isModalOpen && (
+            <div className="modal" onClick={closeModal}>
+              <div
+                className="modal-image-container"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+              >
+                <img
+                  src={mainImage || "https://via.placeholder.com/150"}
+                  alt="Zoomed Image"
+                  className="modal-image"
+                  style={{transform: `scale(${zoomLevel}) translate(${translate.x}px, ${translate.y}px)`, }} // Apply zoom
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Product Details */}
@@ -356,61 +425,83 @@ const handleMouseMove = (e) => {
 
 
 <style jsx>{`
-      .product-image-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-       
-      }
-      
-      .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit:contain; /* Ensures the entire image is visible without cropping */
-        object-position: center; /* Centers the image */
-        transition: transform 0.3s ease; /* Smooth zoom effect */
-      }
-      
-      .image-container {
-        position: relative;
-        width: 100%; /* Makes it responsive */
-        max-width: 500px; /* Limits the maximum size */
-        height: auto; /* Adjust height automatically */
-        border: 1px solid #ddd;
-        background-color: #f9f9f9;
-        overflow: hidden;
-        cursor: zoom-in;
-      }
-      
-      .image-container:hover .product-image {
-        transform: scale(1.2); /* Zoom-in effect on hover */
-        transition: transform 0.3s ease-in-out; /* Smooth transition */
-      }
-      
-      .zoomed-image {
-        margin-top: 20px;
-        width: 500px;
-        height: 500px;
-        border: 1px solid #ddd;
-        background-repeat: no-repeat;
-        background-size: 200%;
-      }
-      
-      
-      
-      /* Magnifier Effect */
-      .magnifier {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-repeat: no-repeat;
-        background-size: 200%; /* Magnification level */
-        pointer-events: none;
-        z-index: 2;
-      }
-      
+       .product-image-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center;
+          transition: transform 0.3s ease;
+        }
+
+        .image-container {
+          position: relative;
+          width: 100%;
+          max-width: 500px;
+          height: auto;
+          border: 1px solid #ddd;
+          background-color: #f9f9f9;
+          overflow: hidden;
+          cursor: zoom-in;
+        }
+
+        .image-container:hover .product-image {
+          transform: scale(1.2);
+          transition: transform 0.3s ease-in-out;
+        }
+
+        /* Modal for smaller screens */
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          overflow: hidden;
+        }
+
+        .modal-image-container {
+          position: relative;
+          width: 100%;
+          max-width: 90%;
+          max-height: 90%;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .modal-image {
+          width: 100%;
+          height: auto;
+          max-height: 100%;
+          object-fit: contain;
+          transition: transform 0.3s ease;
+          cursor: grab;
+          margin-top:150px;
+        }
+
+        .magnifier {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-repeat: no-repeat;
+          background-size: 200%;
+          pointer-events: none;
+          z-index: 2;
+        }
       
       /* Thumbnail Container */
       .thumbnail-container {
