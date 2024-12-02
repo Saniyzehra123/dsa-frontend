@@ -441,7 +441,3 @@ export default function Saree() {
     </div>
   );
 }
-
-
-
-

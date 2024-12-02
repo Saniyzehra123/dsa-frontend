@@ -296,7 +296,7 @@ const handleMouseMove = (e) => {
           <li><i className="fas fa-barcode"></i> Code: {saree?.code_name || 'N/A'}</li>
           <li><i className="fas fa-tshirt"></i> Blouse Description: {saree?.boluse_des || 'N/A'}</li>
           <li><i className="fas fa-box"></i> Included Components: {saree?.included_components || 'N/A'}</li>
-          <li><i className="fas fa-warehouse"></i> Stock Quantity: {saree?.stock_quantity || 'N/A'}</li>
+          {/* <li><i className="fas fa-warehouse"></i> Stock Quantity: {saree?.stock_quantity || 'N/A'}</li> */}
           <li><i className="fas fa-feather"></i> Fabric Type: {saree?.fabric_type_name || 'N/A'}</li>
           <li><i className="fas fa-layer-group"></i> Weave Type: {saree?.weave_name || 'N/A'}</li>
           <li><i className="fas fa-palette"></i> Color: {saree?.color_name || 'N/A'}</li>
